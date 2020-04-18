@@ -1,0 +1,9 @@
+﻿html,body {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.container-fill {
+    flex-grow: 1;
+}
