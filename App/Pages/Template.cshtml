@@ -1,0 +1,863 @@
+﻿@page
+@model App.Pages.TemplateModel
+@{
+    ViewData["Title"] = "Template";
+}
+
+
+<link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" />
+<style>
+    .tab-content {
+        flex-grow: 1;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .tab-pane {
+        flex-grow: 1;
+    }
+
+    .codemirror-wrapper {
+        position: absolute;
+        flex-grow: 1;
+        width: 100%;
+        height: 100%;
+    }
+
+    .CodeMirror {
+        height: 100%;
+    }
+
+    #app-content {
+        height: 100%;
+    }
+
+    .split {
+        box-sizing: border-box;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid transparent;
+        background-color: #fff;
+        border-left-color: lightgray;
+        border-right-color: lightgray;
+    }
+
+    #preview {
+        overflow: hidden;
+    }
+
+    iframe {
+        height: 100%;
+        width: 100%;
+    }
+
+    .gutter.gutter-horizontal {
+        cursor: col-resize;
+    }
+
+    .split.split-horizontal,
+    .gutter.gutter-horizontal {
+        height: 100%;
+        float: left;
+    }
+</style>
+
+<div id="app-content">
+    <div id="code" class="split content split-horizontal">
+
+        <nav>
+            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-template-tab" data-toggle="tab" href="#nav-template" role="tab" aria-controls="nav-home" aria-selected="true">Template</a>
+                <a class="nav-item nav-link" id="nav-testdata-tab" data-toggle="tab" href="#nav-testdata" role="tab" aria-controls="nav-profile" aria-selected="false">Test data</a>
+                <a class="nav-item nav-link" id="nav-result-tab" data-toggle="tab" href="#nav-result" role="tab" aria-controls="nav-contact" aria-selected="false">Result</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-template" role="tabpanel" aria-labelledby="nav-template-tab">
+                <div class="codemirror-wrapper">
+                    <textarea id="html-textarea" class="codearea">
+&#x3C;!DOCTYPE html
+    PUBLIC &#x22;-//W3C//DTD XHTML 1.0 Transitional//EN&#x22; &#x22;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&#x22;&#x3E;
+&#x3C;html xmlns=&#x22;http://www.w3.org/1999/xhtml&#x22; xmlns:v=&#x22;urn:schemas-microsoft-com:vml&#x22;
+    xmlns:o=&#x22;urn:schemas-microsoft-com:office:office&#x22;&#x3E;
+
+&#x3C;head&#x3E;
+    &#x3C;!--[if gte mso 9]&#x3E;
+&#x9;&#x9;&#x9;&#x3C;xml&#x3E;
+&#x9;&#x9;&#x9;&#x9;&#x3C;o:OfficeDocumentSettings&#x3E;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x3C;o:AllowPNG /&#x3E;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x3C;o:PixelsPerInch&#x3E;96&#x3C;/o:PixelsPerInch&#x3E;
+&#x9;&#x9;&#x9;&#x9;&#x3C;/o:OfficeDocumentSettings&#x3E;
+&#x9;&#x9;&#x9;&#x3C;/xml&#x3E;
+&#x9;&#x9;&#x3C;![endif]--&#x3E;
+    &#x3C;meta http-equiv=&#x22;Content-type&#x22; content=&#x22;text/html; charset=utf-8&#x22; /&#x3E;
+    &#x3C;meta name=&#x22;viewport&#x22; content=&#x22;width=device-width, initial-scale=1, maximum-scale=1&#x22; /&#x3E;
+    &#x3C;meta http-equiv=&#x22;X-UA-Compatible&#x22; content=&#x22;IE=edge&#x22; /&#x3E;
+    &#x3C;meta name=&#x22;format-detection&#x22; content=&#x22;date=no&#x22; /&#x3E;
+    &#x3C;meta name=&#x22;format-detection&#x22; content=&#x22;address=no&#x22; /&#x3E;
+    &#x3C;meta name=&#x22;format-detection&#x22; content=&#x22;telephone=no&#x22; /&#x3E;
+    &#x3C;meta name=&#x22;x-apple-disable-message-reformatting&#x22; /&#x3E;
+    &#x3C;!--[if !mso]&#x3E;&#x3C;!--&#x3E;
+    &#x3C;link href=&#x22;https://fonts.googleapis.com/css?family=Muli:400,400i,700,700i&#x22; rel=&#x22;stylesheet&#x22; /&#x3E;
+    &#x3C;!--&#x3C;![endif]--&#x3E;
+    &#x3C;title&#x3E;Email Template&#x3C;/title&#x3E;
+    &#x3C;!--[if gte mso 9]&#x3E;
+&#x9;&#x9;&#x9;&#x3C;style type=&#x22;text/css&#x22; media=&#x22;all&#x22;&#x3E;
+&#x9;&#x9;&#x9;&#x9;sup {
+&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 100% !important;
+&#x9;&#x9;&#x9;&#x9;}
+&#x9;&#x9;&#x9;&#x3C;/style&#x3E;
+&#x9;&#x9;&#x3C;![endif]--&#x3E;
+
+    &#x3C;style type=&#x22;text/css&#x22; media=&#x22;screen&#x22;&#x3E;
+        /* Linked Styles */
+        body {
+            padding: 0 !important;
+            margin: 0 !important;
+            display: block !important;
+            min-width: 100% !important;
+            width: 100% !important;
+            background: #001736;
+            -webkit-text-size-adjust: none;
+        }
+
+        a {
+            color: #66c7ff;
+            text-decoration: none;
+        }
+
+        p {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        img {
+            -ms-interpolation-mode: bicubic;
+            /* Allow smoother rendering of resized image in Internet Explorer */
+        }
+
+        .mcnPreviewText {
+            display: none !important;
+        }
+
+        /* Mobile styles */
+        @@media only screen and (max-device-width: 480px),
+        only screen and (max-width: 480px) {
+            .mobile-shell {
+                width: 100% !important;
+                min-width: 100% !important;
+            }
+
+            .bg {
+                background-size: 100% auto !important;
+                -webkit-background-size: 100% auto !important;
+            }
+
+            .text-header,
+            .m-center {
+                text-align: center !important;
+            }
+
+            .center {
+                margin: 0 auto !important;
+            }
+
+            .container {
+                padding: 20px 10px !important;
+            }
+
+            .td {
+                width: 100% !important;
+                min-width: 100% !important;
+            }
+
+            .m-br-15 {
+                height: 15px !important;
+            }
+
+            .p30-15 {
+                padding: 30px 15px !important;
+            }
+
+            .m-td,
+            .m-hide {
+                display: none !important;
+                width: 0 !important;
+                height: 0 !important;
+                font-size: 0 !important;
+                line-height: 0 !important;
+                min-height: 0 !important;
+            }
+
+            .m-block {
+                display: block !important;
+            }
+
+            .fluid-img img {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+            }
+
+            .column,
+            .column-top,
+            .column-empty,
+            .column-empty2,
+            .column-dir-top {
+                float: left !important;
+                width: 100% !important;
+                display: block !important;
+            }
+
+            .column-empty {
+                padding-bottom: 10px !important;
+            }
+
+            .column-empty2 {
+                padding-bottom: 30px !important;
+            }
+
+            .content-spacing {
+                width: 15px !important;
+            }
+        }
+    &#x3C;/style&#x3E;
+&#x3C;/head&#x3E;
+
+&#x3C;body class=&#x22;body&#x22; style=&#x22;
+&#x9;&#x9;&#x9;padding: 0 !important;
+&#x9;&#x9;&#x9;margin: 0 !important;
+&#x9;&#x9;&#x9;display: block !important;
+&#x9;&#x9;&#x9;min-width: 100% !important;
+&#x9;&#x9;&#x9;width: 100% !important;
+&#x9;&#x9;&#x9;background: #001736;
+&#x9;&#x9;&#x9;-webkit-text-size-adjust: none;
+&#x9;&#x9;&#x22;&#x3E;
+    &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22; bgcolor=&#x22;#001736&#x22;&#x3E;
+        &#x3C;tr&#x3E;
+            &#x3C;td align=&#x22;center&#x22; valign=&#x22;top&#x22;&#x3E;
+                &#x3C;table width=&#x22;650&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22; class=&#x22;mobile-shell&#x22;&#x3E;
+                    &#x3C;tr&#x3E;
+                        &#x3C;td class=&#x22;td container&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;width: 650px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;min-width: 650px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;margin: 0;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-weight: normal;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding: 55px 0px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                            &#x3C;!-- Intro --&#x3E;
+                            &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;&#x3E;
+                                &#x3C;tr&#x3E;
+                                    &#x3C;td style=&#x22;padding-bottom: 10px;&#x22;&#x3E;
+                                        &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;&#x3E;
+                                            &#x3C;tr&#x3E;
+                                                &#x3C;td class=&#x22;tbrr p30-15&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding: 60px 30px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;border-radius: 26px 26px 0px 0px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22; bgcolor=&#x22;#12325c&#x22;&#x3E;
+                                                    &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;&#x3E;
+                                                        &#x3C;tr&#x3E;
+                                                            &#x3C;td class=&#x22;h1 pb25&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 40px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 46px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: center;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 25px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                Welcome, {{name}}
+                                                            &#x3C;/td&#x3E;
+                                                        &#x3C;/tr&#x3E;
+                                                        &#x3C;tr&#x3E;
+                                                            &#x3C;td class=&#x22;text-center pb25&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #c1cddc;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 16px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 30px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: center;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 25px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                Lorem ipsum dolor sit amet, consectetur
+                                                                adipisicing elit, sed do eiusmod
+                                                                &#x3C;span class=&#x22;m-hide&#x22;&#x3E;&#x3C;br /&#x3E;&#x3C;/span&#x3E;tempor
+                                                                incididunt ut labore et dolore magna aliqua.
+                                                            &#x3C;/td&#x3E;
+                                                        &#x3C;/tr&#x3E;
+                                                    &#x3C;/table&#x3E;
+                                                &#x3C;/td&#x3E;
+                                            &#x3C;/tr&#x3E;
+                                        &#x3C;/table&#x3E;
+                                    &#x3C;/td&#x3E;
+                                &#x3C;/tr&#x3E;
+                            &#x3C;/table&#x3E;
+                            &#x3C;!-- END Intro --&#x3E;
+
+                            &#x3C;!-- Article / Full Width Image + Title + Copy + Button --&#x3E;
+                            &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;&#x3E;
+                                &#x3C;tr&#x3E;
+                                    &#x3C;td style=&#x22;padding-bottom: 10px;&#x22;&#x3E;
+                                        &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;
+                                            bgcolor=&#x22;#0e264b&#x22;&#x3E;
+                                            &#x3C;tr&#x3E;
+                                                &#x3C;td class=&#x22;fluid-img&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                    &#x3C;img src=&#x22;https://www.yourtrainingedge.com/wp-content/uploads/2019/05/background-calm-clouds-747964.jpg&#x22;
+                                                        width=&#x22;650&#x22; height=&#x22;366&#x22; border=&#x22;0&#x22; alt=&#x22;&#x22; /&#x3E;
+                                                &#x3C;/td&#x3E;
+                                            &#x3C;/tr&#x3E;
+                                            &#x3C;tr&#x3E;
+                                                &#x3C;td class=&#x22;p30-15&#x22; style=&#x22;padding: 50px 30px;&#x22;&#x3E;
+                                                    &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;&#x3E;
+                                                        &#x3C;tr&#x3E;
+                                                            &#x3C;td class=&#x22;h3 pb20&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 25px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 32px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 20px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                Lorem ipsum dolor sit amet
+                                                            &#x3C;/td&#x3E;
+                                                        &#x3C;/tr&#x3E;
+                                                        &#x3C;tr&#x3E;
+                                                            &#x3C;td class=&#x22;text pb20&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 14px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 26px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 20px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                Lorem ipsum dolor sit amet, consectetur
+                                                                adipisicing elit, sed do eiusmod tempor
+                                                                incididunt ut labore et dolore magna aliqua.
+                                                                Ut enim ad minim veniam, quis nostrud
+                                                                exercitation ullamco laboris nisi ut aliquip
+                                                                ex ea commodo consequat.
+                                                            &#x3C;/td&#x3E;
+                                                        &#x3C;/tr&#x3E;
+                                                        &#x3C;!-- Button --&#x3E;
+                                                        &#x3C;tr&#x3E;
+                                                            &#x3C;td align=&#x22;left&#x22;&#x3E;
+                                                                &#x3C;table class=&#x22;center&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22;
+                                                                    cellpadding=&#x22;0&#x22; style=&#x22;text-align: center;&#x22;&#x3E;
+                                                                    &#x3C;tr&#x3E;
+                                                                        &#x3C;td class=&#x22;pink-button text-button&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;background: #ff6666;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #c1cddc;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 14px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 18px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding: 12px 30px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: center;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;border-radius: 0px 22px 22px 22px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-weight: bold;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                            &#x3C;a href=&#x22;#&#x22; target=&#x22;_blank&#x22;
+                                                                                class=&#x22;link-white&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-decoration: none;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;&#x3C;span class=&#x22;link-white&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-decoration: none;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;CLICK HERE&#x3C;/span&#x3E;&#x3C;/a&#x3E;
+                                                                        &#x3C;/td&#x3E;
+                                                                    &#x3C;/tr&#x3E;
+                                                                &#x3C;/table&#x3E;
+                                                            &#x3C;/td&#x3E;
+                                                        &#x3C;/tr&#x3E;
+                                                        &#x3C;!-- END Button --&#x3E;
+                                                    &#x3C;/table&#x3E;
+                                                &#x3C;/td&#x3E;
+                                            &#x3C;/tr&#x3E;
+                                        &#x3C;/table&#x3E;
+                                    &#x3C;/td&#x3E;
+                                &#x3C;/tr&#x3E;
+                            &#x3C;/table&#x3E;
+                            &#x3C;!-- END Article / Full Width Image + Title + Copy + Button --&#x3E;
+
+                            &#x3C;!-- Two Columns / Articles --&#x3E;
+                            &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;&#x3E;
+                                &#x3C;tr&#x3E;
+                                    &#x3C;td style=&#x22;padding-bottom: 10px;&#x22;&#x3E;
+                                        &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;
+                                            bgcolor=&#x22;#ff6666&#x22;&#x3E;
+                                            &#x3C;tr&#x3E;
+                                                &#x3C;td class=&#x22;p30-15&#x22; style=&#x22;padding: 50px 30px;&#x22;&#x3E;
+                                                    &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;&#x3E;
+                                                        &#x3C;tr&#x3E;
+                                                            &#x3C;th class=&#x22;column-top&#x22; width=&#x22;280&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding: 0;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;margin: 0;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-weight: normal;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;vertical-align: top;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22;
+                                                                    cellpadding=&#x22;0&#x22;&#x3E;
+                                                                    &#x3C;tr&#x3E;
+                                                                        &#x3C;td class=&#x22;fluid-img pb25&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 25px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                            &#x3C;img src=&#x22;https://iso.500px.com/wp-content/uploads/2014/07/big-one.jpg&#x22;
+                                                                                width=&#x22;280&#x22; height=&#x22;157&#x22; border=&#x22;0&#x22;
+                                                                                alt=&#x22;&#x22; /&#x3E;
+                                                                        &#x3C;/td&#x3E;
+                                                                    &#x3C;/tr&#x3E;
+                                                                    &#x3C;tr&#x3E;
+                                                                        &#x3C;td class=&#x22;h4 pb20&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 20px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 28px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 20px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                            Lorem ipsum dolor sit amet, consectetur
+                                                                            adipisicing
+                                                                        &#x3C;/td&#x3E;
+                                                                    &#x3C;/tr&#x3E;
+                                                                    &#x3C;tr&#x3E;
+                                                                        &#x3C;td class=&#x22;text pb20&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 14px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 26px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 20px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                            Magna aliqua. Ut enim ad minim veniam,
+                                                                            quis nostrud exercitation ullamco
+                                                                            laboris nisi ut aliquip ex ea commodo.
+                                                                        &#x3C;/td&#x3E;
+                                                                    &#x3C;/tr&#x3E;
+                                                                    &#x3C;!-- Button --&#x3E;
+                                                                    &#x3C;tr&#x3E;
+                                                                        &#x3C;td align=&#x22;left&#x22;&#x3E;
+                                                                            &#x3C;table border=&#x22;0&#x22; cellspacing=&#x22;0&#x22;
+                                                                                cellpadding=&#x22;0&#x22;&#x3E;
+                                                                                &#x3C;tr&#x3E;
+                                                                                    &#x3C;td class=&#x22;dark-blue-button text-button&#x22;
+                                                                                        style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;background: #12325c;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #c1cddc;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial,
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 14px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 18px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding: 12px 30px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: center;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;border-radius: 0px 22px 22px
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;22px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-weight: bold;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                                        &#x3C;a href=&#x22;#&#x22; target=&#x22;_blank&#x22;
+                                                                                            class=&#x22;link-white&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-decoration: none;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;&#x3C;span class=&#x22;link-white&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-decoration: none;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;CALICK HERE&#x3C;/span&#x3E;&#x3C;/a&#x3E;
+                                                                                    &#x3C;/td&#x3E;
+                                                                                &#x3C;/tr&#x3E;
+                                                                            &#x3C;/table&#x3E;
+                                                                        &#x3C;/td&#x3E;
+                                                                    &#x3C;/tr&#x3E;
+                                                                    &#x3C;!-- END Button --&#x3E;
+                                                                &#x3C;/table&#x3E;
+                                                            &#x3C;/th&#x3E;
+                                                            &#x3C;th class=&#x22;column-empty2&#x22; width=&#x22;30&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding: 0;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;margin: 0;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-weight: normal;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;vertical-align: top;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;&#x3C;/th&#x3E;
+                                                            &#x3C;th class=&#x22;column-top&#x22; width=&#x22;280&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding: 0;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;margin: 0;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-weight: normal;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;vertical-align: top;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22;
+                                                                    cellpadding=&#x22;0&#x22;&#x3E;
+                                                                    &#x3C;tr&#x3E;
+                                                                        &#x3C;td class=&#x22;fluid-img pb25&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 25px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                            &#x3C;img src=&#x22;https://www.lukas-petereit.com/wp-content/uploads/2018/08/Sunset-at-Verdon-Canyon-Landscape-of-Provence-Photography-in-France.jpg&#x22;
+                                                                                width=&#x22;280&#x22; height=&#x22;157&#x22; border=&#x22;0&#x22;
+                                                                                alt=&#x22;&#x22; /&#x3E;
+                                                                        &#x3C;/td&#x3E;
+                                                                    &#x3C;/tr&#x3E;
+                                                                    &#x3C;tr&#x3E;
+                                                                        &#x3C;td class=&#x22;h4 pb20&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 20px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 28px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 20px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                            Lorem ipsum dolor sit amet, consectetur
+                                                                            adipisicing
+                                                                        &#x3C;/td&#x3E;
+                                                                    &#x3C;/tr&#x3E;
+                                                                    &#x3C;tr&#x3E;
+                                                                        &#x3C;td class=&#x22;text pb20&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 14px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 26px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 20px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                            Magna aliqua. Ut enim ad minim veniam,
+                                                                            quis nostrud exercitation ullamco
+                                                                            laboris nisi ut aliquip ex ea commodo.
+                                                                        &#x3C;/td&#x3E;
+                                                                    &#x3C;/tr&#x3E;
+                                                                    &#x3C;!-- Button --&#x3E;
+                                                                    &#x3C;tr&#x3E;
+                                                                        &#x3C;td align=&#x22;left&#x22;&#x3E;
+                                                                            &#x3C;table border=&#x22;0&#x22; cellspacing=&#x22;0&#x22;
+                                                                                cellpadding=&#x22;0&#x22;&#x3E;
+                                                                                &#x3C;tr&#x3E;
+                                                                                    &#x3C;td class=&#x22;dark-blue-button text-button&#x22;
+                                                                                        style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;background: #12325c;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #c1cddc;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial,
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 14px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 18px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding: 12px 30px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: center;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;border-radius: 0px 22px 22px
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;22px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-weight: bold;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                                        &#x3C;a href=&#x22;#&#x22; target=&#x22;_blank&#x22;
+                                                                                            class=&#x22;link-white&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-decoration: none;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;&#x3C;span class=&#x22;link-white&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #ffffff;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-decoration: none;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;CALICK HERE&#x3C;/span&#x3E;&#x3C;/a&#x3E;
+                                                                                    &#x3C;/td&#x3E;
+                                                                                &#x3C;/tr&#x3E;
+                                                                            &#x3C;/table&#x3E;
+                                                                        &#x3C;/td&#x3E;
+                                                                    &#x3C;/tr&#x3E;
+                                                                    &#x3C;!-- END Button --&#x3E;
+                                                                &#x3C;/table&#x3E;
+                                                            &#x3C;/th&#x3E;
+                                                        &#x3C;/tr&#x3E;
+                                                    &#x3C;/table&#x3E;
+                                                &#x3C;/td&#x3E;
+                                            &#x3C;/tr&#x3E;
+                                        &#x3C;/table&#x3E;
+                                    &#x3C;/td&#x3E;
+                                &#x3C;/tr&#x3E;
+                            &#x3C;/table&#x3E;
+                            &#x3C;!-- END Two Columns / Articles --&#x3E;
+                            &#x3C;!-- Footer --&#x3E;
+                            &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;&#x3E;
+                                &#x3C;tr&#x3E;
+                                    &#x3C;td class=&#x22;p30-15 bbrr&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding: 50px 30px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;border-radius: 0px 0px 26px 26px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22; bgcolor=&#x22;#0e264b&#x22;&#x3E;
+                                        &#x3C;table width=&#x22;100%&#x22; border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;&#x3E;
+                                            &#x3C;tr&#x3E;
+                                                &#x3C;td align=&#x22;center&#x22; style=&#x22;padding-bottom: 30px;&#x22;&#x3E;
+                                                    &#x3C;table border=&#x22;0&#x22; cellspacing=&#x22;0&#x22; cellpadding=&#x22;0&#x22;&#x3E;
+                                                        &#x3C;tr&#x3E;
+                                                            &#x3C;td class=&#x22;img&#x22; width=&#x22;55&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                &#x3C;a href=&#x22;https://twitter.com/{{twitter}}&#x22;
+                                                                    target=&#x22;_blank&#x22;&#x3E;&#x3C;img
+                                                                        src=&#x22;https://lh3.googleusercontent.com/proxy/bFPcNOI_t9PZfzL-OA75bdQIHanf4kqf8u3OzN9dioehIDfOr3LF68ESn5md3ztUTlaEgwrAvJnRB2zdsikLzJ95qbFCSP4&#x22;
+                                                                        width=&#x22;38&#x22; height=&#x22;38&#x22; border=&#x22;0&#x22; alt=&#x22;&#x22; /&#x3E;&#x3C;/a&#x3E;
+                                                            &#x3C;/td&#x3E;
+                                                            &#x3C;td class=&#x22;img&#x22; width=&#x22;55&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 0pt;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: left;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                                &#x3C;a href=&#x22;https://github.com/{{github}}&#x22;
+                                                                    target=&#x22;_blank&#x22;&#x3E;&#x3C;img
+                                                                        src=&#x22;https://pngimg.com/uploads/github/github_PNG40.png&#x22;
+                                                                        width=&#x22;38&#x22; height=&#x22;38&#x22; border=&#x22;0&#x22; alt=&#x22;&#x22; /&#x3E;&#x3C;/a&#x3E;
+                                                            &#x3C;/td&#x3E;
+                                                        &#x3C;/tr&#x3E;
+                                                    &#x3C;/table&#x3E;
+                                                &#x3C;/td&#x3E;
+                                            &#x3C;/tr&#x3E;
+                                            &#x3C;tr&#x3E;
+                                                &#x3C;td class=&#x22;text-footer1 pb10&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #c1cddc;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 16px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 20px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: center;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding-bottom: 10px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                    Ieuan Walker
+                                                &#x3C;/td&#x3E;
+                                            &#x3C;/tr&#x3E;
+                                            &#x3C;tr&#x3E;
+                                                &#x3C;td class=&#x22;text-footer2&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #8297b3;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 12px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 26px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: center;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                                    {{address}}
+                                                &#x3C;/td&#x3E;
+                                            &#x3C;/tr&#x3E;
+                                        &#x3C;/table&#x3E;
+                                    &#x3C;/td&#x3E;
+                                &#x3C;/tr&#x3E;
+                                &#x3C;tr&#x3E;
+                                    &#x3C;td class=&#x22;text-footer3 p30-15&#x22; style=&#x22;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;padding: 40px 30px 0px 30px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;color: #475c77;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-family: &#x27;Muli&#x27;, Arial, sans-serif;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;font-size: 12px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;line-height: 18px;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;text-align: center;
+&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x22;&#x3E;
+                                        &#x3C;a href=&#x22;#&#x22; target=&#x22;_blank&#x22; class=&#x22;link2-u&#x22;
+                                            style=&#x22;color: #475c77; text-decoration: underline;&#x22;&#x3E;&#x3C;span class=&#x22;link2-u&#x22;
+                                                style=&#x22;color: #475c77; text-decoration: underline;&#x22;&#x3E;Unsubscribe&#x3C;/span&#x3E;&#x3C;/a&#x3E;
+                                        from this mailing list.
+                                    &#x3C;/td&#x3E;
+                                &#x3C;/tr&#x3E;
+                            &#x3C;/table&#x3E;
+                            &#x3C;!-- END Footer --&#x3E;
+                        &#x3C;/td&#x3E;
+                    &#x3C;/tr&#x3E;
+                &#x3C;/table&#x3E;
+            &#x3C;/td&#x3E;
+        &#x3C;/tr&#x3E;
+    &#x3C;/table&#x3E;
+&#x3C;/body&#x3E;
+
+&#x3C;/html&#x3E;
+
+</textarea>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-testdata" role="tabpanel" aria-labelledby="nav-testdata-tab">
+                <div class="codemirror-wrapper">
+                    <textarea id="json-textarea" onchange="UpdateResult()">
+{
+    &#x22;name&#x22;: &#x22;Ieuan Walker&#x22;,
+    &#x22;twitter&#x22;: &#x22;IeuanTWalker&#x22;,
+    &#x22;github&#x22;: &#x22;IeuanWalker&#x22;,
+    &#x22;address&#x22;: &#x22;Cardiff, United Kingdom&#x22;
+}
+                    </textarea>
+                </div>
+            </div>
+            <div class="tab-pane fade h-100" id="nav-result" role="tabpanel" aria-labelledby="nav-result-tab">
+                <div class="codemirror-wrapper">
+                    <textarea id="result-textarea" onchange="UpdatePreview()"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="preview" class="split content split-horizontal">
+        <iframe id="preview-iframe"></iframe>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.3.5/split.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+
+
+    <script src="~/lib/codemirror/lib/codemirror.js"></script>
+    <script src="~/lib/codemirror/mode/css/css.js"></script>
+    <script src="~/lib/codemirror/mode/xml/xml.js"></script>
+    <script src="~/lib/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+
+
+    <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
+
+    <!-- Lint -->
+    <link rel="stylesheet" href="~/lib/codemirror/addon/lint/lint.css" />
+    <script src="~/lib/codemirror/addon/lint/lint.js"></script>
+    <script src="~/lib/codemirror/addon/lint/json-lint.js"></script>
+
+    <!-- Theme -->
+    <link rel="stylesheet" href="~/lib/codemirror/theme/eclipse.css" />
+
+    <!-- Hints -->
+    <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css" />
+    <script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
+    <script src="~/lib/codemirror/addon/hint/html-hint.js"></script>
+    <script src="~/lib/codemirror/addon/hint/xml-hint.js"></script>
+
+    <!-- Full screen -->
+    <link rel="stylesheet" href="~/lib/codemirror/addon/display/fullscreen.css" />
+    <script src="~/lib/codemirror/addon/display/fullscreen.js"></script>
+
+    <!-- Active line -->
+    <script src="~/lib/codemirror/addon/selection/active-line.js"></script>
+
+
+    <script>
+        Split(['#code', '#preview'], {
+            sizes: [30, 70],
+            gutterSize: 10,
+            cursor: 'row-resize',
+        });
+
+        var htmlEditor, jsonEditor, htmlEditor;
+        $(document).ready(function () {
+            htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-textarea"), {
+                lineNumbers: true,
+                matchBrackets: true,
+                mode: "htmlmixed",
+                htmlMode: true,
+                autocorrect: true,
+                lineWrapping: false,
+                extraKeys: {
+                    "F11": function (cm) {
+                        cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                    },
+                    "Esc": function (cm) {
+                        if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                    },
+                    "Ctrl-Space": "autocomplete"
+                },
+                hint: CodeMirror.hint.htmlHint
+            });
+            htmlEditor.on("change", function (htmlEditor, change) {
+                UpdateResult();
+            });
+
+            jsonEditor = CodeMirror.fromTextArea(document.getElementById("json-textarea"), {
+                lineNumbers: true,
+                border: true,
+                theme: "eclipse",
+                mode: "application/json",
+                gutters: ["CodeMirror-lint-markers"],
+                styleActiveLine: true,
+                lint: true,
+                extraKeys: {
+                    "F11": function (cm) {
+                        cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                    },
+                    "Esc": function (cm) {
+                        if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                    }
+                },
+            });
+            jsonEditor.on("change", function (jsonEditor, change) {
+                UpdateResult();
+            });
+
+            resultEditor = CodeMirror.fromTextArea(document.getElementById("result-textarea"), {
+                lineNumbers: true,
+                matchBrackets: true,
+                mode: "xml",
+                htmlMode: true,
+                autocorrect: true,
+                lineWrapping: false,
+                readOnly: true,
+                extraKeys: {
+                    "F11": function (cm) {
+                        cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                    },
+                    "Esc": function (cm) {
+                        if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                    }
+                },
+            });
+            resultEditor.on("change", function (resultEditor, change) {
+                UpdatePreview();
+            });
+
+            UpdateResult();
+        });
+        //when the bootstrap tab is fully shown, call codemirror's refresh().
+        //Also, if you use jquery-UI, it's gonna be different here.
+        $('.nav-tabs a').on('shown.bs.tab', function () {
+            htmlEditor.refresh();
+            jsonEditor.refresh();
+            resultEditor.refresh();
+        });
+
+        function UpdateResult() {
+            var template = Handlebars.compile(htmlEditor.getValue());
+            var compiled = template(JSON.parse(jsonEditor.getValue()));
+            resultEditor.getDoc().setValue(compiled);
+        }
+
+        function UpdatePreview() {
+            document.getElementById("preview-iframe").src = "data:text/html;charset=utf-8," + escape(resultEditor.getValue());
+        }
+
+
+        var snippets = [
+            { text: 'const', displayText: 'const declarations' },
+            { text: 'let', displayText: 'let declarations' },
+            { text: 'var', displayText: 'var declarations' }];
+
+        function snippet() {
+            CodeMirror.showHint(codemirror, function () {
+                var cursor = codemirror.getCursor();
+                var token = codemirror.getTokenAt(cursor);
+                var start = token.start;
+                var end = cursor.ch;
+                var line = cursor.line;
+                var currentWord = token.string;
+                // 入力した文字列をスニペット配列から探す
+                var list = snippets.filter(function (item) {
+                    return item.text.indexOf(currentWord) >= 0;
+                });
+                return {
+                    list: list.length ? list : snippets,
+                    from: CodeMirror.Pos(line, start),
+                    to: CodeMirror.Pos(line, end)
+                };
+
+            }, { completeSingle: false });
+        }
+    </script>
+}
+
+
