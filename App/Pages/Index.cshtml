@@ -3,11 +3,24 @@
 @{
     ViewData["Title"] = "Home page";
 }
-
+<link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" />
 <style>
     .tab-content {
         flex-grow: 1;
-        overflow:hidden;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        position:relative;
+    }
+    .tab-pane{
+        flex-grow: 1;
+    }
+
+    .codemirror-wrapper{
+        position: absolute;
+        flex-grow: 1;
+        width: 100%;
+        height: 100%;
     }
 
     .CodeMirror {
@@ -51,10 +64,6 @@
         height: 100%;
         float: left;
     }
-
-    .CodeMirror {
-        height: 100% !important;
-    }
 </style>
 
 <div id="app-content">
@@ -68,8 +77,9 @@
             </div>
         </nav>
         <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show h-100 active" id="nav-template" role="tabpanel" aria-labelledby="nav-template-tab">
-                <textarea id="html-textarea" class="codearea h-100">
+            <div class="tab-pane fade show active" id="nav-template" role="tabpanel" aria-labelledby="nav-template-tab">
+                <div class="codemirror-wrapper">
+                    <textarea id="html-textarea" class="codearea">
 &#x3C;!DOCTYPE html
     PUBLIC &#x22;-//W3C//DTD XHTML 1.0 Transitional//EN&#x22; &#x22;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&#x22;&#x3E;
 &#x3C;html xmlns=&#x22;http://www.w3.org/1999/xhtml&#x22; xmlns:v=&#x22;urn:schemas-microsoft-com:vml&#x22;
@@ -663,19 +673,24 @@
 &#x3C;/html&#x3E;
 
 </textarea>
+                </div>
             </div>
-            <div class="tab-pane fade h-100" id="nav-testdata" role="tabpanel" aria-labelledby="nav-testdata-tab">
-                <textarea id="json-textarea" class="h-100" onchange="UpdateResult()">
+            <div class="tab-pane fade" id="nav-testdata" role="tabpanel" aria-labelledby="nav-testdata-tab">
+                <div class="codemirror-wrapper">
+                    <textarea id="json-textarea" onchange="UpdateResult()">
 {
     &#x22;name&#x22;: &#x22;Ieuan Walker&#x22;,
     &#x22;twitter&#x22;: &#x22;IeuanTWalker&#x22;,
     &#x22;github&#x22;: &#x22;IeuanWalker&#x22;,
     &#x22;address&#x22;: &#x22;Cardiff, United Kingdom&#x22;
 }
-                </textarea>
+                    </textarea>
+                </div>
             </div>
             <div class="tab-pane fade h-100" id="nav-result" role="tabpanel" aria-labelledby="nav-result-tab">
-                <textarea id="result-textarea" class="h-100" onchange="UpdatePreview()"></textarea>
+                <div class="codemirror-wrapper">
+                    <textarea id="result-textarea" onchange="UpdatePreview()"></textarea>
+                </div>
             </div>
         </div>
     </div>
@@ -689,19 +704,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.3.5/split.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 
-    <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" />
 
     <script src="~/lib/codemirror/lib/codemirror.js"></script>
     <script src="~/lib/codemirror/mode/css/css.js"></script>
     <script src="~/lib/codemirror/mode/xml/xml.js"></script>
     <script src="~/lib/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+
+
     <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
+
+    <!-- Lint -->
+    <link rel="stylesheet" href="~/lib/codemirror/addon/lint/lint.css" />
+    <script src="~/lib/codemirror/addon/lint/lint.js"></script>
+    <script src="~/lib/codemirror/addon/lint/json-lint.js"></script>
+
+    <!-- Theme -->
+    <link rel="stylesheet" href="~/lib/codemirror/theme/eclipse.css" />
 
     <!-- Hints -->
     <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css" />
     <script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
     <script src="~/lib/codemirror/addon/hint/html-hint.js"></script>
     <script src="~/lib/codemirror/addon/hint/xml-hint.js"></script>
+
+    <!-- Full screen -->
+    <link rel="stylesheet" href="~/lib/codemirror/addon/display/fullscreen.css" />
+    <script src="~/lib/codemirror/addon/display/fullscreen.js"></script>
+
+    <!-- Active line -->
+    <script src="~/lib/codemirror/addon/selection/active-line.js"></script>
 
 
     <script>
@@ -721,13 +752,15 @@
                 autocorrect: true,
                 lineWrapping: false,
                 extraKeys: {
-                    "Tab": "autocomplete"
+                    "F11": function (cm) {
+                        cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                    },
+                    "Esc": function (cm) {
+                        if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                    },
+                    "Ctrl-Space": "autocomplete"
                 },
                 hint: CodeMirror.hint.htmlHint
-            });
-            htmlEditor.on('keyup', function (htmlEditor, event) {
-                // type code and show autocomplete hint in the meanwhile
-                CodeMirror.commands.autocomplete(htmlEditor);
             });
             htmlEditor.on("change", function (htmlEditor, change) {
                 UpdateResult();
@@ -735,11 +768,20 @@
 
             jsonEditor = CodeMirror.fromTextArea(document.getElementById("json-textarea"), {
                 lineNumbers: true,
-                matchBrackets: true,
-                mode: "javascript",
-                htmlMode: true,
-                autocorrect: true,
-                lineWrapping: false
+                border: true,
+                theme: "eclipse",
+                mode: "application/json",
+                gutters: ["CodeMirror-lint-markers"],
+                styleActiveLine: true,
+                lint: true,
+                extraKeys: {
+                    "F11": function (cm) {
+                        cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                    },
+                    "Esc": function (cm) {
+                        if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                    }
+                },
             });
             jsonEditor.on("change", function (jsonEditor, change) {
                 UpdateResult();
@@ -752,7 +794,15 @@
                 htmlMode: true,
                 autocorrect: true,
                 lineWrapping: false,
-                readOnly: true
+                readOnly: true,
+                extraKeys: {
+                    "F11": function (cm) {
+                        cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                    },
+                    "Esc": function (cm) {
+                        if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                    }
+                },
             });
             resultEditor.on("change", function (resultEditor, change) {
                 UpdatePreview();
