@@ -16,5 +16,6 @@ namespace App.Database.Models
         public string TestData { get; set; }
 
         public Guid ProjectId { get; set; }
+        public ProjectTbl Project { get; set; }
     }
 }

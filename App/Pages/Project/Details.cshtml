@@ -1,4 +1,5 @@
 ﻿@page
+@using Humanizer;
 @model App.Pages.Project.DetailsModel
 @{
     ViewData["Title"] = "Details";
@@ -11,6 +12,30 @@
         <p>@Model.Project.Description</p>
         <p>@Model.Project.DateCreated</p>
         <p>@Model.Project.DateModified</p>
-        <a asp-area="" asp-page="/Template/Add" asp-route-id="@Model.Project.Id" type="button" class="btn btn-outline-success align-self-end m-0">Create template</a>
+        <a asp-area="" asp-page="/Template/Add" asp-route-projectId="@Model.Project.Id" type="button" class="btn btn-outline-success align-self-end m-0">Create template</a>
+
+        @if (Model.Project.Templates.Any())
+        {
+            <div class="row m-0 mt-3">
+                <div class="card-deck">
+                    @foreach (var template in Model.Project.Templates)
+                    {
+                        <a asp-page="/Project/Details" asp-route-id="@template.Id">
+                            <div class="card mb-4" style="min-width: 18rem;">
+                                <div class="card-body">
+                                    <h5 class="card-title">@template.Name</h5>
+                                    <p class="card-text">@template.Description</p>
+                                    <p class="card-text"><small class="text-muted">Last modified @template.DateCreated.Humanize()</small></p>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <p>No project, create a project</p>
+        }
     </div>
 

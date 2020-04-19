@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using App.Database.Models;
 using App.Database.Repositories.Project;
@@ -17,7 +18,7 @@ namespace App.Pages.Project
         public ProjectTbl Project { get; set; }
         public async Task OnGet(Guid id)
         {
-            Project = await _projectTbl.GetById(id);
+            Project = (await _projectTbl.Get(x => x.Id.Equals(id), null, nameof(ProjectTbl.Templates)).ConfigureAwait(false)).Single();
         }
     }
 }

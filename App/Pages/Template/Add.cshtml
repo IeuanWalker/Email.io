@@ -4,5 +4,18 @@
     ViewData["Title"] = "Add";
 }
 
-<h1>Add</h1>
+<div class="container">
+    <form method="post">
+        <div class="form-group">
+            <label for="NameInput">@Html.DisplayNameFor(model => model.Template.Name)</label>
+            <input asp-for="Template.Name" type="text" class="form-control" id="NameInput" placeholder="@Html.DisplayNameFor(model => model.Template.Name)">
+        </div>
+        <div class="form-group">
+            <label for="DescriptionInput">@Html.DisplayNameFor(model => model.Template.Description)</label>
+            <input asp-for="Template.Description" type="text" class="form-control" id="DescriptionInput" placeholder="@Html.DisplayNameFor(model => model.Template.Description)">
+        </div>
+        <input type="submit" class="btn btn-primary">
+    </form>
+</div>
+
 
