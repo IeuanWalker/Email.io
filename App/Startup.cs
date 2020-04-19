@@ -1,3 +1,4 @@
+using App.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,13 @@ namespace App
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Interface mapping
+            InterfaceConfiguration.ConfigureServices(services);
+
+            // Database
+            DatabaseConfiguration.ConfigureServices(services, Configuration);
+
+
             services.AddRazorPages()
                  .AddRazorRuntimeCompilation();
 
@@ -49,10 +57,7 @@ namespace App
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-            });
+            app.UseEndpoints(endpoints => endpoints.MapRazorPages());
         }
     }
 }

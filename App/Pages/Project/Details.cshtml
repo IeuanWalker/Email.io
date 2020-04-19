@@ -1,0 +1,16 @@
+﻿@page
+@model App.Pages.Project.DetailsModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+    <div class="container">
+
+        <h1>@Model.Project.Title</h1>
+        <p>@Model.Project.Id</p>
+        <p>@Model.Project.Description</p>
+        <p>@Model.Project.DateCreated</p>
+        <p>@Model.Project.DateModified</p>
+        <a asp-area="" asp-page="/Template/Add" asp-route-id="@Model.Project.Id" type="button" class="btn btn-outline-success align-self-end m-0">Create template</a>
+    </div>
+

@@ -1,0 +1,19 @@
+﻿@page
+@model App.Pages.Project.AddModel
+@{
+    ViewData["Title"] = "Add";
+}
+    <div class="container">
+        <form method="post">
+            <div class="form-group">
+                <label for="TitleInput">@Html.DisplayNameFor(model => model.Project.Title)</label>
+                <input asp-for="Project.Title" type="text" class="form-control" id="TitleInput" placeholder="@Html.DisplayNameFor(model => model.Project.Title)">
+            </div>
+            <div class="form-group">
+                <label for="DescriptionInput">@Html.DisplayNameFor(model => model.Project.Description)</label>
+                <input asp-for="Project.Description" type="text" class="form-control" id="DescriptionInput" placeholder="@Html.DisplayNameFor(model => model.Project.Description)">
+            </div>
+            <input type="submit" class="btn btn-primary">
+        </form>
+    </div>
+
