@@ -9,17 +9,22 @@
     <link rel="stylesheet" href="~/css/bundle.min.css" />
     <link rel="stylesheet" href="~/css/output/main.css" />
 
-     @RenderSection("Styles", required: false)
+    <style>
+
+
+    </style>
+
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <div class="docs-container off-canvas off-canvas-sidebar-show">
-        <partial name="_sidebar"/>
+        <partial name="_sidebar" />
 
         <div class="content">
-            <div class="container">
+            <div class="container" style="height: 1000px">
                 @RenderBody()
             </div>
-           <partial name="_footer"/>
+            <partial name="_footer" />
         </div>
     </div>
 
