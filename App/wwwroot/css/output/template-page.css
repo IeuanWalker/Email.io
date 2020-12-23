@@ -58,9 +58,8 @@ iframe {
   justify-content: center;
   align-items: center;
   font-size: 16px;
-  font-family: "IBM Plex Sans", sans-serif;
   overflow: hidden;
-  transition: 0.3s ease; }
+  transition: 0.2s ease; }
   .template-navbar-buttons:hover {
     background-color: #f1f1fc; }
     .template-navbar-buttons:hover p {
@@ -68,14 +67,15 @@ iframe {
   .template-navbar-buttons.active {
     border-bottom: 5px solid #3634d2; }
     .template-navbar-buttons.active p {
-      color: #686868; }
+      color: #686868;
+      text-shadow: 0.5px 0px 0px #555, -0.5px 0px 0px #555; }
   .template-navbar-buttons p {
     opacity: 0.6;
-    font-family: 'Lato', sans-serif;
+    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
     align-items: center;
+    font-weight: 400;
     justify-content: center;
     transition: 0.5s ease;
-    font-weight: 400;
     margin: 0; }
   .template-navbar-buttons.active p {
     opacity: 1; }
@@ -156,6 +156,9 @@ textarea {
   font-family: "Source Code Pro", monospace;
   font-size: 13px;
   line-height: 20px; }
+
+.CodeMirror-fullscreen {
+  position: fixed !important; }
 
 .CodeMirror-gutters {
   border-right: 0;

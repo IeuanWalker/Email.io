@@ -43,7 +43,8 @@
       "node_modules/codemirror/theme/eclipse.css",
       "node_modules/codemirror/addon/lint/lint.css",
       "node_modules/codemirror/addon/fold/foldgutter.css",
-      "node_modules/codemirror/addon/hint/show-hint.css"
+      "node_modules/codemirror/addon/hint/show-hint.css",
+      "node_modules/codemirror/addon/display/fullscreen.css"
     ],
     "minify": {
       "enabled": true,
@@ -88,7 +89,8 @@
       "node_modules/codemirror/addon/fold/indent-fold.js",
       "node_modules/codemirror/addon/fold/xml-fold.js",
 
-      "node_modules/codemirror/addon/display/autorefresh.js"
+      "node_modules/codemirror/addon/display/autorefresh.js",
+      "node_modules/codemirror/addon/display/fullscreen.js"
     ],
     "minify": {
       "enabled": true,

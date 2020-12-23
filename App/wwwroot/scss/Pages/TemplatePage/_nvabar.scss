@@ -20,9 +20,8 @@
     justify-content: center;
     align-items: center;
     font-size: 16px;
-    font-family: "IBM Plex Sans", sans-serif;
     overflow: hidden;
-    transition: 0.3s ease;
+    transition: 0.2s ease;
 
     &:hover {
         background-color: #f1f1fc;
@@ -37,16 +36,17 @@
 
         p {
             color: #686868;
+            text-shadow: 0.5px 0px 0px #555, -0.5px 0px 0px #555;
         }
     }
 
     p {
         opacity: 0.6;
-        font-family: 'Lato', sans-serif;
+        font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
         align-items: center;
+        font-weight: 400;
         justify-content: center;
         transition: 0.5s ease;
-        font-weight: 400;
         margin: 0;
     }
 

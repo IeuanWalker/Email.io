@@ -20,6 +20,10 @@
     line-height: 20px;
 }
 
+.CodeMirror-fullscreen{
+    position:fixed !important;
+}
+
 .CodeMirror-gutters {
     border-right: 0;
     padding-right: 1px;
