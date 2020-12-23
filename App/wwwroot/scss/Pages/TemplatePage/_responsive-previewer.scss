@@ -1,0 +1,71 @@
+﻿.test-responsive-navbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+    border-bottom: 1px solid lightgray;
+
+    ul {
+        list-style: none;
+        margin: 0 auto;
+        display: block;
+        padding: 0;
+
+        li {
+            display: inline;
+
+            a {
+                text-indent: -9999px;
+                font-size: 0;
+                margin: 0 15px;
+
+                svg {
+                    width: 60px;
+                    height: 50px;
+                    pointer-events: all;
+                    color: #999;
+                }
+            }
+
+            a[data-portsize*="320"] svg {
+                width: 14px;
+            }
+
+            a[data-portsize*="768"] svg {
+                width: 20px;
+            }
+
+            a[data-portsize*="1024"] svg {
+                width: 28px;
+            }
+
+            a[data-portsize*="reset"] svg {
+                width: 41px;
+            }
+
+            svg:hover {
+                color: #ccc;
+                transition: color 0.3s;
+            }
+
+            .fr-active svg {
+                color: #3634d2;
+            }
+        }
+    }
+}
+
+
+svg .sg-fill {
+    fill: transparent;
+    transition: fill 0.3s;
+}
+
+
+.demo-content {
+    width: 100%;
+    display: flex;
+    margin: 0 auto;
+    background-color: #ccc;
+    border: 12px solid #ddd;
+}

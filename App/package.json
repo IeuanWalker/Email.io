@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "codemirror": "^5.59.0",
     "spectre.css": "^0.5.9",
     "split-grid": "^1.0.9",
     "viewport-resizer": "^0.1.2"

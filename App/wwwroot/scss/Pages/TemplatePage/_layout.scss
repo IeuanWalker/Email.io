@@ -1,0 +1,43 @@
+﻿.grid {
+    display: grid;
+    flex-grow: 1;
+    grid-template-columns: 0.5fr 10px 1fr;
+}
+
+.template-divider {
+    grid-area: 1 / 2;
+    height: auto;
+    margin: 0px;
+    opacity: 0.5;
+    background-color: lightgray;
+    cursor: col-resize;
+    transition: opacity 0.3s;
+
+    &:hover,
+    &:active {
+        opacity: 1;
+    }
+}
+
+
+.preview {
+    display: flex;
+    flex-direction: column
+}
+
+.subject {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid lightgray;
+
+    p {
+        margin: 0;
+    }
+}
+
+.demo-content,
+iframe {
+    flex-grow: 1;
+    display: flex
+}
