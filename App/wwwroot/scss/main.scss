@@ -1,1 +1,6 @@
-﻿@import 'Pages/TemplatePage/_template-page.scss';
+﻿a:focus {
+    box-shadow: none !important;
+}
+
+
+@import 'Layout/_layout.scss';

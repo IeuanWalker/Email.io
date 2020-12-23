@@ -1,0 +1,83 @@
+﻿
+.docs-container {
+    min-height: 100vh;
+}
+
+
+
+.content {
+    -ms-flex: 1 1 auto;
+    height: 100%;
+    flex: 1 1 auto;
+    padding: 0 4rem;
+    width: calc(100vw - 12rem);
+    display: flex;
+    margin-left: 12rem;
+    margin-top: 3.8rem;
+    flex-direction: column;
+
+    .container {
+        margin-left: 0;
+        padding-bottom: 1.5rem;
+    }
+
+    .s-title,
+    .s-subtitle {
+        line-height: 1.8rem;
+        margin-bottom: 0;
+        padding-bottom: 1rem;
+        padding-top: 1rem;
+        position: static;
+    }
+
+    .column {
+        padding: .4rem;
+    }
+}
+
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+    .content {
+        .s-title,
+        .s-subtitle {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+
+            &::before {
+                background: #fff;
+                bottom: 0;
+                content: "";
+                display: block;
+                left: -10px;
+                position: absolute;
+                right: -10px;
+                top: -5px;
+                z-index: -1;
+            }
+        }
+    }
+}
+
+
+@media (max-width: 960px) {
+    .content {
+        min-width: auto;
+        margin-left: 0px;
+        margin-top: 0px;
+        padding: 0 1.5rem;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .s-title,
+        .s-subtitle {
+            padding-top: 5rem;
+            position: static;
+
+            &::before {
+                content: none;
+            }
+        }
+    }
+}

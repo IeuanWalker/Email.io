@@ -2,7 +2,8 @@
   {
     "outputFileName": "wwwroot/css/bundle.css",
     "inputFiles": [
-      "node_modules/spectre.css/dist/spectre.css"
+      "node_modules/spectre.css/dist/spectre.css",
+      "node_modules/spectre.css/dist/spectre-icons.css"
     ],
     "minify": {
       "enabled": true,

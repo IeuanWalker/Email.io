@@ -108,53 +108,7 @@
     <script src="js/codemirror.min.js"></script>
 
     <script>
-        let json = {
-            phases: [
-                {
-                    id: "dev",
-                    name: "Dev",
-                    gates: [
-                        {
-                            id: "dev",
-                            name: "Dev",
-                            master: "https://loki.gauntlet.cloudbees.com/",
-                            job: "cloudbees-cd-analytics/master",
-                            feeds: "staging"
-                        }
-                    ]
-                },
-                {
-                    id: "staging",
-                    name: "Staging",
-                    gates: [
-                        {
-                            id: "staging",
-                            name: "Staging",
-                            master: "https://loki.gauntlet.cloudbees.com/",
-                            job: "cloudbees-cd-analytics/staging",
-                            feeds: "production"
-                        }
-                    ]
-                },
-                {
-                    id: "production",
-                    name: "Production",
-                    gates: [
-                        {
-                            id: "production",
-                            name: "Production",
-                            master: "https://loki.gauntlet.cloudbees.com/",
-                            job: "prod-deploy/master"
-                        }
-                    ]
-                }
-            ]
-        };
-        let testDataTextarea = document.getElementById("testData");
-        let stringified = JSON.stringify(json, null, 2);
-        testDataTextarea.value = stringified;
-
-        let testDataEditor = CodeMirror.fromTextArea(testDataTextarea,
+        let testDataEditor = CodeMirror.fromTextArea(document.getElementById("testData"),
             {
                 lineNumbers: true,
                 border: true,
@@ -176,10 +130,7 @@
     </script>
 
     <script>
-        let codeTextarea = document.getElementById("code");
-        codeTextarea.value = '<html>sdfsdf</html>';
-
-        let codeEditor = CodeMirror.fromTextArea(codeTextarea,
+        let codeEditor = CodeMirror.fromTextArea(document.getElementById("code"),
             {
                 lineNumbers: true,
                 border: true,

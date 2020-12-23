@@ -1,5 +1,9 @@
 ﻿[
   {
+    "outputFile": "wwwroot/css/output/main.css",
+    "inputFile": "wwwroot/scss/main.scss"
+  },
+  {
     "outputFile": "wwwroot/css/output/template-page.css",
     "inputFile": "wwwroot/scss/Pages/TemplatePage/template-page.scss"
   }
