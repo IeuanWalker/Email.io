@@ -1,0 +1,17 @@
+{
+  "name": "App",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "spectre.css": "^0.5.9",
+    "split-grid": "^1.0.9",
+    "viewport-resizer": "^0.1.2"
+  }
+}

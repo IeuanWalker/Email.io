@@ -1,0 +1,35 @@
+﻿[
+  {
+    "outputFileName": "wwwroot/css/bundle.css",
+    "inputFiles": [
+      "node_modules/spectre.css/dist/spectre.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": false
+    },
+    "sourceMap": true
+  },
+  {
+    "outputFileName": "wwwroot/js/bundle.js",
+    "inputFiles": [
+      "node_modules/split-grid/dist/split-grid.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": false
+    },
+    "sourceMap": true
+  }
+  //{
+  //  "outputFileName": "wwwroot/js/viewport-resizer.js",
+  //  "inputFiles": [
+  //    "node_modules/viewport-resizer/lib/viewpr.js"
+  //  ],
+  //  "minify": {
+  //    "enabled": true,
+  //    "renameLocals": false
+  //  },
+  //  "sourceMap": true
+  //}
+]

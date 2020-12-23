@@ -1,42 +1,80 @@
-﻿<!DOCTYPE html>
+﻿@{
+    @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
+}
+
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>@ViewData["Title"] - App</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/bundle.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">App</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Project/Index">Project</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Template1">Template</a>
-                        </li>
-                    </ul>
+    <div class="docs-container off-canvas off-canvas-sidebar-show">
+        <div class="docs-navbar">
+            <a class="off-canvas-toggle btn btn-link btn-action" href="#sidebar"><i class="icon icon-menu"></i></a>
+        </div>
+        <div class="docs-sidebar off-canvas-sidebar" id="sidebar">
+            <div class="docs-brand">
+                <a class="docs-logo" asp-page="/Index">
+                    <h2>Email.io</h2><small class="label label-secondary text-bold">@hostingEnv.EnvironmentName</small>
+                </a>
+            </div>
+            <div class="docs-nav">
+                <div class="accordion-container">
+                    <div class="accordion">
+                        <input id="accordion-getting-started" type="checkbox" name="docs-accordion-checkbox" hidden="" />
+                        <label class="accordion-header c-hand" for="accordion-getting-started">Getting started</label>
+                        <div class="accordion-body">
+                            <ul class="menu menu-nav">
+                                <li class="menu-item">
+                                    <a href="../getting-started/installation.html">Installation</a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="../getting-started/custom.html">Custom version</a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="../getting-started/browsers.html">Browser support</a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="../getting-started/whatsnew.html">What's new</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="accordion-container">
+                    <div class="accordion">
+                        <input id="accordion-getting-started" type="checkbox" name="docs-accordion-checkbox" hidden="" />
+                        <a class="accordion-header c-hand" asp-area="" asp-page="/Project/Index">Project</a>
+                    </div>
+                </div>
+
+                   <div class="accordion-container">
+                    <div class="accordion">
+                        <input id="accordion-getting-started" type="checkbox" name="docs-accordion-checkbox" hidden="" />
+                        <a class="accordion-header c-hand" asp-area="" asp-page="/Template1">Template</a>
+                    </div>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container-fill">
-        <main role="main" class="h-100">
-            @RenderBody()
-        </main>
+        </div><a class="off-canvas-overlay" href="#close"></a>
+        <div class="off-canvas-content">
+            <div class="docs-content" id="content">
+                <div class="container" id="navbar">
+                    @RenderBody()
+                </div>
+                <div class="docs-footer" id="copyright">
+                    <p>Designed and built by <a href="https://github.com/IeuanWalker/Email.io" target="_blank">Ieuan Walker</a>. Licensed under the <a href="#" target="_blank">MIT License</a>.</p>
+                </div>
+            </div>
+        </div>
     </div>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

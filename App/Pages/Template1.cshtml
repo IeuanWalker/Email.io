@@ -2,10 +2,433 @@
 @model App.Pages.Template1Model
 @{
     ViewData["Title"] = "Template";
+    Layout = "_LayoutTemplate";
+}
+
+@section Styles
+{
+    <style>
+        html, body {
+            height: 100%;
+            padding: 0;
+            display: flex;
+            flex-direction: column
+        }
+
+        .grid {
+            display: grid;
+            flex-grow: 1;
+            grid-template-columns: 0.5fr 10px 1fr;
+        }
+
+        .template-divider {
+            grid-area: 1 / 2;
+            height: auto;
+            margin: 0px;
+            background-color: lightgray;
+            cursor: col-resize;
+        }
+
+        .preview {
+            display: flex;
+            flex-direction: column
+        }
+
+        .subject {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid lightgray;
+        }
+
+            .subject > p {
+                margin: 0;
+            }
+
+        .demo-content,
+        iframe {
+            flex-grow: 1;
+            display: flex
+        }
+
+        .navbar {
+            border: 1px solid lightgray;
+        }
+
+            .navbar a {
+                text-decoration: none;
+            }
+
+        .navbar-menu-item {
+            padding: 25px 40px;
+            text-transform: capitalize;
+            text-decoration: none;
+        }
+
+            .navbar-menu-item:hover {
+                background-color: lightgray;
+            }
+
+
+
+
+
+
+
+
+        .test-responsive-navbar {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            align-content: center;
+            border-bottom: 1px solid lightgray;
+        }
+
+            .test-responsive-navbar ul {
+                list-style: none;
+                margin: 0 auto;
+                display: block;
+                padding: 0;
+            }
+
+                .test-responsive-navbar ul li {
+                    display: inline;
+                }
+
+                    .test-responsive-navbar ul li a {
+                        text-indent: -9999px;
+                        font-size: 0;
+                        margin: 0 15px;
+                    }
+
+                        .test-responsive-navbar ul li a svg {
+                            width: 60px;
+                            height: 50px;
+                            pointer-events: all;
+                            color: #999;
+                        }
+
+                        .test-responsive-navbar ul li a[data-portsize*="320"] svg {
+                            width: 14px;
+                        }
+
+                        .test-responsive-navbar ul li a[data-portsize*="768"] svg {
+                            width: 20px;
+                        }
+
+                        .test-responsive-navbar ul li a[data-portsize*="1024"] svg {
+                            width: 28px;
+                        }
+
+                        .test-responsive-navbar ul li a[data-portsize*="reset"] svg {
+                            width: 41px;
+                        }
+
+        svg .sg-fill {
+            fill: transparent;
+            transition: fill 0.3s;
+        }
+
+        .test-responsive-navbar ul li svg:hover {
+            color: #ccc;
+            transition: color 0.3s;
+        }
+
+        .test-responsive-navbar ul li .fr-active svg {
+            color: #5755d9;
+        }
+
+        .demo-content {
+            width: 100%;
+            display: flex;
+            margin: 0 auto;
+            background-color: #ccc;
+            border: 12px solid #ddd;
+        }
+
+        .codemirror-wrapper {
+            position: absolute;
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .CodeMirror {
+            height: 100%;
+        }
+    </style>
+
+    <style>
+
+        textarea {
+            border: 1px solid rgba(73, 73, 73, 0.5);
+            border-radius: 3px;
+            font-family: "Source Code Pro", monospace;
+            font-size: 13px;
+            line-height: 20px;
+            padding: 4px;
+        }
+
+        .CodeMirror {
+            position: absolute !important;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100% !important;
+            color: #4a4a4a;
+            font-family: "Source Code Pro", monospace;
+            font-size: 13px;
+            line-height: 20px;
+        }
+
+        .CodeMirror-gutters {
+            border-right: 0;
+            padding-right: 1px;
+        }
+
+        .CodeMirror-linenumber {
+            font-family: "Source Code Pro", monospace;
+            font-size: 13px;
+            line-height: 20px;
+        }
+
+        .CodeMirror-activeline-gutter {
+            background: rgba(87, 193, 250, 0.15);
+        }
+
+        .cm-s-eclipse .CodeMirror-activeline-background {
+            background: rgba(87, 193, 250, 0.15);
+        }
+
+        .CodeMirror-lint-marker-error {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path d="M 0 8 C 0 12.416 3.584 16 8 16 C 12.416 16 16 12.416 16 8 C 16 3.584 12.416 0 8 0 C 3.584 0 0 3.584 0 8 Z" fill="#d54c53" /><path d="M 8 7.0807611 L 4.92408548 4.00484658 L 4.0048467 4.92408537 L 7.08076122 7.99999988 L 4.0048467 11.0759144 L 4.92408548 11.9951532 L 8 8.91923866 L 11.0759145 11.9951532 L 11.9951533 11.0759144 L 8.91923878 7.99999988 L 11.9951533 4.92408537 L 11.0759145 4.00484658 L 8 7.0807611 Z" fill="#fff" /></svg>') no-repeat center center;
+            margin-left: 2px;
+            margin-top: -4px;
+        }
+
+        .CodeMirror-lint-tooltip {
+            background: white;
+            font-family: "Source Code Pro", monospace;
+            font-size: 12px;
+            line-height: 16px;
+            padding: 8px;
+            border: none;
+            border-radius: 2px;
+            box-shadow: rgba(74, 74, 74, 0.25) 0 0 0 1px, rgba(0, 0, 0, 0.1) 0 1px 6px 0;
+        }
+
+        .CodeMirror-lint-message-error {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path d="M 0 8 C 0 12.416 3.584 16 8 16 C 12.416 16 16 12.416 16 8 C 16 3.584 12.416 0 8 0 C 3.584 0 0 3.584 0 8 Z" fill="#d54c53" /><path d="M 8 7.0807611 L 4.92408548 4.00484658 L 4.0048467 4.92408537 L 7.08076122 7.99999988 L 4.0048467 11.0759144 L 4.92408548 11.9951532 L 8 8.91923866 L 11.0759145 11.9951532 L 11.9951533 11.0759144 L 8.91923878 7.99999988 L 11.9951533 4.92408537 L 11.0759145 4.00484658 L 8 7.0807611 Z" fill="#fff" /></svg>') no-repeat 0 0;
+            padding-left: 24px;
+        }
+
+        .cm-s-eclipse span.cm-string {
+            color: #1997b5;
+        }
+
+            .cm-s-eclipse span.cm-string.cm-property {
+                color: #53b10b;
+            }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/codemirror.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/theme/eclipse.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/addon/lint/lint.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/foldgutter.min.css" />
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none"><symbol id="reset" viewbox="0 0 41.591 30" class="sg-resize-icon"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.364 29.5c-.476 0-.864-.388-.864-.864V1.364C.5.888.888.5 1.364.5h38.863c.477 0 .864.388.864.864v27.272c0 .476-.387.864-.863.864H1.364z" class="sg-fill"></path><path fill="currentColor" d="M40.227 1c.2 0 .364.163.364.364v27.273c0 .2-.162.364-.363.364H1.364c-.2 0-.364-.163-.364-.364V1.364c0-.2.163-.364.364-.364h38.863m0-1H1.364C.61 0 0 .61 0 1.364v27.273C0 29.39.61 30 1.364 30h38.864c.753 0 1.364-.61 1.364-1.364V1.364C41.592.61 40.98 0 40.227 0z" class="sg-stroke"></path></symbol><symbol id="1280" viewbox="0 0 38 30" class="sg-resize-icon"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M25 24v6H13v-6h12z" class="sg-stroke"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M27 29v1H11v-1h16zM1.02 0h35.96C37.545 0 38 .468 38 1.044v22.91c0 .578-.456 1.046-1.02 1.046H1.02C.455 25 0 24.532 0 23.956V1.044C0 .468.456 0 1.02 0z" class="sg-fill"></path><path d="M1.02 1L1 23.956 36.98 24 37 1.044 36.98 1M14 25h10v4H14z" class="sg-fill"></path><path fill="currentColor" d="M36.98 0H1.02C.455 0 0 .468 0 1.044v22.91C0 24.533.456 25 1.02 25H13v4h-2v1h16v-1h-2v-4h11.98c.564 0 1.02-.468 1.02-1.044V1.044C38 .468 37.544 0 36.98 0zM24 29H14v-4h10v4zm12.98-5L1 23.956 1.02 1h35.96l.02.044L36.98 24z" class="sg-stroke"></path></symbol><symbol id="1024" viewbox="0 0 28 30" class="sg-resize-icon"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.35 24.5c-.47 0-.85-.388-.85-.864V6.364c0-.476.38-.864.85-.864h25.3c.47 0 .85.388.85.864v17.272c0 .476-.38.864-.85.864H1.35z" class="sg-fill"></path><path fill="currentColor" d="M26.65 6c.193 0 .35.163.35.364v17.273c0 .2-.157.364-.35.364H1.35c-.193 0-.35-.163-.35-.364V6.364c0-.2.157-.364.35-.364h25.3m0-1H1.35C.603 5 0 5.61 0 6.364v17.273C0 24.39.604 25 1.35 25h25.3c.746 0 1.35-.61 1.35-1.364V6.364C28 5.61 27.396 5 26.65 5z" class="sg-stroke"></path><path fill="currentColor" d="M24 14c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1z" class="sg-stroke"></path></symbol><symbol id="768" viewbox="0 0 20 30" class="sg-resize-icon"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.364 28.5c-.476 0-.864-.38-.864-.85V2.35c0-.47.388-.85.864-.85h17.273c.476 0 .863.38.863.85v25.3c0 .47-.388.85-.863.85H1.364z" class="sg-fill"></path><path fill="currentColor" d="M18.636 2c.2 0 .364.157.364.35v25.3c0 .193-.163.35-.364.35H1.364c-.2 0-.364-.157-.364-.35V2.35c0-.193.163-.35.364-.35h17.272m0-1H1.364C.61 1 0 1.604 0 2.35v25.3C0 28.397.61 29 1.364 29h17.273C19.39 29 20 28.396 20 27.65V2.35C20 1.603 19.39 1 18.636 1z" class="sg-stroke"></path><path fill="currentColor" d="M10 24c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1z" class="sg-stroke"></path></symbol><symbol id="320" viewbox="0 0 14 30" class="sg-resize-icon"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.364 27.5c-.476 0-.864-.38-.864-.85v-16.3c0-.47.388-.85.864-.85h11.273c.476 0 .863.38.863.85v16.3c0 .47-.388.85-.863.85H1.364z" class="sg-fill"></path><path fill="currentColor" d="M12.636 10c.2 0 .364.157.364.35v16.3c0 .193-.163.35-.364.35H1.364c-.2 0-.364-.157-.364-.35v-16.3c0-.193.163-.35.364-.35h11.272m0-1H1.364C.61 9 0 9.604 0 10.35v16.3C0 27.397.61 28 1.364 28h11.273C13.39 28 14 27.396 14 26.65v-16.3C14 9.603 13.39 9 12.636 9z" class="sg-stroke"></path><path fill="currentColor" d="M7 23c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1z" class="sg-stroke"></path></symbol></svg>
 }
 
 
-<link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" />
+<header class="navbar">
+    <section class="navbar-section">
+        <a href="#" class="navbar-menu-item"><i class="icon icon-back"></i></a>
+        <a href="#" class="navbar-menu-item"><> Code</a>
+        <a href="#" class="navbar-menu-item">{} Test data</a>
+        <a href="#" class="btn btn-lg">Save</a>
+    </section>
+</header>
+
+<div class="grid">
+    <div class="p-relative">
+        <textarea id="code"></textarea>
+        <textarea id="testData"></textarea>
+    </div>
+    <div class="preview">
+        <div class="subject">
+            <p><strong>Subject: </strong>Welcome to the family!</p>
+        </div>
+        <div class="test-responsive-navbar">
+            <ul id="viewpr-list">
+            </ul>
+        </div>
+        <div id="viewpr-content" class="demo-content">
+            <iframe frameborder="0" src="https://www.ieuanwalker.com"></iframe>
+        </div>
+    </div>
+
+    <div class="template-divider"></div>
+</div>
+
+
+
+
+@section Scripts
+{
+    <script src="js/viewpr.min.js"></script>
+
+    <script>
+        Split({
+            columnGutters: [{
+                track: 1,
+                element: document.querySelector('.template-divider'),
+            }]
+        })
+
+    </script>
+
+    <script type="text/javascript">
+        window.onload = function () {
+            viewpr(params = {
+                svg: true
+            });
+        }
+    </script>
+
+    @*CodeMirror Shared*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/addon/selection/active-line.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/edit/closetag.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/comment-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/brace-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/foldgutter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/indent-fold.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/mode/javascript/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/hint/javascript-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/javascript-lint.min.js"></script>
+
+
+
+    @*CodeMirror JSON*@
+    <script src="https://rawgithub.com/zaach/jsonlint/79b553fb65c192add9066da64043458981b3972b/lib/jsonlint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/addon/lint/json-lint.js"></script>
+
+    @*CodeMirror HTML*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/hint/html-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/html-lint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/hint/xml-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/xml-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/hint/css-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/css-lint.min.js"></script>
+
+    <script>
+        let json = {
+            phases: [
+                {
+                    id: "dev",
+                    name: "Dev",
+                    gates: [
+                        {
+                            id: "dev",
+                            name: "Dev",
+                            master: "https://loki.gauntlet.cloudbees.com/",
+                            job: "cloudbees-cd-analytics/master",
+                            feeds: "staging"
+                        }]
+                },
+
+
+
+                {
+                    id: "staging",
+                    name: "Staging",
+                    gates: [
+                        {
+                            id: "staging",
+                            name: "Staging",
+                            master: "https://loki.gauntlet.cloudbees.com/",
+                            job: "cloudbees-cd-analytics/staging",
+                            feeds: "production"
+                        }]
+                },
+
+
+
+                {
+                    id: "production",
+                    name: "Production",
+                    gates: [
+                        {
+                            id: "production",
+                            name: "Production",
+                            master: "https://loki.gauntlet.cloudbees.com/",
+                            job: "prod-deploy/master"
+                        }]
+                }]
+        };
+
+        let stringified = JSON.stringify(json, null, 2);
+
+        let testDataTextarea = document.getElementById("testData");
+        testDataTextarea.value = stringified;
+
+        let testDataEditor = CodeMirror.fromTextArea(testDataTextarea, {
+            lineNumbers: true,
+            border: true,
+            theme: "eclipse",
+            mode: "application/json",
+            gutters: ["CodeMirror-lint-markers"],
+            styleActiveLine: true,
+            lint: true
+        });
+    </script>
+
+    @*CodeMirror HTML*@
+    <script>
+        let codeTextarea = document.getElementById("code");
+
+            codeTextarea.value = '<html></html>';
+
+        let copdeEditor = CodeMirror.fromTextArea(codeTextarea, {
+            lineNumbers: true,
+            border: true,
+            theme: "eclipse",
+            HtmlMode: true, lineWrapping: false,
+            mode: "text/html",
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"],
+            styleActiveLine: true,
+            lint: true,
+            foldGutter: true,
+            autoCloseTags: true,
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" />
 <style>
     .tab-content {
         flex-grow: 1;
@@ -71,7 +494,18 @@
 
 <div id="app-content">
     <div id="code" class="split content split-horizontal">
+        <ul class="tab tab-block">
+          <li class="tab-item active">
+            <a href="#" class="active">Template</a>
+          </li>
+          <li class="tab-item">
+            <a href="#">Test data</a>
+          </li>
+          <li class="tab-item">
+            <a href="#">Result</a>
+          </li>
 
+        </ul>
         <nav>
             <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
                 <a class="nav-item nav-link active" id="nav-template-tab" data-toggle="tab" href="#nav-template" role="tab" aria-controls="nav-home" aria-selected="true">Template</a>
@@ -702,8 +1136,7 @@
     </div>
 </div>
 
-@section Scripts
-{
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.3.5/split.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 
@@ -715,27 +1148,22 @@
 
 
     <script src="~/lib/codemirror/mode/javascript/javascript.js"></script>
-
-    <!-- Lint -->
-    <link rel="stylesheet" href="~/lib/codemirror/addon/lint/lint.css" />
-    <script src="~/lib/codemirror/addon/lint/lint.js"></script>
-    <script src="~/lib/codemirror/addon/lint/json-lint.js"></script>
-
-    <!-- Theme -->
-    <link rel="stylesheet" href="~/lib/codemirror/theme/eclipse.css" />
-
-    <!-- Hints -->
-    <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css" />
-    <script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
-    <script src="~/lib/codemirror/addon/hint/html-hint.js"></script>
-    <script src="~/lib/codemirror/addon/hint/xml-hint.js"></script>
-
-    <!-- Full screen -->
-    <link rel="stylesheet" href="~/lib/codemirror/addon/display/fullscreen.css" />
-    <script src="~/lib/codemirror/addon/display/fullscreen.js"></script>
-
-    <!-- Active line -->
-    <script src="~/lib/codemirror/addon/selection/active-line.js"></script>
+<!-- Lint -->
+<!--<link rel="stylesheet" href="~/lib/codemirror/addon/lint/lint.css" />
+<script src="~/lib/codemirror/addon/lint/lint.js"></script>
+<script src="~/lib/codemirror/addon/lint/json-lint.js"></script>-->
+<!-- Theme -->
+<!--<link rel="stylesheet" href="~/lib/codemirror/theme/eclipse.css" />-->
+<!-- Hints -->
+<!--<link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css" />
+<script src="~/lib/codemirror/addon/hint/show-hint.js"></script>
+<script src="~/lib/codemirror/addon/hint/html-hint.js"></script>
+<script src="~/lib/codemirror/addon/hint/xml-hint.js"></script>-->
+<!-- Full screen -->
+<!--<link rel="stylesheet" href="~/lib/codemirror/addon/display/fullscreen.css" />
+<script src="~/lib/codemirror/addon/display/fullscreen.js"></script>-->
+<!-- Active line -->
+<!--<script src="~/lib/codemirror/addon/selection/active-line.js"></script>
 
 
     <script>
@@ -858,6 +1286,4 @@
             }, { completeSingle: false });
         }
     </script>
-}
-
-
+}-->
