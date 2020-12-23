@@ -7,6 +7,8 @@
 
 @section Styles
 {
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@900&display=swap" rel="stylesheet">
     <style>
         html, body {
             height: 100%;
@@ -25,9 +27,16 @@
             grid-area: 1 / 2;
             height: auto;
             margin: 0px;
+            opacity: 0.5;
             background-color: lightgray;
             cursor: col-resize;
+            transition: opacity 0.3s;
         }
+
+            .template-divider:hover,
+            .template-divider:active {
+                opacity: 1;
+            }
 
         .preview {
             display: flex;
@@ -135,7 +144,7 @@
         }
 
         .test-responsive-navbar ul li .fr-active svg {
-            color: #5755d9;
+            color: #3634d2;
         }
 
         .demo-content {
@@ -231,6 +240,79 @@
                 color: #53b10b;
             }
     </style>
+    <style>
+
+        /* Tabs menu */
+        .template-navbar {
+            margin: 0;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            height: 80px;
+            border-radius: 2px 2px 0px 0px;
+            border-bottom: 1px solid lightgray;
+        }
+        /* Tab Links */
+        .template-navbar-buttons {
+            background: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 0px 30px;
+            height: 80px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            font-family: "IBM Plex Sans", sans-serif;
+            overflow: hidden;
+            transition: 0.3s ease;
+        }
+
+            .template-navbar-buttons:hover {
+                background-color: #f1f1fc;
+            }
+
+            /* Tab active */
+            .template-navbar-buttons.active {
+                border-bottom: 5px solid #3634d2;
+            }
+
+
+
+            /* Tabs text */
+            .template-navbar-buttons p {
+                opacity: 0.6;
+                font-family: 'Lato', sans-serif;
+                align-items: center;
+                justify-content: center;
+                transition: 0.5s ease;
+                font-weight: 400;
+                margin: 0;
+            }
+
+            .template-navbar-buttons.active p {
+                opacity: 1;
+            }
+
+            .template-navbar-buttons.active:hover p {
+                color: #686868;
+            }
+
+            .template-navbar-buttons:hover p {
+                opacity: 1;
+            }
+
+        /* tab content */
+        .tabcontent {
+            display: none;
+        }
+
+            .tabcontent.active {
+                display: block;
+            }
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/codemirror.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/theme/eclipse.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/addon/lint/lint.css" />
@@ -239,19 +321,21 @@
 }
 
 
-<header class="navbar">
-    <section class="navbar-section">
-        <a href="#" class="navbar-menu-item"><i class="icon icon-back"></i></a>
-        <a href="#" class="navbar-menu-item"><> Code</a>
-        <a href="#" class="navbar-menu-item">{} Test data</a>
-        <a href="#" class="btn btn-lg">Save</a>
-    </section>
+<header class="template-navbar">
+    <button href="#" class="template-navbar-buttons"><p><i class="icon icon-back"></i></p></button>
+    <button href="#" class="template-navbar-buttons tablinks active " data-tabId="codeContainer"><p> CODE</p></button>
+    <button href="#" class="template-navbar-buttons tablinks mr-2" data-tabId="testDataContainer"><p>TEST DATA</p></button>
+    <button href="#" class="btn btn-lg ml-2">Save</button>
 </header>
 
 <div class="grid">
     <div class="p-relative">
-        <textarea id="code"></textarea>
-        <textarea id="testData"></textarea>
+        <div id="codeContainer" class="tabcontent active">
+            <textarea id="code"></textarea>
+        </div>
+        <div id="testDataContainer" class="tabcontent">
+            <textarea id="testData"></textarea>
+        </div>
     </div>
     <div class="preview">
         <div class="subject">
@@ -262,7 +346,7 @@
             </ul>
         </div>
         <div id="viewpr-content" class="demo-content">
-            <iframe frameborder="0" src="https://www.ieuanwalker.com"></iframe>
+            <iframe frameborder="0" id="preview-iframe"></iframe>
         </div>
     </div>
 
@@ -274,8 +358,7 @@
 
 @section Scripts
 {
-    <script src="js/viewpr.min.js"></script>
-
+    @*Resizeable column*@
     <script>
         Split({
             columnGutters: [{
@@ -286,11 +369,41 @@
 
     </script>
 
+    @*Responsive tester*@
+    <script src="js/viewpr.min.js"></script>
     <script type="text/javascript">
         window.onload = function () {
             viewpr(params = {
                 svg: true
             });
+        }
+    </script>
+
+    @*Tabs*@
+    <script type="text/javascript">
+        var tabLinks = document.querySelectorAll(".tablinks");
+        var tabContent = document.querySelectorAll(".tabcontent");
+
+
+        tabLinks.forEach(function (el) {
+            el.addEventListener("click", openTabs);
+        });
+
+
+        function openTabs(el) {
+            var btnTarget = el.currentTarget;
+            var tabId = btnTarget.getAttribute('data-tabId');
+            tabContent.forEach(function (el) {
+                el.classList.remove("active");
+            });
+
+            tabLinks.forEach(function (el) {
+                el.classList.remove("active");
+            });
+
+            document.querySelector("#" + tabId).classList.add("active");
+
+            btnTarget.classList.add("active");
         }
     </script>
 
@@ -305,6 +418,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/foldcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/foldgutter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/fold/indent-fold.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/display/autorefresh.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.30.0/mode/javascript/javascript.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/hint/javascript-hint.min.js"></script>
@@ -325,6 +439,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/hint/css-hint.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/css-lint.min.js"></script>
+
+
 
     <script>
         let json = {
@@ -371,41 +487,57 @@
                         }]
                 }]
         };
-
-        let stringified = JSON.stringify(json, null, 2);
-
         let testDataTextarea = document.getElementById("testData");
+        let stringified = JSON.stringify(json, null, 2);
         testDataTextarea.value = stringified;
 
         let testDataEditor = CodeMirror.fromTextArea(testDataTextarea, {
             lineNumbers: true,
             border: true,
             theme: "eclipse",
+            lineWrapping: false,
             mode: "application/json",
-            gutters: ["CodeMirror-lint-markers"],
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"],
             styleActiveLine: true,
-            lint: true
+            lint: true,
+            autoRefresh: true
+        });
+
+        testDataEditor.on("change", function (resultEditor, change) {
+            UpdatePreview();
         });
     </script>
 
-    @*CodeMirror HTML*@
     <script>
         let codeTextarea = document.getElementById("code");
+        codeTextarea.value = '<html></html>';
 
-            codeTextarea.value = '<html></html>';
-
-        let copdeEditor = CodeMirror.fromTextArea(codeTextarea, {
+        let codeEditor = CodeMirror.fromTextArea(codeTextarea, {
             lineNumbers: true,
             border: true,
             theme: "eclipse",
-            HtmlMode: true, lineWrapping: false,
+            HtmlMode: true,
+            lineWrapping: false,
             mode: "text/html",
             gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"],
             styleActiveLine: true,
             lint: true,
             foldGutter: true,
             autoCloseTags: true,
+            autoRefresh: true
         });
+
+        codeEditor.on("change", function (resultEditor, change) {
+            UpdatePreview();
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script>
+        function UpdatePreview() {
+            var template = Handlebars.compile(codeEditor.getValue());
+            var compiled = template(JSON.parse(testDataEditor.getValue()));
+            document.getElementById("preview-iframe").src = "data:text/html;charset=utf-8," + escape(compiled);
+        }
     </script>
 }
 
@@ -1166,7 +1298,7 @@
 <!--<script src="~/lib/codemirror/addon/selection/active-line.js"></script>
 
 
-    <script>
+<script>
         Split(['#code', '#preview'], {
             sizes: [30, 70],
             gutterSize: 10,
@@ -1239,6 +1371,11 @@
                 UpdatePreview();
             });
 
+      function UpdateResult() {
+            var template = Handlebars.compile(htmlEditor.getValue());
+            var compiled = template(JSON.parse(jsonEditor.getValue()));
+            resultEditor.getDoc().setValue(compiled);
+        }
             UpdateResult();
         });
         //when the bootstrap tab is fully shown, call codemirror's refresh().
