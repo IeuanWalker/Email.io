@@ -250,6 +250,63 @@ footer {
   background-color: firebrick;
   color: #fff; }
 
+.accordian-table header {
+  display: grid;
+  grid-template-columns: auto 260px;
+  grid-column-gap: 6px;
+  padding: 12px 0 12px 0; }
+  .accordian-table header p {
+    margin-bottom: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #7f90a0;
+    text-transform: uppercase;
+    letter-spacing: 1px; }
+
+.accordian-table .accordion-wrapper {
+  background-color: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 2px; }
+  .accordian-table .accordion-wrapper .accordion {
+    border-bottom: 1px solid #e9ecef; }
+    .accordian-table .accordion-wrapper .accordion:last-child {
+      border: none; }
+  .accordian-table .accordion-wrapper .accordion-header {
+    display: grid;
+    grid-template-columns: min-content auto 200px 38px;
+    grid-column-gap: 6px;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 12px 12px 12px 12px;
+    cursor: pointer; }
+    .accordian-table .accordion-wrapper .accordion-header .btn {
+      border: none;
+      color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center; }
+  .accordian-table .accordion-wrapper .accordion-body {
+    background-color: #f7f8f9;
+    margin: 0px; }
+    .accordian-table .accordion-wrapper .accordion-body > div {
+      padding: 20px; }
+
+.text-caption {
+  color: #546b81;
+  font-size: small; }
+
+.empty-template {
+  background-color: #fff;
+  min-height: 150px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 70px 10px 70px 10px; }
+  .empty-template p {
+    text-align: center; }
+
 .tags {
   --tag-bg: #5755d9;
   --tag-hover: #3634d2;

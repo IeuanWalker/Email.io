@@ -8,167 +8,75 @@
 @section Styles
 {
     <style>
-        .expand-table {
-            margin-top: 20px;
-            table-layout: auto;
-            width: 100%;
-            text-align: left;
-            border-collapse: collapse;
-        }
-
-            .expand-table .t-cell,
-            .expand-table .t-head-cell {
-                display: table-cell;
-                padding: 2px 2px;
-            }
-
-            .expand-table .t-cell {
-                width: 1%;
-                white-space: nowrap;
-            }
-
-            .expand-table thead {
-                font-weight: bold;
-                display: table-header-group;
-                padding: 5px;
-            }
-
-
-
-
-            .expand-table .t-row {
-                display: table-row;
-            }
-
-                .expand-table .t-row:hover {
-                    background: #bbd8f1;
-                }
-
-            .expand-table .t-detail {
-                background: #eee;
-                transition: all 0.5s;
-            }
-
-                .expand-table .t-detail td {
-                    border-bottom: 1px solid transparent;
-                }
-
-                .expand-table .t-detail .shrink {
-                    max-height: 0;
-                    overflow: hidden;
-                    transition: all 0.2s;
-                }
-
-                .expand-table .t-detail.expanded {
-                    -webkit-animation: expandRow 0.15s forwards;
-                    animation: expandRow 0.15s forwards;
-                }
-
-                    .expand-table .t-detail.expanded td {
-                        border-bottom: 1px solid #aaaaaa;
-                    }
-
-        @@media (min-width: 768px) {
-            .expand-table .t-detail.expanded .shrink {
-                max-height: 60rem;
-                overflow: visible;
-            }
-        }
-
-        @@-webkit-keyframes expandRow {
-            from {
-                max-height: 0;
-            }
-
-            to {
-                max-height: 20rem;
-            }
-        }
-
-        @@keyframes expandRow {
-            from {
-                max-height: 0;
-            }
-
-            to {
-                max-height: 20rem;
-            }
-        }
     </style>
 }
 
-<h3 class="s-title">@Model.Project.Title</h3>
-<p>@Model.Project.SubHeading</p>
+<h3 class="s-title pb-0">@Model.Project.Title</h3>
+<p class="card-subtitle text-gray">@Model.Project.SubHeading</p>
 <p>@Model.Project.Description</p>
 
-<div class="clearfix">
+@foreach (string tag in Model.Project.Tags?.Split(",") ?? new string[0])
+{
+    <span class="chip">@tag</span>
+}
+
+<div class="clearfix mt-2">
     <a asp-page="/Template/Add" asp-route-projectId="@Model.Project.Id" type="button" class="btn btn-outline-success float-right mb-4">Create template</a>
 </div>
 
 @if (Model.Project.Templates.Any())
 {
-    <div class="row m-0 mt-3">
-        <div class="card-deck">
+    <div class="accordian-table">
+        <header>
+            <p>Template</p>
+            <p>Last edited</p>
+        </header>
+        <div class="accordion-wrapper">
             @foreach (var template in Model.Project.Templates)
             {
-                <a asp-page="/Project/Details" asp-route-id="@template.Id">
-                    <div class="card mb-4" style="min-width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">@template.Name</h5>
-                            <p class="card-text">@template.Description</p>
-                            <p class="card-text"><small class="text-muted">Last modified @template.DateCreated.Humanize()</small></p>
+                <div class="accordion">
+                    <input type="checkbox" id="@template.Id" name="accordion-checkbox" hidden>
+                    <label class="accordion-header" for="@template.Id">
+                        <i class="icon icon-arrow-right"></i>
+                        <span class="ml-2">@template.Name</span>
+                        <span>@template.DateModified.Humanize()</span>
+                        <div class="dropdown dropdown-right">
+                            <a href="#" class="btn btn-action btn-link dropdown-toggle" tabindex="0">
+                                <i class="icon icon-more-vert"></i>
+                            </a>
+                            <!-- menu component -->
+                            <ul class="menu">
+                                <li class="menu-item"><a href="#dropdowns">Edit name</a></li>
+                                <li class="menu-item"><a href="#dropdowns">Duplicate</a></li>
+                                <li class="menu-item"><a href="#dropdowns">Delete</a></li>
+                            </ul>
+                        </div>
+                    </label>
+                    <div class="accordion-body">
+                        <div>
+                            <div class="d-inline">
+                                <span class="text-caption">Temaplate ID: @template.Id</span>
+                                <div class="popover popover-bottom ml-2">
+                                    <div class="btn btn-action btn-sm s-circle">i</div>
+                                    <div class="popover-container">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                A template ID is the unique identifier for a template. It's most often used as part of an API call to identify which template should be used for an email request.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="empty-template">
+                                <p class="text-caption">Add a version to this template in order to start editing its contents.</p>
+                                <a asp-page="/Template/Add" type="button" class="btn btn-outline-success float-right">Add version</a>
+                            </div>
                         </div>
                     </div>
-                </a>
+                </div>
             }
         </div>
     </div>
-}
-else
-{
-    <p>No project, create a project</p>
-}
-
-
-
-@if (Model.Project.Templates.Any())
-{
-    <table class="expand-table ">
-        <thead>
-            <tr class="t-row">
-                <th class="t-cell" colspan="2" data-title="Template">Template</th>
-                <th class="t-cell" style="text-align: end" data-title="Last edited">Last edited</th>
-                <th class="t-cell"></th>
-            </tr>
-        </thead>
-        <tbody class="t-body">
-            @foreach (var template in Model.Project.Templates)
-            {
-                <tr class="t-row">
-                    <td class="t-cell" data-title="Heading 01">
-                        Cell 1_1
-                    </td>
-                    <td class="t-cell" style="width: 50%" data-title="Heading 02">
-                        @template.Name
-                    </td>
-                    <td class="t-cell" style="width: 50%; text-align: end" data-title="Heading 03">
-                        @template.DateModified.Humanize()
-                    </td>
-                    <td class="t-cell" style="text-align: end" data-title="Heading 04">
-                        Cell 4_1
-                    </td>
-                </tr>
-                <tr class="t-detail">
-                    <td colspan="4">
-                        <div class="shrink">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum non iusto consequatur laborum ratione quibusdam velit, assumenda deleniti voluptate. Nulla.</p>
-                            <p>Molestiae illo, ratione sequi, reiciendis vitae, magni corrupti cupiditate explicabo recusandae voluptate et qui quibusdam deleniti repellat blanditiis voluptatem? Excepturi, nemo vero explicabo corrupti molestiae, tempora corporis unde minus ab dolores, deleniti porro laudantium. Illum labore ullam distinctio laborum! Minus, non! A, sunt ab.</p>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
 }
 else
 {
