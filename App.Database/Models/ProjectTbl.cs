@@ -11,9 +11,10 @@ namespace App.Database.Models
         [Required]
         [MaxLength(200)]
         public string Title { get; set; }
+        public string SubHeading { get; set; }
         [MaxLength(500)]
         public string Description { get; set; }
-
+        public string Tags { get; set; }
         public ICollection<TemplateTbl> Templates { get; set; }
     }
 }

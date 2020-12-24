@@ -40,8 +40,4 @@
     <ProjectReference Include="..\App.Database\App.Database.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\css\output\" />
-  </ItemGroup>
-
 </Project>

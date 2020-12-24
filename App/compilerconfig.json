@@ -1,10 +1,10 @@
 ﻿[
   {
-    "outputFile": "wwwroot/css/output/main.css",
+    "outputFile": "wwwroot/css/main.css",
     "inputFile": "wwwroot/scss/main.scss"
   },
   {
-    "outputFile": "wwwroot/css/output/template-page.css",
+    "outputFile": "wwwroot/css/template-page.css",
     "inputFile": "wwwroot/scss/Pages/TemplatePage/template-page.scss"
   }
 ]

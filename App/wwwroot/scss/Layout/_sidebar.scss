@@ -7,52 +7,55 @@
         position: fixed;
         top: 3.5rem;
         width: 12rem;
+
+        .nav-item {
+            margin-bottom: .75rem;
+            user-select: none;
+            color: #455060;
+            font-size: .65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: .2rem .4rem;
+
+            &:hover {
+                color: #4b48d6;
+                cursor: pointer;
+            }
+        }
     }
 
     .accordion {
-        margin-bottom: .75rem;
-
-        a {
-            text-decoration: none;
+        label {
+            cursor: pointer;
+            user-select: none;
         }
 
-        input {
-
-            & ~ .accordion-header {
-                color: #455060;
-                font-size: .65rem;
-                font-weight: 600;
-                text-transform: uppercase;
-            }
-
-            &:checked ~ .accordion-header {
-                color: #505c6e;
-            }
-
-            .menu .menu-item {
-                font-size: .7rem;
-                padding-left: 1rem;
-
-                a {
-                    background: transparent;
-                    color: #66758c;
-                    display: inline-block;
-                }
-            }
+        input:checked + label{
+            color: #4b48d6;
         }
     }
 }
 
+.menu-item {
+    font-size: .7rem;
+    padding-left: 1rem;
 
 
+    a {
+        background: transparent;
+        color: #66758c;
+        font-weight: 400;
+        text-transform: none;
+        display: inline-block;
+    }
+}
 
 .sidebar-mobile-icon {
     position: fixed;
     right: 0;
     top: 0;
     z-index: 100;
-    padding:20px;
-
+    padding: 20px;
 }
 
 .off-canvas {
@@ -65,11 +68,12 @@
     width: 100%;
 
     .off-canvas-toggle {
-        padding:0px;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        i{
+        padding: 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        i {
             font-size: 25px;
         }
     }

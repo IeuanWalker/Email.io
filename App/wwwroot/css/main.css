@@ -1,5 +1,9 @@
-﻿a:focus {
-  box-shadow: none !important; }
+﻿a:focus,
+a:active,
+a:hover,
+a {
+  box-shadow: none !important;
+  text-decoration: none; }
 
 .docs-container {
   min-height: 100vh; }
@@ -71,25 +75,34 @@
   position: fixed;
   top: 3.5rem;
   width: 12rem; }
-
-.sidebar .accordion {
-  margin-bottom: .75rem; }
-  .sidebar .accordion a {
-    text-decoration: none; }
-  .sidebar .accordion input ~ .accordion-header {
+  .sidebar .nav .nav-item {
+    margin-bottom: .75rem;
+    user-select: none;
     color: #455060;
     font-size: .65rem;
     font-weight: 600;
-    text-transform: uppercase; }
-  .sidebar .accordion input:checked ~ .accordion-header {
-    color: #505c6e; }
-  .sidebar .accordion input .menu .menu-item {
-    font-size: .7rem;
-    padding-left: 1rem; }
-    .sidebar .accordion input .menu .menu-item a {
-      background: transparent;
-      color: #66758c;
-      display: inline-block; }
+    text-transform: uppercase;
+    padding: .2rem .4rem; }
+    .sidebar .nav .nav-item:hover {
+      color: #4b48d6;
+      cursor: pointer; }
+
+.sidebar .accordion label {
+  cursor: pointer;
+  user-select: none; }
+
+.sidebar .accordion input:checked + label {
+  color: #4b48d6; }
+
+.menu-item {
+  font-size: .7rem;
+  padding-left: 1rem; }
+  .menu-item a {
+    background: transparent;
+    color: #66758c;
+    font-weight: 400;
+    text-transform: none;
+    display: inline-block; }
 
 .sidebar-mobile-icon {
   position: fixed;
@@ -215,3 +228,10 @@ footer {
   transition: all 0.5s ease; }
   *::-webkit-scrollbar-thumb:hover {
     background-color: #2826ab; }
+
+.card {
+  text-decoration: none;
+  color: #455060;
+  box-shadow: 0 0.25rem 1rem hls(217, 15.8, 22.4); }
+  .card:hover {
+    border-color: #455060; }

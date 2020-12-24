@@ -12,17 +12,6 @@
     "sourceMap": true
   },
   {
-    "outputFileName": "wwwroot/css/template-page.css",
-    "inputFiles": [
-      "wwwroot/css/output/template-page.css"
-    ],
-    "minify": {
-      "enabled": true,
-      "renameLocals": false
-    },
-    "sourceMap": true
-  },
-  {
     "outputFileName": "wwwroot/js/bundle.js",
     "inputFiles": [
       "node_modules/split-grid/dist/split-grid.js"

@@ -1,0 +1,8 @@
+﻿.card{
+    text-decoration:none;
+    color: #455060;
+    box-shadow: 0 0.25rem 1rem hls(217, 15.8, 22.4);
+    &:hover{
+        border-color: #455060;
+    }
+}

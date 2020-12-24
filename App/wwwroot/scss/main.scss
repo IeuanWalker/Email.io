@@ -1,6 +1,12 @@
-﻿a:focus {
+﻿a:focus,
+a:active,
+a:hover,
+a{
     box-shadow: none !important;
+    text-decoration:none;
 }
 
 
+
 @import 'Layout/_layout.scss';
+@import 'Components/_components.scss';
