@@ -6,6 +6,15 @@
     height: 80px;
     border-radius: 2px 2px 0px 0px;
     border-bottom: 1px solid lightgray;
+    a{
+        text-decoration:none;
+        color: black;
+        &:hover,
+        &:focus,
+        &:active{
+            text-decoration:none;
+        }
+    }
 }
 
 .template-navbar-buttons {
@@ -22,6 +31,7 @@
     font-size: 16px;
     overflow: hidden;
     transition: 0.2s ease;
+    color: black;
 
     &:hover {
         background-color: #f1f1fc;

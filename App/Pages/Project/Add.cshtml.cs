@@ -23,6 +23,11 @@ namespace App.Pages.Project
         public ProjectTbl Project { get; set; }
         public async Task<IActionResult> OnPost()
         {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
             Project = await _projectTbl.Add(Project);
 
             return RedirectToPage("/Project/Details", new { id = Project.Id });

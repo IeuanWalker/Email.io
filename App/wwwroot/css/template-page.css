@@ -45,6 +45,11 @@ iframe {
   height: 80px;
   border-radius: 2px 2px 0px 0px;
   border-bottom: 1px solid lightgray; }
+  .template-navbar a {
+    text-decoration: none;
+    color: black; }
+    .template-navbar a:hover, .template-navbar a:focus, .template-navbar a:active {
+      text-decoration: none; }
 
 .template-navbar-buttons {
   background: transparent;
@@ -59,7 +64,8 @@ iframe {
   align-items: center;
   font-size: 16px;
   overflow: hidden;
-  transition: 0.2s ease; }
+  transition: 0.2s ease;
+  color: black; }
   .template-navbar-buttons:hover {
     background-color: #f1f1fc; }
     .template-navbar-buttons:hover p {

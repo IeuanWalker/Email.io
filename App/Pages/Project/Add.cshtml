@@ -3,17 +3,100 @@
 @{
     ViewData["Title"] = "Add";
 }
-    <div class="container">
-        <form method="post">
-            <div class="form-group">
-                <label for="TitleInput">@Html.DisplayNameFor(model => model.Project.Title)</label>
-                <input asp-for="Project.Title" type="text" class="form-control" id="TitleInput" placeholder="@Html.DisplayNameFor(model => model.Project.Title)">
-            </div>
-            <div class="form-group">
-                <label for="DescriptionInput">@Html.DisplayNameFor(model => model.Project.Description)</label>
-                <input asp-for="Project.Description" type="text" class="form-control" id="DescriptionInput" placeholder="@Html.DisplayNameFor(model => model.Project.Description)">
-            </div>
-            <input type="submit" class="btn btn-primary">
-        </form>
-    </div>
 
+@section Styles{
+    <style>
+        .chars-length {
+            background-color: whitesmoke;
+            display: inline-block;
+            margin: 4px 0 0;
+            padding: 5px 10px;
+            text-align: center;
+            float: right;
+            font-size: smaller
+        }
+
+        .warn {
+            background-color: firebrick;
+            color: #fff;
+        }
+
+        .field-validation-error {
+            color: #e85600
+        }
+    </style>
+}
+
+<h3 class="s-title">Create a new project</h3>
+<form class="form-horizontal" id="createProjectForm" method="post" style="max-width: 800px" onsubmit="return validationFunction(Event)">
+    <div class="form-group">
+        <div class="col-3 col-sm-12">
+            <label class="form-label" asp-for="Project.Title">@Html.DisplayNameFor(model => model.Project.Title)</label>
+        </div>
+        <div class="col-9 col-sm-12">
+            <input class="form-input" type="text" asp-for="Project.Title" placeholder="@Html.DisplayNameFor(model => model.Project.Title)">
+            <span class="form-input-hint" asp-validation-for="Project.Title"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-3 col-sm-12">
+            <label class="form-label" asp-for="Project.SubHeading">@Html.DisplayNameFor(model => model.Project.SubHeading)</label>
+        </div>
+        <div class="col-9 col-sm-12">
+            <input class="form-input" type="text" asp-for="Project.SubHeading" placeholder="@Html.DisplayNameFor(model => model.Project.SubHeading)">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-3 col-sm-12">
+            <label class="form-label d-inline mr-2" asp-for="Project.Description">@Html.DisplayNameFor(model => model.Project.Description)</label>
+            <div class="popover popover-right ">
+                <div class="btn btn-action btn-sm s-circle">i</div>
+                <div class="popover-container">
+                    <div class="card">
+                        <div class="card-header">
+                            Markdown support
+                        </div>
+                        <div class="card-body">
+                            The description field support markdown formatting.
+                        </div>
+                        <div class="card-footer">
+                            <a href="https://guides.github.com/features/mastering-markdown/" target="_blank" class="btn btn-primary">Markdown guide</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-9 col-sm-12">
+            <textarea class="form-input" type="text" asp-for="Project.Description" placeholder="@Html.DisplayNameFor(model => model.Project.Description)"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-3 col-sm-12">
+            <label class="form-label" asp-for="Project.Tags">@Html.DisplayNameFor(model => model.Project.Tags)</label>
+        </div>
+        <div class="col-9 col-sm-12">
+            <input class="form-input" type="text" asp-for="Project.Tags" placeholder="@Html.DisplayNameFor(model => model.Project.Tags)">
+        </div>
+    </div>
+    <input type="submit" class="btn btn-primary float-right">
+
+    <!-- form structure -->
+</form>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        VCountdown({
+            target: '#Project_Title',
+            maxChars: 200
+        });
+        VCountdown({
+            target: '#Project_SubHeading',
+            maxChars: 200
+        });
+        VCountdown({
+            target: '#Project_Description',
+            maxChars: 500
+        });
+    </script>
+}

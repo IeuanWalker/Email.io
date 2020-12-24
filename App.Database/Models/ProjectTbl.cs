@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace App.Database.Models
@@ -11,6 +12,8 @@ namespace App.Database.Models
         [Required]
         [MaxLength(200)]
         public string Title { get; set; }
+        [DisplayName("Sub heading")]
+        [MaxLength(200)]
         public string SubHeading { get; set; }
         [MaxLength(500)]
         public string Description { get; set; }

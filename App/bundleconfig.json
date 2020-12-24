@@ -14,7 +14,11 @@
   {
     "outputFileName": "wwwroot/js/bundle.js",
     "inputFiles": [
-      "node_modules/split-grid/dist/split-grid.js"
+      "node_modules/split-grid/dist/split-grid.js",
+      "wwwroot/lib/character-counter/character-counter.js",
+      "node_modules/jquery/dist/jquery.js",
+      "node_modules/jquery-validation/dist/jquery.validate.js",
+      "node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"
     ],
     "minify": {
       "enabled": true,
