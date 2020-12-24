@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@yaireo/dragsort": "^1.0.8",
+    "@yaireo/tagify": "^3.21.5",
     "codemirror": "^5.59.0",
     "jquery-validation-unobtrusive": "^3.2.11",
     "spectre.css": "^0.5.9",

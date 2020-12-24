@@ -10,10 +10,8 @@ a {
 
 .content {
   -ms-flex: 1 1 auto;
-  height: 100%;
   flex: 1 1 auto;
   padding: 0 4rem;
-  width: calc(100vw - 12rem);
   display: flex;
   margin-left: 12rem;
   margin-top: 3.8rem;
@@ -235,3 +233,66 @@ footer {
   box-shadow: 0 0.25rem 1rem hls(217, 15.8, 22.4); }
   .card:hover {
     border-color: #455060; }
+
+.field-validation-error {
+  color: #e85600; }
+
+.chars-length {
+  background-color: whitesmoke;
+  display: inline-block;
+  margin: 4px 0 0;
+  padding: 5px 10px;
+  text-align: center;
+  float: right;
+  font-size: smaller; }
+
+.warn {
+  background-color: firebrick;
+  color: #fff; }
+
+.tags {
+  --tag-bg: #5755d9;
+  --tag-hover: #3634d2;
+  --tag-text-color: #FFF;
+  --tags-border-color: silver;
+  --tag-text-color--edit: #111;
+  --tag-remove-bg: var(--tag-hover);
+  --tag-pad: .6em 1em;
+  --tag-inset-shadow-size: 1.3em;
+  --tag-remove-btn-bg--hover: #3634d2;
+  display: inline-block;
+  min-width: 0;
+  border: none; }
+  .tags .tagify__tag {
+    margin-top: 0;
+    margin: 0px 5px 5px 5px; }
+    .tags .tagify__tag:hover .tagify__tag__removeBtn {
+      color: #fff;
+      transform: none;
+      opacity: 1;
+      margin-left: -1ch; }
+  .tags .tagify__tag__removeBtn {
+    opacity: 0;
+    transform: translateX(-6px) scale(0.5);
+    margin-left: -3ch;
+    transition: 0.12s; }
+  .tags + button {
+    color: #3634d2;
+    font: bold 1.4em/1.65 Arial;
+    border: 0;
+    background: none;
+    box-shadow: 0 0 0 2px inset currentColor;
+    width: 1.65em;
+    height: 1.65em;
+    cursor: pointer;
+    outline: none;
+    transition: 0.1s ease-out;
+    margin: 0px 0 5px 0px;
+    vertical-align: top; }
+    .tags + button:hover {
+      box-shadow: 0 0 0 5px inset currentColor; }
+  .tags .tagify__input {
+    display: none; }
+
+.tags.tagify--hasMaxTags + button {
+  display: none; }

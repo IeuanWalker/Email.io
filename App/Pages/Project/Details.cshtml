@@ -5,37 +5,183 @@
     ViewData["Title"] = "Details";
 }
 
-    <div class="container">
+@section Styles
+{
+    <style>
+        .expand-table {
+            margin-top: 20px;
+            table-layout: auto;
+            width: 100%;
+            text-align: left;
+            border-collapse: collapse;
+        }
 
-        <h1>@Model.Project.Title</h1>
-        <p>@Model.Project.Id</p>
-        <p>@Model.Project.Description</p>
-        <p>@Model.Project.DateCreated</p>
-        <p>@Model.Project.DateModified</p>
-        <a asp-area="" asp-page="/Template/Add" asp-route-projectId="@Model.Project.Id" type="button" class="btn btn-outline-success align-self-end m-0">Create template</a>
+            .expand-table .t-cell,
+            .expand-table .t-head-cell {
+                display: table-cell;
+                padding: 2px 2px;
+            }
 
-        @if (Model.Project.Templates.Any())
-        {
-            <div class="row m-0 mt-3">
-                <div class="card-deck">
-                    @foreach (var template in Model.Project.Templates)
-                    {
-                        <a asp-page="/Project/Details" asp-route-id="@template.Id">
-                            <div class="card mb-4" style="min-width: 18rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">@template.Name</h5>
-                                    <p class="card-text">@template.Description</p>
-                                    <p class="card-text"><small class="text-muted">Last modified @template.DateCreated.Humanize()</small></p>
-                                </div>
-                            </div>
-                        </a>
+            .expand-table .t-cell {
+                width: 1%;
+                white-space: nowrap;
+            }
+
+            .expand-table thead {
+                font-weight: bold;
+                display: table-header-group;
+                padding: 5px;
+            }
+
+
+
+
+            .expand-table .t-row {
+                display: table-row;
+            }
+
+                .expand-table .t-row:hover {
+                    background: #bbd8f1;
+                }
+
+            .expand-table .t-detail {
+                background: #eee;
+                transition: all 0.5s;
+            }
+
+                .expand-table .t-detail td {
+                    border-bottom: 1px solid transparent;
+                }
+
+                .expand-table .t-detail .shrink {
+                    max-height: 0;
+                    overflow: hidden;
+                    transition: all 0.2s;
+                }
+
+                .expand-table .t-detail.expanded {
+                    -webkit-animation: expandRow 0.15s forwards;
+                    animation: expandRow 0.15s forwards;
+                }
+
+                    .expand-table .t-detail.expanded td {
+                        border-bottom: 1px solid #aaaaaa;
                     }
-                </div>
-            </div>
-        }
-        else
-        {
-            <p>No project, create a project</p>
-        }
-    </div>
 
+        @@media (min-width: 768px) {
+            .expand-table .t-detail.expanded .shrink {
+                max-height: 60rem;
+                overflow: visible;
+            }
+        }
+
+        @@-webkit-keyframes expandRow {
+            from {
+                max-height: 0;
+            }
+
+            to {
+                max-height: 20rem;
+            }
+        }
+
+        @@keyframes expandRow {
+            from {
+                max-height: 0;
+            }
+
+            to {
+                max-height: 20rem;
+            }
+        }
+    </style>
+}
+
+<h3 class="s-title">@Model.Project.Title</h3>
+<p>@Model.Project.SubHeading</p>
+<p>@Model.Project.Description</p>
+
+<div class="clearfix">
+    <a asp-page="/Template/Add" asp-route-projectId="@Model.Project.Id" type="button" class="btn btn-outline-success float-right mb-4">Create template</a>
+</div>
+
+@if (Model.Project.Templates.Any())
+{
+    <div class="row m-0 mt-3">
+        <div class="card-deck">
+            @foreach (var template in Model.Project.Templates)
+            {
+                <a asp-page="/Project/Details" asp-route-id="@template.Id">
+                    <div class="card mb-4" style="min-width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">@template.Name</h5>
+                            <p class="card-text">@template.Description</p>
+                            <p class="card-text"><small class="text-muted">Last modified @template.DateCreated.Humanize()</small></p>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <p>No project, create a project</p>
+}
+
+
+
+@if (Model.Project.Templates.Any())
+{
+    <table class="expand-table ">
+        <thead>
+            <tr class="t-row">
+                <th class="t-cell" colspan="2" data-title="Template">Template</th>
+                <th class="t-cell" style="text-align: end" data-title="Last edited">Last edited</th>
+                <th class="t-cell"></th>
+            </tr>
+        </thead>
+        <tbody class="t-body">
+            @foreach (var template in Model.Project.Templates)
+            {
+                <tr class="t-row">
+                    <td class="t-cell" data-title="Heading 01">
+                        Cell 1_1
+                    </td>
+                    <td class="t-cell" style="width: 50%" data-title="Heading 02">
+                        @template.Name
+                    </td>
+                    <td class="t-cell" style="width: 50%; text-align: end" data-title="Heading 03">
+                        @template.DateModified.Humanize()
+                    </td>
+                    <td class="t-cell" style="text-align: end" data-title="Heading 04">
+                        Cell 4_1
+                    </td>
+                </tr>
+                <tr class="t-detail">
+                    <td colspan="4">
+                        <div class="shrink">
+                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum non iusto consequatur laborum ratione quibusdam velit, assumenda deleniti voluptate. Nulla.</p>
+                            <p>Molestiae illo, ratione sequi, reiciendis vitae, magni corrupti cupiditate explicabo recusandae voluptate et qui quibusdam deleniti repellat blanditiis voluptatem? Excepturi, nemo vero explicabo corrupti molestiae, tempora corporis unde minus ab dolores, deleniti porro laudantium. Illum labore ullam distinctio laborum! Minus, non! A, sunt ab.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No project, create a project</p>
+}
+
+
+@section Scripts
+{
+    <script>
+        $('.expand-table .t-row').on("click", function (event) {
+            $(this).next(".t-detail").toggleClass("expanded");
+        });
+
+    </script>
+}

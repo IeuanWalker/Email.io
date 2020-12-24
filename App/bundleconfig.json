@@ -3,7 +3,9 @@
     "outputFileName": "wwwroot/css/bundle.css",
     "inputFiles": [
       "node_modules/spectre.css/dist/spectre.css",
-      "node_modules/spectre.css/dist/spectre-icons.css"
+      "node_modules/spectre.css/dist/spectre-icons.css",
+      "node_modules/@yaireo/tagify/dist/tagify.css",
+      "node_modules/@yaireo/dragsort/dist/dragsort.css"
     ],
     "minify": {
       "enabled": true,
@@ -18,10 +20,23 @@
       "wwwroot/lib/character-counter/character-counter.js",
       "node_modules/jquery/dist/jquery.js",
       "node_modules/jquery-validation/dist/jquery.validate.js",
-      "node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"
+      "node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js",
+      "node_modules/@yaireo/tagify/dist/tagify.min.js"
+
     ],
     "minify": {
       "enabled": true,
+      "renameLocals": false
+    },
+    "sourceMap": true
+  },
+   {
+    "outputFileName": "wwwroot/js/dragsort.js",
+    "inputFiles": [
+      "node_modules/@yaireo/dragsort/dist/dragsort.js"
+    ],
+    "minify": {
+      "enabled": false,
       "renameLocals": false
     },
     "sourceMap": true

@@ -16,15 +16,15 @@
         <partial name="_sidebar" />
 
         <div class="content">
-            <div class="container" style="height: 1000px">
+            <div class="container">
                 @RenderBody()
             </div>
             <partial name="_footer" />
         </div>
     </div>
 
-    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/bundle.min.js" asp-append-version="true"></script>
+    <script src="/js/dragsort.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

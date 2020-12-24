@@ -7,7 +7,9 @@
 
 <h3 class="s-title">Projects</h3>
 
-<a asp-page="/project/Add" type="button" class="btn btn-outline-success align-self-end m-0">Create project</a>
+<div class="clearfix">
+    <a asp-page="/project/Add" type="button" class="btn btn-outline-success float-right">Create project</a>
+</div>
 @if (Model.Projects.Any())
 {
     <div class="columns">
@@ -18,21 +20,26 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title h5">@project.Title</div>
-                        <div class="card-subtitle text-gray">Last modified @project.DateCreated.Humanize()</div>
+                        <div class="card-subtitle text-gray">@project.SubHeading</div>
                     </div>
-                    <div class="card-body">@project.Description</div>
-                    <div class="card-footer">
-                        <div class="btn btn-primary" href="#cards">Example</div>
-                    </div>
+                    <div class="card-body text-clip">@project.Description</div>
                 </div>
             </a>
         }
     </div>
-
 }
 else
 {
     <p>No project, create a project</p>
+}
+
+@section Scripts{
+    <script>
+        var inputs = document.getElementsByClassName('tags');
+        for (input in inputs) {
+            var tagify = new Tagify(input);
+        }
+    </script>
 }
 
 

@@ -4,29 +4,6 @@
     ViewData["Title"] = "Add";
 }
 
-@section Styles{
-    <style>
-        .chars-length {
-            background-color: whitesmoke;
-            display: inline-block;
-            margin: 4px 0 0;
-            padding: 5px 10px;
-            text-align: center;
-            float: right;
-            font-size: smaller
-        }
-
-        .warn {
-            background-color: firebrick;
-            color: #fff;
-        }
-
-        .field-validation-error {
-            color: #e85600
-        }
-    </style>
-}
-
 <h3 class="s-title">Create a new project</h3>
 <form class="form-horizontal" id="createProjectForm" method="post" style="max-width: 800px" onsubmit="return validationFunction(Event)">
     <div class="form-group">
@@ -44,6 +21,7 @@
         </div>
         <div class="col-9 col-sm-12">
             <input class="form-input" type="text" asp-for="Project.SubHeading" placeholder="@Html.DisplayNameFor(model => model.Project.SubHeading)">
+            <span class="form-input-hint" asp-validation-for="Project.SubHeading"></span>
         </div>
     </div>
     <div class="form-group">
@@ -54,7 +32,7 @@
                 <div class="popover-container">
                     <div class="card">
                         <div class="card-header">
-                            Markdown support
+                            <h4>Markdown support</h4>
                         </div>
                         <div class="card-body">
                             The description field support markdown formatting.
@@ -68,14 +46,28 @@
         </div>
         <div class="col-9 col-sm-12">
             <textarea class="form-input" type="text" asp-for="Project.Description" placeholder="@Html.DisplayNameFor(model => model.Project.Description)"></textarea>
+            <span class="form-input-hint" asp-validation-for="Project.Description"></span>
         </div>
     </div>
     <div class="form-group">
         <div class="col-3 col-sm-12">
-            <label class="form-label" asp-for="Project.Tags">@Html.DisplayNameFor(model => model.Project.Tags)</label>
+            <label class="form-label d-inline  mr-2" asp-for="Project.Tags">@Html.DisplayNameFor(model => model.Project.Tags)</label>
+            <div class="popover popover-right ">
+                <div class="btn btn-action btn-sm s-circle">i</div>
+                <div class="popover-container">
+                    <div class="card">
+                        <div class="card-body">
+                            Used to imporve project search
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-9 col-sm-12">
-            <input class="form-input" type="text" asp-for="Project.Tags" placeholder="@Html.DisplayNameFor(model => model.Project.Tags)">
+        <div class="col-9 col-sm-12 d-flex">
+            <input class="tags" value="test"/>
+            <button type="button">+</button>
+            <input hidden asp-for="Project.Tags">
+
         </div>
     </div>
     <input type="submit" class="btn btn-primary float-right">
@@ -98,5 +90,55 @@
             target: '#Project_Description',
             maxChars: 500
         });
+    </script>
+
+    <script>
+        var input = document.querySelector('.tags');
+        var tagify = new Tagify(input,
+            {
+                delimiters: ', ',
+                pattern: /^[a-zA-Z0-9äöüÄÖÜ]*$/,
+            });
+
+        var button = input.nextElementSibling; // "add new tag" action-button
+
+        button.addEventListener("click", onAddButtonClick);
+
+        function onAddButtonClick() {
+            tagify.addEmptyTag();
+        }
+
+        input.addEventListener('change', onChange)
+
+        function onChange(e) {
+            if (e.target.value == "") {
+                document.getElementById("Project_Tags").value = "";
+            } else {
+                document.getElementById("Project_Tags").value = JSON.parse(e.target.value)
+                    .filter(function(x) {
+                        if (x['value'] == "" || x['value'] == null) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    .map(function(item) {
+                        return item['value'];
+                    });
+            }
+
+        }
+
+        var dragsort = new DragSort(tagify.DOM.scope,
+            {
+                selector: '.' + tagify.settings.classNames.tag,
+                callbacks: {
+                    dragEnd: onDragEnd
+                }
+            });
+
+        function onDragEnd(elm) {
+            tagify.updateValueByDOMTags()
+        }
+
     </script>
 }

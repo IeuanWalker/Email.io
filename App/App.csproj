@@ -6,16 +6,10 @@
 
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
-    <Content Remove="wwwroot\js\bundle.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\js\bundle.js" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
-    <None Include="wwwroot\js\bundle.js" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,7 +2,7 @@
     @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
 }
 <div class="sidebar-mobile-icon">
-    <a class="off-canvas-toggle btn btn-link btn-action" href="#sidebar"><i class="icon icon-menu"></i></a>
+    <a class="off-canvas-toggle btn btn-link btn-action" href="#sidebar" aria-label="Open menu"><i class="icon icon-menu"></i></a>
 </div>
 <div class="sidebar off-canvas-sidebar" id="sidebar">
     <div class="brand">
@@ -35,4 +35,4 @@
         <a class="nav-item" asp-area="" asp-page="/Template1">Test template</a>
     </div>
 </div>
-<a class="off-canvas-overlay" href="#close"></a>
+<a class="off-canvas-overlay" href="#close" aria-label="Close menu"></a>

@@ -1,0 +1,64 @@
+﻿.tags {
+    --tag-bg: #5755d9;
+    --tag-hover: #3634d2;
+    --tag-text-color: #FFF;
+    --tags-border-color: silver;
+    --tag-text-color--edit: #111;
+    --tag-remove-bg: var(--tag-hover);
+    --tag-pad: .6em 1em;
+    --tag-inset-shadow-size: 1.3em;
+    --tag-remove-btn-bg--hover: #3634d2;
+    display: inline-block;
+    min-width: 0;
+    border: none;
+
+
+    .tagify__tag {
+        margin-top: 0;
+        margin: 0px 5px 5px 5px;
+
+        > div {
+        }
+
+        &:hover .tagify__tag__removeBtn {
+            color: #fff;
+            transform: none;
+            opacity: 1;
+            margin-left: -1ch;
+        }
+    }
+
+    .tagify__tag__removeBtn {
+        opacity: 0;
+        transform: translateX(-6px) scale(0.5);
+        margin-left: -3ch;
+        transition: 0.12s;
+    }
+
+    + button {
+        color: #3634d2;
+        font: bold 1.4em/1.65 Arial;
+        border: 0;
+        background: none;
+        box-shadow: 0 0 0 2px inset currentColor;
+        width: 1.65em;
+        height: 1.65em;
+        cursor: pointer;
+        outline: none;
+        transition: 0.1s ease-out;
+        margin: 0px 0 5px 0px;
+        vertical-align: top;
+
+        &:hover {
+            box-shadow: 0 0 0 5px inset currentColor;
+        }
+    }
+
+    .tagify__input {
+        display: none;
+    }
+}
+
+.tags.tagify--hasMaxTags + button {
+    display: none;
+}
