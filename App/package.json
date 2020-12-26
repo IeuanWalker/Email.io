@@ -13,6 +13,7 @@
     "@yaireo/dragsort": "^1.0.8",
     "@yaireo/tagify": "^3.21.5",
     "codemirror": "^5.59.0",
+    "egalink-toasty.js": "^1.5.5",
     "jquery-validation-unobtrusive": "^3.2.11",
     "spectre.css": "^0.5.9",
     "split-grid": "^1.0.9",

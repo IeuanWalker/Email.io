@@ -64,19 +64,19 @@
             </div>
         </div>
         <div class="col-9 col-sm-12 d-flex">
-            <input class="tags" value="test"/>
+            <input class="tags" />
             <button type="button">+</button>
             <input hidden asp-for="Project.Tags">
-
         </div>
     </div>
-    <input type="submit" class="btn btn-primary float-right">
+    <button type="submit" class="btn btn-outline-success float-right">Create</button>
 
     <!-- form structure -->
 </form>
 
 @section Scripts
 {
+    <!-- Character counter -->
     <script type="text/javascript">
         VCountdown({
             target: '#Project_Title',
@@ -92,17 +92,16 @@
         });
     </script>
 
+    <!-- Tags -->
     <script>
         var input = document.querySelector('.tags');
         var tagify = new Tagify(input,
             {
-                delimiters: ', ',
+                delimiters: ',',
                 pattern: /^[a-zA-Z0-9äöüÄÖÜ]*$/,
             });
 
-        var button = input.nextElementSibling; // "add new tag" action-button
-
-        button.addEventListener("click", onAddButtonClick);
+        input.nextElementSibling.addEventListener("click", onAddButtonClick);
 
         function onAddButtonClick() {
             tagify.addEmptyTag();

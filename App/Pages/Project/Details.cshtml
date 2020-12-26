@@ -11,9 +11,11 @@
     </style>
 }
 
+
 <h3 class="s-title pb-0">@Model.Project.Title</h3>
 <p class="card-subtitle text-gray">@Model.Project.SubHeading</p>
 <p>@Model.Project.Description</p>
+
 
 @foreach (string tag in Model.Project.Tags?.Split(",") ?? new string[0])
 {
@@ -21,7 +23,7 @@
 }
 
 <div class="clearfix mt-2">
-    <a asp-page="/Template/Add" asp-route-projectId="@Model.Project.Id" type="button" class="btn btn-outline-success float-right mb-4">Create template</a>
+    <a type="button" href="#0" class="btn btn-outline-success float-right mb-4 js-cd-panel-trigger" data-panel="main">Create template</a>
 </div>
 
 @if (Model.Project.Templates.Any())
@@ -38,8 +40,8 @@
                     <input type="checkbox" id="@template.Id" name="accordion-checkbox" hidden>
                     <label class="accordion-header" for="@template.Id">
                         <i class="icon icon-arrow-right"></i>
-                        <span class="ml-2">@template.Name</span>
-                        <span>@template.DateModified.Humanize()</span>
+                        <span class="ml-2 user-select-none">@template.Name</span>
+                        <span class="text-capitalize user-select-none">@template.DateModified.Humanize()</span>
                         <div class="dropdown dropdown-right">
                             <a href="#" class="btn btn-action btn-link dropdown-toggle" tabindex="0">
                                 <i class="icon icon-more-vert"></i>
@@ -55,7 +57,7 @@
                     <div class="accordion-body">
                         <div>
                             <div class="d-inline">
-                                <span class="text-caption">Temaplate ID: @template.Id</span>
+                                <span class="text-caption"><span class="user-select-none">Temaplate ID: </span>@template.Id</span>
                                 <div class="popover popover-bottom ml-2">
                                     <div class="btn btn-action btn-sm s-circle">i</div>
                                     <div class="popover-container">
@@ -83,13 +85,45 @@ else
     <p>No project, create a project</p>
 }
 
+@section Panels
+{
+    <div class="cd-panel cd-panel--from-right js-cd-panel-main">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Create a new template</h3>
+                <p>Give your new template a name. Template names are never public, are visible only to you and can be changed anytime.</p>
+                <form class="form-horizontal" method="post" style="max-width: 800px">
+                    <div class="form-group">
+                        @Html.HiddenFor(model => model.CreateTemplate.ProjectId)
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" asp-for="CreateTemplate.Name">@Html.DisplayNameFor(model => model.CreateTemplate.Name)</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" asp-for="CreateTemplate.Name" placeholder="@Html.DisplayNameFor(model => model.CreateTemplate.Name)">
+                            <span class="form-input-hint" asp-validation-for="CreateTemplate.Name"></span>
+                        </div>
+                    </div>
+                    <button type="submit" id="createTemplateSubmitBtn" class="btn btn-outline-success float-right" disabled>Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
 
 @section Scripts
 {
+    @*Disable and enable create temaplate button*@
     <script>
-        $('.expand-table .t-row').on("click", function (event) {
-            $(this).next(".t-detail").toggleClass("expanded");
-        });
-
+        const templateNameInput = document.getElementById("CreateTemplate_Name");
+        const templateNameInputHandler = function (e) {
+            if (e.target.value == null || e.target.value == "") {
+                document.getElementById("createTemplateSubmitBtn").disabled = true;
+            } else {
+                document.getElementById("createTemplateSubmitBtn").disabled = false;
+            }
+        }
+        templateNameInput.addEventListener('input', templateNameInputHandler);
     </script>
 }

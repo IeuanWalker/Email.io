@@ -12,7 +12,7 @@
     @RenderSection("Styles", required: false)
 </head>
 <body>
-    <div class="docs-container off-canvas off-canvas-sidebar-show">
+    <div class="docs-container off-canvas off-canvas-sidebar-show cd-main-content">
         <partial name="_sidebar" />
 
         <div class="content">
@@ -23,8 +23,27 @@
         </div>
     </div>
 
+    @RenderSection("Panels", required: false)
+
     <script src="~/js/bundle.min.js" asp-append-version="true"></script>
     <script src="/js/dragsort.js" asp-append-version="true"></script>
+    <script src="/js/toast.js" asp-append-version="true"></script>
+    <script>
+        var toastMessage = null;
+        var toastStatus = null;
+        @{
+            if (!string.IsNullOrEmpty(TempData["message"]?.ToString()))
+            {
+                <text>toastMessage = "@TempData["message"]";</text>
+            }
+
+            if (!string.IsNullOrEmpty(TempData["status"]?.ToString()))
+            {
+                 <text>toastStatus = "@TempData["status"]";</text>
+            }
+        }
+        loadToests(toastMessage, toastStatus);
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

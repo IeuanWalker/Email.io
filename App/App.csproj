@@ -34,4 +34,8 @@
     <ProjectReference Include="..\App.Database\App.Database.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Template\" />
+  </ItemGroup>
+
 </Project>

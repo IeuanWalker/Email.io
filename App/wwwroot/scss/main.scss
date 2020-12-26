@@ -6,7 +6,17 @@ a{
     text-decoration:none;
 }
 
+.user-select-none{
+    user-select: none;
+}
+
+.text-caption {
+    color: #546b81;
+    font-size: small;
+}
 
 
 @import 'Layout/_layout.scss';
 @import 'Components/_components.scss';
+@import 'Library/_slide-panel.scss';
+@import 'Pages/_pages.scss';
