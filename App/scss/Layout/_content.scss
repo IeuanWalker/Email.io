@@ -3,8 +3,6 @@
     min-height: 100vh;
 }
 
-
-
 .content {
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
@@ -19,13 +17,9 @@
         padding-bottom: 1.5rem;
     }
 
-    .s-title,
-    .s-subtitle {
-        line-height: 1.8rem;
-        margin-bottom: 0;
+    .sticky-header {
         padding-bottom: 1rem;
         padding-top: 1rem;
-        position: static;
     }
 
     .column {
@@ -35,12 +29,15 @@
 
 @supports ((position: -webkit-sticky) or (position: sticky)) {
     .content {
-        .s-title,
-        .s-subtitle {
+
+        .sticky-header {
+            padding-bottom: 1rem;
+            padding-top: 1rem;
             position: -webkit-sticky;
             position: sticky;
             top: 0;
             z-index: 99;
+
 
             &::before {
                 background: #fff;
@@ -68,8 +65,7 @@
         display: flex;
         flex-direction: column;
 
-        .s-title,
-        .s-subtitle {
+        .sticky-header {
             padding-top: 5rem;
             position: static;
 

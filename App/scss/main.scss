@@ -1,4 +1,10 @@
-﻿a:focus,
+﻿
+@import 'Library/_library.scss';
+@import 'Layout/_layout.scss';
+@import 'Components/_components.scss';
+@import 'Pages/_pages.scss';
+
+a:focus,
 a:active,
 a:hover,
 a{
@@ -15,8 +21,3 @@ a{
     font-size: small;
 }
 
-
-@import 'Layout/_layout.scss';
-@import 'Components/_components.scss';
-@import 'Library/_slide-panel.scss';
-@import 'Pages/_pages.scss';

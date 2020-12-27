@@ -9,6 +9,34 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="scss\Components\_accordian-table.scss" />
+    <Content Include="scss\Components\_cards.scss" />
+    <Content Include="scss\Components\_character-counter.scss" />
+    <Content Include="scss\Components\_components.scss" />
+    <Content Include="scss\Components\_tags.scss" />
+    <Content Include="scss\Components\_validation.scss" />
+    <Content Include="scss\Layout\_content.scss" />
+    <Content Include="scss\Layout\_footer.scss" />
+    <Content Include="scss\Layout\_layout.scss" />
+    <Content Include="scss\Layout\_scrollbar.scss" />
+    <Content Include="scss\Layout\_sidebar.scss" />
+    <Content Include="scss\Library\spectre\_spectre.scss" />
+    <Content Include="scss\Library\_library.scss" />
+    <Content Include="scss\Library\_slide-panel.scss" />
+    <Content Include="scss\main.css" />
+    <Content Include="scss\main.min.css" />
+    <Content Include="scss\main.scss" />
+    <Content Include="scss\Pages\Project\_empty-template.scss" />
+    <Content Include="scss\Pages\Project\_project.scss" />
+    <Content Include="scss\Pages\Template\_code-mirror.scss" />
+    <Content Include="scss\Pages\Template\_layout.scss" />
+    <Content Include="scss\Pages\Template\_nvabar.scss" />
+    <Content Include="scss\Pages\Template\_responsive-previewer.scss" />
+    <Content Include="scss\Pages\Template\_template.scss" />
+    <Content Include="scss\Pages\_pages.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="compilerconfig.json" />
   </ItemGroup>
 
@@ -37,5 +65,7 @@
   <ItemGroup>
     <Folder Include="Pages\Template\" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties compilerconfig_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

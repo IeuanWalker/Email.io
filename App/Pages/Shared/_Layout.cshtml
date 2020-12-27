@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>@ViewData["Title"] - Email.io</title>
-    <link rel="stylesheet" href="~/css/bundle.min.css" />
     <link rel="stylesheet" href="~/css/main.css" />
 
     @RenderSection("Styles", required: false)
@@ -28,6 +27,8 @@
     <script src="~/js/bundle.min.js" asp-append-version="true"></script>
     <script src="/js/dragsort.js" asp-append-version="true"></script>
     <script src="/js/toast.js" asp-append-version="true"></script>
+
+    <!-- Triggers toasts -->
     <script>
         var toastMessage = null;
         var toastStatus = null;
