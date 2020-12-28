@@ -1,10 +1,12 @@
 ﻿@page
 @model App.Pages.Project.AddModel
 @{
-    ViewData["Title"] = "Add";
+    ViewData["Title"] = "Create project";
 }
 
-<h3 class="s-title">Create a new project</h3>
+<div class="sticky-header">
+    <h3>Create a new project</h3>
+</div>
 <form class="form-horizontal" id="createProjectForm" method="post" style="max-width: 800px" onsubmit="return validationFunction(Event)">
     <div class="form-group">
         <div class="col-3 col-sm-12">

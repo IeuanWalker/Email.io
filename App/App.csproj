@@ -62,10 +62,6 @@
     <ProjectReference Include="..\App.Database\App.Database.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Template\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties compilerconfig_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

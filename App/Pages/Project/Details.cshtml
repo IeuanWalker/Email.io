@@ -2,13 +2,7 @@
 @using Humanizer;
 @model App.Pages.Project.DetailsModel
 @{
-    ViewData["Title"] = "Details";
-}
-
-@section Styles
-{
-    <style>
-    </style>
+    ViewData["Title"] = @Model.Project.Title;
 }
 
 <div class="sticky-header">
@@ -48,7 +42,6 @@
                             <a href="#" class="btn btn-action btn-link dropdown-toggle" tabindex="0">
                                 <i class="icon icon-more-vert"></i>
                             </a>
-                            <!-- menu component -->
                             <ul class="menu">
                                 <li class="menu-item user-select-none"><a href="#" class="js-cd-panel-trigger" data-panel="editNema">Edit name</a></li>
                                 <li class="menu-item user-select-none"><a href="#" class="js-cd-panel-trigger" data-panel="delete">Delete</a></li>
@@ -148,31 +141,30 @@ else
 {
     @*Disable and enable create temaplate button*@
     <script>
-        const templateNameInput = document.getElementById("CreateTemplate_Name");
-        const templateNameInputHandler = function (e) {
-            if (e.target.value == null || e.target.value == "") {
+        document.getElementById("CreateTemplate_Name").addEventListener('input', function (e) {
+            if (e.target.value == null || e.target.value.trim() == "") {
                 document.getElementById("createTemplateSubmitBtn").disabled = true;
             } else {
                 document.getElementById("createTemplateSubmitBtn").disabled = false;
             }
-        }
-        templateNameInput.addEventListener('input', templateNameInputHandler);
+        });
     </script>
 
+    @*Trigger row to shake , indicating new entry*@
     <script>
-        $(document).one("scrollToId",
-            function (event) {
-                var scrollToId = null;
-                @{
-                    if (!string.IsNullOrEmpty(TempData["scrollToId"]?.ToString()))
-                    {
-                        <text>scrollToId = "@TempData["scrollToId"]";</text>
-                    }
+        $(document).one("scrollToId", function (event) {
+            var scrollToId = null;
+            @{
+                if (!string.IsNullOrWhiteSpace(TempData["scrollToId"]?.ToString()))
+                {
+                    <text>scrollToId = "@TempData["scrollToId"]";</text>
                 }
+            }
 
-                if (scrollToId != null) {
-                    document.getElementById(scrollToId).classList.add('animate__animated', 'animate__headShake');
-                }
-            });
+            if (scrollToId != null) {
+                // TODO: Fade to green
+                document.getElementById(scrollToId).classList.add('animate__animated', 'animate__headShake');
+            }
+        });
     </script>
 }

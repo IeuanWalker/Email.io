@@ -102,9 +102,10 @@
         }
     </script>
 
-    @*CodeMirror Shared*@
+    @*CodeMirror*@
     <script src="js/codemirror.min.js"></script>
 
+    @*CodeMirror JSON editor*@
     <script>
         let testDataEditor = CodeMirror.fromTextArea(document.getElementById("testData"),
             {
@@ -135,6 +136,7 @@
             });
     </script>
 
+    @*CodeMirror HTML editor*@
     <script>
         let codeEditor = CodeMirror.fromTextArea(document.getElementById("code"),
             {
@@ -166,6 +168,8 @@
                 UpdatePreview();
             });
     </script>
+
+    @*Preview handling*@
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {

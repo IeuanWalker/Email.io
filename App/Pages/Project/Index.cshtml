@@ -2,10 +2,13 @@
 @using Humanizer;
 @model App.Pages.Project.IndexModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Projects";
 }
 
-<h3 class="s-title">Projects</h3>
+<div class="sticky-header">
+    <h3>Projects</h3>
+</div>
+
 
 <div class="clearfix">
     <a asp-page="/project/Add" type="button" class="btn btn-outline-success float-right">Create project</a>
