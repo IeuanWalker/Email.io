@@ -12,6 +12,7 @@
   "dependencies": {
     "@yaireo/dragsort": "^1.0.8",
     "@yaireo/tagify": "^3.21.5",
+    "animate.css": "^4.1.1",
     "codemirror": "^5.59.0",
     "egalink-toasty.js": "^1.5.5",
     "jquery-validation-unobtrusive": "^3.2.11",

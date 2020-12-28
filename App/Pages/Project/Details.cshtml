@@ -25,7 +25,7 @@
 }
 
 <div class="clearfix mt-2">
-    <a type="button" href="#0" class="btn btn-outline-success float-right mb-4 js-cd-panel-trigger" data-panel="main">Create template</a>
+    <a type="button" href="#" class="btn btn-outline-success float-right mb-4 js-cd-panel-trigger" data-panel="main">Create template</a>
 </div>
 
 @if (Model.Project.Templates.Any())
@@ -38,7 +38,7 @@
         <div class="accordion-wrapper">
             @foreach (var template in Model.Project.Templates)
             {
-                <div class="accordion">
+                <div class="accordion" id="template-@template.Id">
                     <input type="checkbox" id="@template.Id" name="accordion-checkbox" hidden>
                     <label class="accordion-header" for="@template.Id">
                         <i class="icon icon-arrow-right"></i>
@@ -50,9 +50,8 @@
                             </a>
                             <!-- menu component -->
                             <ul class="menu">
-                                <li class="menu-item"><a href="#dropdowns">Edit name</a></li>
-                                <li class="menu-item"><a href="#dropdowns">Duplicate</a></li>
-                                <li class="menu-item"><a href="#dropdowns">Delete</a></li>
+                                <li class="menu-item user-select-none"><a href="#"  class="js-cd-panel-trigger" data-panel="editNema">Edit name</a></li>
+                                <li class="menu-item user-select-none"><a  href="#" class="js-cd-panel-trigger" data-panel="delete">Delete</a></li>
                             </ul>
                         </div>
                     </label>
@@ -111,6 +110,37 @@ else
             </div>
         </div>
     </div>
+
+    <div class="cd-panel cd-panel--from-right js-cd-panel-delete">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Delete template</h3>
+                <p>Give your new template a name. Template names are never public, are visible only to you and can be changed anytime.</p>
+                <form class="form-horizontal" method="post" style="max-width: 800px">
+                    <div class="form-group">
+
+                    </div>
+                    <button type="submit" class="btn btn-outline-success float-right" disabled>Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+       <div class="cd-panel cd-panel--from-right js-cd-panel-editNema">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Edit name</h3>
+                <p>Give your new template a name. Template names are never public, are visible only to you and can be changed anytime.</p>
+                <form class="form-horizontal" method="post" style="max-width: 800px">
+                    <div class="form-group">
+
+                    </div>
+                    <button type="submit" class="btn btn-outline-success float-right" disabled>Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
 }
 
 
@@ -127,5 +157,23 @@ else
             }
         }
         templateNameInput.addEventListener('input', templateNameInputHandler);
+    </script>
+
+    <script>
+        var scrollToId = null;
+        @{
+            if (!string.IsNullOrEmpty(TempData["scrollToId"]?.ToString()))
+            {
+                <text>scrollToId = "@TempData["scrollToId"]";</text>
+            }
+        }
+
+        if (scrollToId != null) {
+            setTimeout(() => {
+                document.getElementById(scrollToId).classList.add('animate__animated', 'animate__headShake');
+            }, 2000);
+
+        }
+
     </script>
 }

@@ -25,6 +25,7 @@ namespace App.Pages.Project
         {
             // TODO: Error handling
             Project = (await _projectTbl.Get(x => x.Id.Equals(id), null, nameof(ProjectTbl.Templates)).ConfigureAwait(false)).Single();
+            Project.Templates = Project.Templates.OrderBy(x => x.Name).ToList();
             CreateTemplate = new TemplateTbl
             {
                 ProjectId = id
@@ -36,11 +37,12 @@ namespace App.Pages.Project
         public async Task<IActionResult> OnPost()
         {
             // TODO: Error handling
-            await _templateTbl.Add(CreateTemplate);
+            TemplateTbl result = await _templateTbl.Add(CreateTemplate);
 
 
-            TempData["status"] = "success";
-            TempData["message"] = "Template created";
+            TempData["toastStatus"] = "success";
+            TempData["toastMessage"] = "Template created";
+            TempData["scrollToId"] = $"template-{result.Id}";
 
             return RedirectToPage("/Project/Details", new { id = CreateTemplate.ProjectId });
         }

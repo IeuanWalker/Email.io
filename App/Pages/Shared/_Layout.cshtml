@@ -33,17 +33,32 @@
         var toastMessage = null;
         var toastStatus = null;
         @{
-            if (!string.IsNullOrEmpty(TempData["message"]?.ToString()))
-            {
-                <text>toastMessage = "@TempData["message"]";</text>
-            }
+        if (!string.IsNullOrEmpty(TempData["toastMessage"]?.ToString()))
+        {
+            <text>toastMessage = "@TempData["toastMessage"]";</text>
+        }
 
-            if (!string.IsNullOrEmpty(TempData["status"]?.ToString()))
+        if (!string.IsNullOrEmpty(TempData["toastStatus"]?.ToString()))
+        {
+            <text>toastStatus = "@TempData["toastStatus"]";</text>
+        }
+    }
+        loadToests(toastMessage, toastStatus);
+    </script>
+    <script>
+        var scrollToId = null;
+        @{
+            if (!string.IsNullOrEmpty(TempData["scrollToId"]?.ToString()))
             {
-                 <text>toastStatus = "@TempData["status"]";</text>
+                <text>scrollToId = "@TempData["scrollToId"]";</text>
             }
         }
-        loadToests(toastMessage, toastStatus);
+
+        if (scrollToId != null) {
+            $('html, body').animate({
+                scrollTop: $(`#${scrollToId}`).offset().top
+            }, 2000);
+        }
     </script>
     @RenderSection("Scripts", required: false)
 </body>

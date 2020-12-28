@@ -22,7 +22,7 @@
     <Content Include="scss\Layout\_sidebar.scss" />
     <Content Include="scss\Library\spectre\_spectre.scss" />
     <Content Include="scss\Library\_library.scss" />
-    <Content Include="scss\Library\_slide-panel.scss" />
+    <Content Include="scss\Library\slide-panel\_slide-panel.scss" />
     <Content Include="scss\main.css" />
     <Content Include="scss\main.min.css" />
     <Content Include="scss\main.scss" />
