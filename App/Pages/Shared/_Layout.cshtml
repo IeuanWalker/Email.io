@@ -56,8 +56,11 @@
 
         if (scrollToId != null) {
             $('html, body').animate({
-                scrollTop: $(`#${scrollToId}`).offset().top
-            }, 2000);
+                scrollTop: $(`#${scrollToId}`).offset().top,
+            }, 1000).promise().done(function () {
+                $(document).trigger("scrollToId");
+                console.log("test");
+            });
         }
     </script>
     @RenderSection("Scripts", required: false)

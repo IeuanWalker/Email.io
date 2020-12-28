@@ -50,8 +50,8 @@
                             </a>
                             <!-- menu component -->
                             <ul class="menu">
-                                <li class="menu-item user-select-none"><a href="#"  class="js-cd-panel-trigger" data-panel="editNema">Edit name</a></li>
-                                <li class="menu-item user-select-none"><a  href="#" class="js-cd-panel-trigger" data-panel="delete">Delete</a></li>
+                                <li class="menu-item user-select-none"><a href="#" class="js-cd-panel-trigger" data-panel="editNema">Edit name</a></li>
+                                <li class="menu-item user-select-none"><a href="#" class="js-cd-panel-trigger" data-panel="delete">Delete</a></li>
                             </ul>
                         </div>
                     </label>
@@ -126,7 +126,7 @@ else
             </div>
         </div>
     </div>
-       <div class="cd-panel cd-panel--from-right js-cd-panel-editNema">
+    <div class="cd-panel cd-panel--from-right js-cd-panel-editNema">
         <div class="cd-panel__container">
             <div class="cd-panel__content">
                 <a href="#0" class="cd-panel__close js-cd-close">Close</a>
@@ -160,20 +160,19 @@ else
     </script>
 
     <script>
-        var scrollToId = null;
-        @{
-            if (!string.IsNullOrEmpty(TempData["scrollToId"]?.ToString()))
-            {
-                <text>scrollToId = "@TempData["scrollToId"]";</text>
-            }
-        }
+        $(document).one("scrollToId",
+            function (event) {
+                var scrollToId = null;
+                @{
+                    if (!string.IsNullOrEmpty(TempData["scrollToId"]?.ToString()))
+                    {
+                        <text>scrollToId = "@TempData["scrollToId"]";</text>
+                    }
+                }
 
-        if (scrollToId != null) {
-            setTimeout(() => {
-                document.getElementById(scrollToId).classList.add('animate__animated', 'animate__headShake');
-            }, 2000);
-
-        }
-
+                if (scrollToId != null) {
+                    document.getElementById(scrollToId).classList.add('animate__animated', 'animate__headShake');
+                }
+            });
     </script>
 }
