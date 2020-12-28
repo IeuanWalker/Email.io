@@ -12,7 +12,6 @@
 
 <p>@Model.Project.Description</p>
 
-
 @foreach (string tag in Model.Project.Tags?.Split(",") ?? new string[0])
 {
     <span class="chip">@tag</span>
@@ -112,7 +111,6 @@ else
                 <p>Give your new template a name. Template names are never public, are visible only to you and can be changed anytime.</p>
                 <form class="form-horizontal" method="post" style="max-width: 800px">
                     <div class="form-group">
-
                     </div>
                     <button type="submit" class="btn btn-outline-success float-right" disabled>Create</button>
                 </form>
@@ -127,7 +125,6 @@ else
                 <p>Give your new template a name. Template names are never public, are visible only to you and can be changed anytime.</p>
                 <form class="form-horizontal" method="post" style="max-width: 800px">
                     <div class="form-group">
-
                     </div>
                     <button type="submit" class="btn btn-outline-success float-right" disabled>Create</button>
                 </form>
@@ -135,7 +132,6 @@ else
         </div>
     </div>
 }
-
 
 @section Scripts
 {

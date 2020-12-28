@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using App.Database.Models;
+﻿using App.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
 
 namespace App.Database.Context
 {
@@ -19,9 +19,9 @@ namespace App.Database.Context
             public ApplicationDbContext CreateDbContext(string[] args)
             {
                 IConfigurationRoot configuration = new ConfigurationBuilder()
-                  .SetBasePath(Directory.GetCurrentDirectory())
-                  .AddJsonFile("appsettings.json")
-                  .Build();
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json")
+                    .Build();
 
                 IConfigurationSection databaseConnections = configuration.GetSection("DatabaseConnections");
                 DbContextOptionsBuilder<ApplicationDbContext> builder = new DbContextOptionsBuilder<ApplicationDbContext>();
@@ -69,7 +69,6 @@ namespace App.Database.Context
 
         public DbSet<ProjectTbl> ProjectTbl { get; set; }
         public DbSet<TemplateTbl> TemplateTbl { get; set; }
-
 
         #endregion DbSet's
     }

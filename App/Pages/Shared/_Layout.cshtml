@@ -31,15 +31,15 @@
         var toastMessage = null;
         var toastStatus = null;
         @{
-        if (!string.IsNullOrEmpty(TempData["toastMessage"]?.ToString()))
-        {
+            if (!string.IsNullOrEmpty(TempData["toastMessage"]?.ToString()))
+            {
             <text>toastMessage = "@TempData["toastMessage"]";</text>
-        }
+            }
 
-        if (!string.IsNullOrEmpty(TempData["toastStatus"]?.ToString()))
-        {
+            if (!string.IsNullOrEmpty(TempData["toastStatus"]?.ToString()))
+            {
             <text>toastStatus = "@TempData["toastStatus"]";</text>
-        }
+            }
     }
         loadToests(toastMessage, toastStatus);
     </script>

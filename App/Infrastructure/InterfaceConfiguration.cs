@@ -1,6 +1,7 @@
 ﻿using App.Database.Repositories.Project;
 using App.Database.Repositories.Template;
 using Microsoft.Extensions.DependencyInjection;
+
 namespace App.Infrastructure
 {
     internal static class InterfaceConfiguration

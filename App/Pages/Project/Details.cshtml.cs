@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using App.Database.Models;
+﻿using App.Database.Models;
 using App.Database.Repositories.Project;
 using App.Database.Repositories.Template;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace App.Pages.Project
 {
@@ -21,6 +21,7 @@ namespace App.Pages.Project
         }
 
         public ProjectTbl Project { get; set; }
+
         public async Task OnGet(Guid id)
         {
             // TODO: Error handling
@@ -34,11 +35,11 @@ namespace App.Pages.Project
 
         [BindProperty]
         public TemplateTbl CreateTemplate { get; set; }
+
         public async Task<IActionResult> OnPost()
         {
             // TODO: Error handling
-            TemplateTbl result = await _templateTbl.Add(CreateTemplate);
-
+            TemplateTbl result = await _templateTbl.Add(CreateTemplate).ConfigureAwait(false);
 
             TempData["toastStatus"] = "success";
             TempData["toastMessage"] = "Template created";

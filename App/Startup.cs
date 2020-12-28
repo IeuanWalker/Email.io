@@ -26,9 +26,8 @@ namespace App
             // Database
             DatabaseConfiguration.ConfigureServices(services, Configuration);
 
-
             services.AddRazorPages()
-                 .AddRazorRuntimeCompilation();
+                .AddRazorRuntimeCompilation();
 
             services.AddLiveReload();
         }
@@ -46,7 +45,6 @@ namespace App
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
 
             app.UseLiveReload();
 

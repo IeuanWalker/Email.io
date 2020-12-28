@@ -35,15 +35,15 @@ namespace App.Database.Repositories.Generic
                 StringSplitOptions.RemoveEmptyEntries)) query = query.Include(includeProperty.Trim());
 
             // Order results and execute request
-            return orderBy == null ? await query.ToListAsync() : await orderBy(query).ToListAsync();
+            return orderBy == null ? await query.ToListAsync().ConfigureAwait(false) : await orderBy(query).ToListAsync().ConfigureAwait(false);
         }
 
-        public virtual async Task<T> GetById(object id) => await DbSet.FindAsync(id);
+        public virtual async Task<T> GetById(object id) => await DbSet.FindAsync(id).ConfigureAwait(false);
 
         public virtual async Task<T> Add(T entity)
         {
             // Add object to database
-            await DbSet.AddAsync(entity);
+            await DbSet.AddAsync(entity).ConfigureAwait(false);
 
             // Save changes
             Context.SaveChanges();
@@ -55,7 +55,7 @@ namespace App.Database.Repositories.Generic
         public virtual async Task Delete(object id)
         {
             // Found object using ID
-            T entityToDelete = await DbSet.FindAsync(id);
+            T entityToDelete = await DbSet.FindAsync(id).ConfigureAwait(false);
 
             // Delete object
             Delete(entityToDelete);
