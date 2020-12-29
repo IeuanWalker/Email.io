@@ -1541,7 +1541,43 @@ summary.accordion-header::-webkit-details-marker {
   display: none; }
 
 /*@import "../../../node_modules/spectre.css/src/avatars";*/
-/*@import "../../../node_modules/spectre.css/src/badges";*/
+.badge {
+  position: relative;
+  white-space: nowrap; }
+  .badge[data-badge]::after, .badge:not([data-badge])::after {
+    background: #5755d9;
+    background-clip: padding-box;
+    border-radius: .5rem;
+    box-shadow: 0 0 0 0.1rem #fff;
+    color: #fff;
+    content: attr(data-badge);
+    display: inline-block;
+    transform: translate(-0.05rem, -0.5rem); }
+  .badge[data-badge]::after {
+    font-size: 0.7rem;
+    height: .9rem;
+    line-height: 1;
+    min-width: .9rem;
+    padding: .1rem .2rem;
+    text-align: center;
+    white-space: nowrap; }
+  .badge:not([data-badge])::after, .badge[data-badge=""]::after {
+    height: 6px;
+    min-width: 6px;
+    padding: 0;
+    width: 6px; }
+  .badge.btn::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%); }
+  .badge.avatar::after {
+    position: absolute;
+    top: 14.64%;
+    right: 14.64%;
+    transform: translate(50%, -50%);
+    z-index: 100; }
+
 /*@import "../../../node_modules/spectre.css/src/breadcrumbs";*/
 /*@import "../../../node_modules/spectre.css/src/bars";*/
 .card {
@@ -1620,7 +1656,20 @@ summary.accordion-header::-webkit-details-marker {
     border-bottom-right-radius: 0.1rem;
     border-top-right-radius: 0.1rem; }
 
-/*@import "../../../node_modules/spectre.css/src/empty";*/
+.empty {
+  background: #f7f8f9;
+  border-radius: 0.1rem;
+  color: #66758c;
+  text-align: center;
+  padding: 3.2rem 1.6rem; }
+  .empty .empty-icon {
+    margin-bottom: 0.8rem; }
+  .empty .empty-title,
+  .empty .empty-subtitle {
+    margin: 0.4rem auto; }
+  .empty .empty-action {
+    margin-top: 0.8rem; }
+
 .menu {
   box-shadow: 0 0.05rem 0.2rem rgba(48, 55, 66, 0.3);
   background: #fff;
@@ -2675,7 +2724,135 @@ a.text-error:visited {
   top: 60%;
   width: .8em; }
 
-/*@import "../../../node_modules/spectre.css/src/icons/icons-object";*/
+.icon-time {
+  border: 0.1rem solid currentColor;
+  border-radius: 50%; }
+  .icon-time::before {
+    background: currentColor;
+    height: .4em;
+    transform: translate(-50%, -75%);
+    width: 0.1rem; }
+  .icon-time::after {
+    background: currentColor;
+    height: .3em;
+    transform: translate(-50%, -75%) rotate(90deg);
+    transform-origin: 50% 90%;
+    width: 0.1rem; }
+
+.icon-mail::before {
+  border: 0.1rem solid currentColor;
+  border-radius: 0.1rem;
+  height: .8em;
+  width: 1em; }
+
+.icon-mail::after {
+  border: 0.1rem solid currentColor;
+  border-right: 0;
+  border-top: 0;
+  height: .5em;
+  transform: translate(-50%, -90%) rotate(-45deg) skew(10deg, 10deg);
+  width: .5em; }
+
+.icon-people::before {
+  border: 0.1rem solid currentColor;
+  border-radius: 50%;
+  height: .45em;
+  top: 25%;
+  width: .45em; }
+
+.icon-people::after {
+  border: 0.1rem solid currentColor;
+  border-radius: 50% 50% 0 0;
+  height: .4em;
+  top: 75%;
+  width: .9em; }
+
+.icon-message {
+  border: 0.1rem solid currentColor;
+  border-bottom: 0;
+  border-radius: 0.1rem;
+  border-right: 0; }
+  .icon-message::before {
+    border: 0.1rem solid currentColor;
+    border-bottom-right-radius: 0.1rem;
+    border-left: 0;
+    border-top: 0;
+    height: .8em;
+    left: 65%;
+    top: 40%;
+    width: .7em; }
+  .icon-message::after {
+    background: currentColor;
+    border-radius: 0.1rem;
+    height: .3em;
+    left: 10%;
+    top: 100%;
+    transform: translate(0, -90%) rotate(45deg);
+    width: 0.1rem; }
+
+.icon-photo {
+  border: 0.1rem solid currentColor;
+  border-radius: 0.1rem; }
+  .icon-photo::before {
+    border: 0.1rem solid currentColor;
+    border-radius: 50%;
+    height: .25em;
+    left: 35%;
+    top: 35%;
+    width: .25em; }
+  .icon-photo::after {
+    border: 0.1rem solid currentColor;
+    border-bottom: 0;
+    border-left: 0;
+    height: .5em;
+    left: 60%;
+    transform: translate(-50%, 25%) rotate(-45deg);
+    width: .5em; }
+
+.icon-link::before, .icon-link::after {
+  border: 0.1rem solid currentColor;
+  border-radius: 5em 0 0 5em;
+  border-right: 0;
+  height: .5em;
+  width: .75em; }
+
+.icon-link::before {
+  transform: translate(-70%, -45%) rotate(-45deg); }
+
+.icon-link::after {
+  transform: translate(-30%, -55%) rotate(135deg); }
+
+.icon-location::before {
+  border: 0.1rem solid currentColor;
+  border-radius: 50% 50% 50% 0;
+  height: .8em;
+  transform: translate(-50%, -60%) rotate(-45deg);
+  width: .8em; }
+
+.icon-location::after {
+  border: 0.1rem solid currentColor;
+  border-radius: 50%;
+  height: .2em;
+  transform: translate(-50%, -80%);
+  width: .2em; }
+
+.icon-emoji {
+  border: 0.1rem solid currentColor;
+  border-radius: 50%; }
+  .icon-emoji::before {
+    border-radius: 50%;
+    box-shadow: -.17em -.1em, .17em -.1em;
+    height: .15em;
+    width: .15em; }
+  .icon-emoji::after {
+    border: 0.1rem solid currentColor;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    border-right-color: transparent;
+    height: .5em;
+    transform: translate(-50%, -40%) rotate(-135deg);
+    width: .5em; }
+
 :root {
   --tagify-dd-color-primary: #3595f6;
   --tagify-dd-bg-color: white; }
@@ -7221,6 +7398,31 @@ a {
 .user-select-none {
   user-select: none; }
 
+.cursor-pointer {
+  cursor: pointer; }
+
+.align-items-center {
+  align-items: center; }
+
 .text-caption {
   color: #546b81;
   font-size: small; }
+
+.btn.btn-outline-error {
+  border-color: #e85600;
+  color: #e85600; }
+
+.btn.btn-outline-error:focus, .btn.btn-outline-error:hover {
+  background: #ffeee5; }
+
+.btn.btn-outline-error:active, .btn.btn-outline-error.active {
+  background: #e85600;
+  color: #fff; }
+
+.empty {
+  background-color: transparent;
+  border: 1px solid lightgray; }
+
+.sticky-header {
+  justify-content: space-between;
+  align-items: center; }

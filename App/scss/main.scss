@@ -7,13 +7,20 @@
 a:focus,
 a:active,
 a:hover,
-a{
+a {
     box-shadow: none !important;
-    text-decoration:none;
+    text-decoration: none;
 }
 
-.user-select-none{
+.user-select-none {
     user-select: none;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+.align-items-center{
+    align-items:center;
 }
 
 .text-caption {
@@ -21,3 +28,26 @@ a{
     font-size: small;
 }
 
+.btn.btn-outline-error {
+    border-color: #e85600;
+    color: #e85600;
+}
+
+.btn.btn-outline-error:focus, .btn.btn-outline-error:hover {
+    background: #ffeee5;
+}
+
+.btn.btn-outline-error:active, .btn.btn-outline-error.active {
+    background: #e85600;
+    color: #fff;
+}
+
+.empty {
+    background-color: transparent;
+    border: 1px solid lightgray;
+}
+
+.sticky-header {
+    justify-content: space-between;
+    align-items: center;
+}

@@ -6,11 +6,15 @@
 }
 
 <div class="sticky-header">
-    <h3>Projects</h3>
+    <h3>
+        <span class="badge" data-badge="@Model.Projects.Count()">
+            Projects
+        </span>
+    </h3>
 </div>
 
 <div class="clearfix">
-    <a asp-page="/project/Add" type="button" class="btn btn-outline-success float-right">Create project</a>
+    <a asp-page="/project/Add" type="button" class="btn float-right">Create project</a>
 </div>
 @if (Model.Projects.Any())
 {

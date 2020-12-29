@@ -1,0 +1,102 @@
+﻿@page "/Project/{id}/Settings"
+@model App.Pages.Project.SettingsModel
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<div class="sticky-header">
+    <h3 class="pb-0 m-0">Settings</h3>
+    <p class="card-subtitle text-gray m-0">@Model.Project.Title</p>
+</div>
+<div class="container p-0">
+    <div class="columns">
+        <div class="column col-auto">
+            <ul class="menu">
+                <li class="menu-item">
+                    <a class="tablinks cursor-pointer" data-tabId="General">General</a>
+                </li>
+                <li class="menu-item">
+                    <a class="tablinks cursor-pointer" data-tabId="DeleteProject">Delete project</a>
+                </li>
+            </ul>
+        </div>
+        <div class="column col" style="max-width: 800px">
+            <div id="General" class="tabcontent active">
+                <h2>General</h2>
+            </div>
+            <div id="DeleteProject" class="tabcontent">
+                <h2>Delete project</h2>
+                <p>Once you delete a project, there is no going back. Please be certain.</p>
+                <button type="submit" class="btn btn-outline-error float-right js-cd-panel-trigger" data-panel="delete">Delete project</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Panels{
+    @*Delete template panel*@
+    <div class="cd-panel cd-panel--from-right js-cd-panel-delete">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Delete project</h3>
+                <p>Are you sure you want to delete this project?</p>
+                <p>This action cannot be undone. This will permanently delete the <strong>'@Model.Project.Title'</strong> project and all associatied email templates. This means any pending emails and any future emails will fail to send.</p>
+
+                <p>To confirm the deletion of this project please re-enter the project name <strong>'@Model.Project.Title'</strong></p>
+                <form class="form-horizontal" method="post" style="max-width: 800px" asp-page-handler="DeleteProject">
+                    @Html.HiddenFor(model => model.DeleteProjectId)
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="deleteProjectNameConfirmation">@Html.DisplayNameFor(model => model.Project.Title):</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="deleteProjectNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.Project.Title)">
+                        </div>
+                    </div>
+                    <button type="submit" id="deleteProjecSubmitBtn" class="btn float-right btn-outline-error" disabled>I understand the consequences, delete this project</button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+    @*Tabs*@
+    <script type="text/javascript">
+        var tabLinks = document.querySelectorAll(".tablinks");
+        var tabContent = document.querySelectorAll(".tabcontent");
+
+        tabLinks.forEach(function (el) {
+            el.addEventListener("click", openTabs);
+        });
+
+        function openTabs(el) {
+            var btnTarget = el.currentTarget;
+            var tabId = btnTarget.getAttribute('data-tabId');
+            tabContent.forEach(function (el) {
+                el.classList.remove("active");
+            });
+
+            tabLinks.forEach(function (el) {
+                el.classList.remove("active");
+            });
+
+            document.querySelector("#" + tabId).classList.add("active");
+
+            btnTarget.classList.add("active");
+        }
+    </script>
+       @*Delete project*@
+    <script>
+        document.getElementById("deleteProjectNameConfirmation").addEventListener('input',
+            function (e) {
+                var projectName = "@Model.Project.Title";
+                if (e.target.value == null || e.target.value.trim() == "" || e.target.value.trim().toLowerCase() != projectName.toLowerCase()) {
+                    document.getElementById("deleteProjecSubmitBtn").disabled = true;
+                } else {
+                    document.getElementById("deleteProjecSubmitBtn").disabled = false;
+                }
+            });
+    </script>
+}
