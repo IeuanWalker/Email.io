@@ -7,7 +7,7 @@ namespace App.Database.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "Title",
+                name: "Name",
                 table: "ProjectTbl",
                 maxLength: 200,
                 nullable: false,
@@ -28,7 +28,7 @@ namespace App.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "Title",
+                name: "Name",
                 table: "ProjectTbl",
                 type: "nvarchar(max)",
                 nullable: true,

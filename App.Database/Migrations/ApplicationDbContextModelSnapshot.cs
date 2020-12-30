@@ -25,41 +25,6 @@ namespace App.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(500)")
-                        .HasMaxLength(500);
-
-                    b.Property<string>("SubHeading")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Tags")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ProjectTbl");
-                });
-
-            modelBuilder.Entity("App.Database.Models.TemplateTbl", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DateModified")
                         .HasColumnType("datetime2");
 
@@ -72,20 +37,40 @@ namespace App.Database.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasMaxLength(200);
 
-                    b.Property<Guid>("ProjectId")
+                    b.Property<string>("SubHeading")
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Project");
+                });
+
+            modelBuilder.Entity("App.Database.Models.TemplateTbl", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Template")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("DateModified")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("TestData")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("TemplateTbl");
+                    b.ToTable("Template");
                 });
 
             modelBuilder.Entity("App.Database.Models.TemplateTbl", b =>

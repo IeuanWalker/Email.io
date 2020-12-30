@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace App.Database.Models
 {
-    public class ProjectTbl : BaseEntity
+    [Table("Project")]
+    public class ProjectTbl : BaseEntityModifiedDate
     {
         [Key]
         public Guid Id { get; set; }
 
         [Required]
         [MaxLength(200)]
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         [DisplayName("Sub heading")]
         [MaxLength(200)]

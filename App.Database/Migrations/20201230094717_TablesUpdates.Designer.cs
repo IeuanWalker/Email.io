@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201224113329_AddedNewColumnsToProject")]
-    partial class AddedNewColumnsToProject
+    [Migration("20201230094717_TablesUpdates")]
+    partial class TablesUpdates
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,9 +27,6 @@ namespace App.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DateModified")
                         .HasColumnType("datetime2");
 
@@ -37,20 +34,21 @@ namespace App.Database.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
 
-                    b.Property<string>("SubHeading")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Tags")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(200)")
                         .HasMaxLength(200);
 
+                    b.Property<string>("SubHeading")
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("ProjectTbl");
+                    b.ToTable("Project");
                 });
 
             modelBuilder.Entity("App.Database.Models.TemplateTbl", b =>
@@ -59,15 +57,8 @@ namespace App.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("DateModified")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(500)")
-                        .HasMaxLength(500);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -77,17 +68,11 @@ namespace App.Database.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Template")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TestData")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("TemplateTbl");
+                    b.ToTable("Template");
                 });
 
             modelBuilder.Entity("App.Database.Models.TemplateTbl", b =>

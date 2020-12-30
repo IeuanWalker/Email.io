@@ -2,7 +2,7 @@
 @using Humanizer;
 @model App.Pages.Project.DetailsModel
 @{
-    ViewData["Title"] = @Model.Project.Title;
+    ViewData["Title"] = @Model.Project.Name;
 }
 
 @section Styles
@@ -12,7 +12,7 @@
 
 <div class="sticky-header d-flex">
     <div>
-        <h3 class="pb-0 m-0">@Model.Project.Title</h3>
+        <h3 class="pb-0 m-0">@Model.Project.Name</h3>
         <p class="card-subtitle text-gray m-0">@Model.Project.SubHeading</p>
     </div>
     <a asp-page="/Project/Settings" asp-route-id="@Model.Project.Id" class="btn btn-link pt-0 pl-0 pb-0 pr-0">
@@ -209,7 +209,7 @@ else
             });
     </script>
 
-    @*Trigger row to shake , indicating new entry*@
+    @*Trigger row to shake, indicating new entry*@
     <script>
         $(document).one("scrollToId",
             function(event) {

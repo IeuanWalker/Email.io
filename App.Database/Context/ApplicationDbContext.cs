@@ -47,20 +47,19 @@ namespace App.Database.Context
         {
             foreach (EntityEntry entry in ChangeTracker.Entries())
             {
-                if (!(entry.Entity is BaseEntity baseEntity)) return;
-
-                DateTime now = DateTime.UtcNow;
-                switch (entry.State)
+                if (entry.Entity is BaseEntityModifiedDate baseModifiedDateEntity)
                 {
-                    case EntityState.Modified:
-                        Entry(baseEntity).Property(x => x.DateCreated).IsModified = false;
-                        baseEntity.DateModified = now;
-                        break;
+                    DateTime now = DateTime.UtcNow;
+                    switch (entry.State)
+                    {
+                        case EntityState.Modified:
+                            baseModifiedDateEntity.DateModified = now;
+                            break;
 
-                    case EntityState.Added:
-                        baseEntity.DateCreated = now;
-                        baseEntity.DateModified = now;
-                        break;
+                        case EntityState.Added:
+                            baseModifiedDateEntity.DateModified = now;
+                            break;
+                    }
                 }
             }
         }
