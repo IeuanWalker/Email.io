@@ -33,8 +33,17 @@
             </div>*@
         <a class="nav-item" asp-area="" asp-page="/Project/Index">Projects</a>
         <a class="nav-item">Design library</a>
-        <a class="nav-item">Settings</a>
-        <a class="nav-item" asp-area="" asp-page="/Template1">Test template</a>
+        <div class="nav-item accordion">
+            <input id="accordion-getting-started" type="checkbox" hidden="" />
+            <label for="accordion-getting-started">Settings</label>
+            <div class="accordion-body">
+                <ul class="menu menu-nav">
+                    <li class="menu-item">
+                        <a href="/dev/hangfire">Hangfire</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 <a class="off-canvas-overlay" href="#close" aria-label="Close menu"></a>

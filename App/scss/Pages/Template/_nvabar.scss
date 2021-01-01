@@ -6,14 +6,21 @@
     height: 80px;
     border-radius: 2px 2px 0px 0px;
     border-bottom: 1px solid lightgray;
-    a{
-        text-decoration:none;
+
+    a {
+        text-decoration: none;
         color: black;
+
         &:hover,
         &:focus,
-        &:active{
-            text-decoration:none;
+        &:active {
+            text-decoration: none;
         }
+    }
+
+    .settings {
+        margin-left: auto;
+        padding: 0px 0.5rem;
     }
 }
 

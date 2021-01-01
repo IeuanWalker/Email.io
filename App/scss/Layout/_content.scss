@@ -18,8 +18,26 @@
     }
 
     .sticky-header {
-        padding-bottom: 1rem;
-        padding-top: 1rem;
+        margin: 0 -4.4rem;
+        padding: 1rem 4.4rem;
+        transition: all .5s ease;
+        border-color: transparent;
+
+        h3, p {
+            transition: all .5s ease;
+        }
+    }
+
+    .sticky-header-border {
+        border-bottom: 1px solid #e9ecef;
+
+        h3 {
+            font-size: 95%;
+        }
+
+        p {
+            font-size: 75%;
+        }
     }
 
     .column {
@@ -35,9 +53,8 @@
             padding-top: 1rem;
             position: -webkit-sticky;
             position: sticky;
-            top: 0;
+            top: -1;
             z-index: 99;
-
 
             &::before {
                 background: #fff;

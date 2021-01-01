@@ -10,7 +10,7 @@
 </div>
 <div class="container p-0">
     <div class="columns">
-        <div class="column col-auto">
+        <div class="column col-auto col-sm-12">
             <ul class="menu">
                 <li class="menu-item">
                     <a class="tablinks cursor-pointer" data-tabId="General">General</a>
@@ -23,6 +23,77 @@
         <div class="column col" style="max-width: 800px">
             <div id="General" class="tabcontent active">
                 <h2>General</h2>
+                <form class="form-horizontal" id="createProjectForm" method="post" style="max-width: 800px" onsubmit="return validationFunction(Event)" asp-page-handler="UpdateProject">
+                    @Html.HiddenFor(model => model.Project.Id)
+                    @Html.HiddenFor(model => model.Project.DateModified)
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" asp-for="Project.Name">@Html.DisplayNameFor(model => model.Project.Name):</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" asp-for="Project.Name" placeholder="@Html.DisplayNameFor(model => model.Project.Name)">
+                            <span class="form-input-hint" asp-validation-for="Project.Name"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" asp-for="Project.SubHeading">@Html.DisplayNameFor(model => model.Project.SubHeading):</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" asp-for="Project.SubHeading" placeholder="@Html.DisplayNameFor(model => model.Project.SubHeading)">
+                            <span class="form-input-hint" asp-validation-for="Project.SubHeading"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <div class="d-flex align-items-center">
+                                <label class="form-label d-inline mr-2" asp-for="Project.Description">@Html.DisplayNameFor(model => model.Project.Description):</label>
+                                <div class="popover popover-right cursor-pointer">
+                                    <ion-icon name="information-circle-outline" size="large"></ion-icon>
+                                    <div class="popover-container">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4>Markdown support</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                The description field support markdown formatting.
+                                            </div>
+                                            <div class="card-footer">
+                                                <a href="https://guides.github.com/features/mastering-markdown/" target="_blank" class="btn btn-primary">Markdown guide</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <textarea class="form-input" type="text" asp-for="Project.Description" placeholder="@Html.DisplayNameFor(model => model.Project.Description)"></textarea>
+                            <span class="form-input-hint" asp-validation-for="Project.Description"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12 d-flex align-items-center">
+                            <label class="form-label d-inline  mr-2" asp-for="Project.Tags">@Html.DisplayNameFor(model => model.Project.Tags):</label>
+                            <div class="popover popover-right d-flex align-items-center cursor-pointer">
+                                <ion-icon name="information-circle-outline" size="large"></ion-icon>
+                                <div class="popover-container">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            Used to imporve project search
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-9 col-sm-12 d-flex">
+                            <input class="tags" value="@Model.Project.Tags" />
+                            <button type="button">+</button>
+                            <input hidden asp-for="Project.Tags">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn float-right">Update</button>
+                </form>
+
             </div>
             <div id="DeleteProject" class="tabcontent">
                 <h2>Delete project</h2>
@@ -51,7 +122,7 @@
                             <label class="form-label" for="deleteProjectNameConfirmation">@Html.DisplayNameFor(model => model.Project.Name):</label>
                         </div>
                         <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" id="deleteProjectNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.Project.Name)">
+                            <input class="form-input" type="text" id="deleteProjectNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.Project.Name)" value="">
                         </div>
                     </div>
                     <button type="submit" id="deleteProjecSubmitBtn" class="btn float-right btn-outline-error" disabled>I understand the consequences, delete this project</button>
@@ -87,7 +158,7 @@
             btnTarget.classList.add("active");
         }
     </script>
-       @*Delete project*@
+    @*Delete project*@
     <script>
         document.getElementById("deleteProjectNameConfirmation").addEventListener('input',
             function (e) {
@@ -98,5 +169,69 @@
                     document.getElementById("deleteProjecSubmitBtn").disabled = false;
                 }
             });
+    </script>
+
+    <!-- Character counter -->
+    <script type="text/javascript">
+        VCountdown({
+            target: '#Project_Name',
+            maxChars: 200
+        });
+        VCountdown({
+            target: '#Project_SubHeading',
+            maxChars: 200
+        });
+        VCountdown({
+            target: '#Project_Description',
+            maxChars: 500
+        });
+    </script>
+
+    <!-- Tags -->
+    <script>
+        var input = document.querySelector('.tags');
+        var tagify = new Tagify(input,
+            {
+                delimiters: ',',
+                pattern: /^[a-zA-Z0-9äöüÄÖÜ ]*$/
+            });
+
+        input.nextElementSibling.addEventListener("click", onAddButtonClick);
+
+        function onAddButtonClick() {
+            tagify.addEmptyTag();
+        }
+
+        input.addEventListener('change', onChange)
+
+        function onChange(e) {
+            if (e.target.value == "") {
+                document.getElementById("Project_Tags").value = "";
+            } else {
+                document.getElementById("Project_Tags").value = JSON.parse(e.target.value)
+                    .filter(function (x) {
+                        if (x['value'] == "" || x['value'] == null) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    .map(function (item) {
+                        return item['value'];
+                    });
+            }
+
+        }
+
+        var dragsort = new DragSort(tagify.DOM.scope,
+            {
+                selector: '.' + tagify.settings.classNames.tag,
+                callbacks: {
+                    dragEnd: onDragEnd
+                }
+            });
+
+        function onDragEnd(elm) {
+            tagify.updateValueByDOMTags()
+        }
     </script>
 }

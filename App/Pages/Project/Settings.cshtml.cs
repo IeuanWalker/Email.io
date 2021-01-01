@@ -16,6 +16,7 @@ namespace App.Pages.Project
         {
             _projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
         }
+        [BindProperty]
         public ProjectTbl Project { get; set; }
 
         public async Task OnGet(Guid id)
@@ -26,6 +27,21 @@ namespace App.Pages.Project
                 throw new NullReferenceException(nameof(Project));
 
             DeleteProjectId = Project.Id;
+        }
+
+        public IActionResult OnPostUpdateProject()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            _projectTbl.Update(Project);
+
+            TempData["toastStatus"] = "success";
+            TempData["toastMessage"] = "Project updated";
+
+            return Page();
         }
 
         [BindProperty]

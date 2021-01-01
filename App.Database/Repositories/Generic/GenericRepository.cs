@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 
 namespace App.Database.Repositories.Generic
 {
@@ -51,6 +52,10 @@ namespace App.Database.Repositories.Generic
             // Return new database object
             return entity;
         }
+        public virtual async Task BulkAdd(List<T> entities, BulkConfig config = null)
+        {
+            await Context.BulkInsertAsync(entities, config).ConfigureAwait(false);
+        }
 
         public virtual async Task Delete(object id)
         {
@@ -74,6 +79,11 @@ namespace App.Database.Repositories.Generic
             Context.SaveChanges();
         }
 
+        public virtual async Task DeleteFromQuery(Expression<Func<T, bool>> query)
+        {
+            await DbSet.Where(query).BatchDeleteAsync().ConfigureAwait(false);
+        }
+
         public virtual void Update(T entityToUpdate)
         {
             // Make sure the object is being tracked by EF
@@ -86,9 +96,16 @@ namespace App.Database.Repositories.Generic
             Context.SaveChanges();
         }
 
-        public IQueryable<T> Query()
+        public virtual async Task UpdateFromQuery(Expression<Func<T, bool>> query, Expression<Func<T, T>> updateExpression)
         {
-            return DbSet;
+            await DbSet.Where(query).BatchUpdateAsync(updateExpression).ConfigureAwait(false);
         }
+
+        public IQueryable<T> Query(Expression<Func<T, bool>> query = null)
+        {
+             return query == null ? DbSet : DbSet.Where(query);
+        }
+
+
     }
 }

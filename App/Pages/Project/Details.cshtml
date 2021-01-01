@@ -1,4 +1,5 @@
 ﻿@page "/Project/{id}"
+@using App.Database.Models
 @using Humanizer;
 @model App.Pages.Project.DetailsModel
 @{
@@ -7,10 +8,18 @@
 
 @section Styles
 {
+    <style>
+        .modal.modal-lg .modal-container {
+            box-shadow: 0 0.2rem 0.5rem rgb(48 55 66 / 30%);
+        }
 
+        .modal.modal-lg .modal-overlay {
+            opacity: 0.6;
+        }
+    </style>
 }
 
-<div class="sticky-header d-flex">
+<div class="sticky-header d-flex" id="page-header">
     <div>
         <h3 class="pb-0 m-0">@Model.Project.Name</h3>
         <p class="card-subtitle text-gray m-0">@Model.Project.SubHeading</p>
@@ -60,7 +69,7 @@
             <p>Last edited</p>
         </header>
         <div class="accordion-wrapper">
-            @foreach (var template in Model.Project.Templates)
+            @foreach (TemplateTbl template in Model.Project.Templates)
             {
                 <div class="accordion" id="template-@template.Id">
                     <input type="checkbox" id="@template.Id" name="accordion-checkbox" hidden>
@@ -93,14 +102,106 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="empty-template">
-                                <p class="text-caption">Add a version to this template in order to start editing its contents.</p>
-                                <a asp-page="/Template/Add" type="button" class="btn  float-right">Add version</a>
-                            </div>
+                            @if (template.Versions.Any())
+                            {
+                                <div class="clearfix">
+                                    <a onclick="CreateNewTemplateVersion('@template.Id')" class="btn float-right">Add version</a>
+                                </div>
+                                <div class="template-version-table">
+                                    <header>
+                                        <p>Version</p>
+                                        <p>Last edited</p>
+                                    </header>
+                                    <div class="row-container">
+
+                                        @foreach (TemplateVersionTbl version in template.Versions)
+                                        {
+                                            <div class="row" id="version-@version.Id" data-templateId="@template.Id">
+                                                <a asp-page="/Project/Template" asp-route-projectId="@Model.Project.Id" asp-route-templateId="@version.TemplateId" asp-route-versionId="@version.Id" class="overlay"></a>
+                                                <div class="inner table-row">
+                                                    <div class="square-image">
+                                                        <img src="@version.ThumbnailImage" />
+                                                    </div>
+                                                    <span class="ml-2 user-select-none">
+                                                        @version.Name
+                                                        @if (version.IsActive)
+                                                        {
+                                                            <small class="label label-success">Active</small>
+                                                        }
+                                                    </span>
+                                                    <span class="text-capitalize user-select-none">@version.DateModified.Humanize()</span>
+                                                    <div class="dropdown dropdown-right">
+                                                        <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
+                                                            <i class="icon icon-more-vert"></i>
+                                                        </button>
+                                                        <ul class="menu">
+                                                            @if (!version.IsActive)
+                                                            {
+                                                                <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="MarkAsActive('@template.Id', '@version.Id')">Make active</a></li>
+                                                            }
+                                                            <li class="menu-item user-select-none"><a class="cursor-pointer" asp-page="/Project/Template" asp-route-projectId="@Model.Project.Id" asp-route-templateId="@version.TemplateId" asp-route-versionId="@version.Id">Edit</a></li>
+                                                            @if (!string.IsNullOrEmpty(version.PreviewImage))
+                                                            {
+                                                                <li class="menu-item user-select-none"><a href="#preview" class="cursor-pointer" onclick="Preview('@version.PreviewImage', '@Model.Project.Id', '@version.TemplateId', '@version.Id')">Preview</a></li>
+                                                            }
+                                                            <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="Duplicate('@template.Id', '@version.Id')">Duplicate</a></li>
+                                                            <li class="menu-item user-select-none"><a class="js-cd-panel-trigger delete-template-version cursor-pointer" data-panel="deleteTemplateVersion" data-versionId="@version.Id" data-templateId="@template.Id" data-templateName="@version.Name">Delete</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="empty-template">
+                                    <p class="text-caption">Add a version to this template in order to start editing its contents.</p>
+                                    <a onclick="CreateNewTemplateVersion('@template.Id')" type="button" class="btn  float-right">Add version</a>
+                                </div>
+                            }
+
                         </div>
                     </div>
                 </div>
             }
+        </div>
+    </div>
+
+    <form hidden method="post" asp-page-handler="CreateTemplateVersion" id="CreateTemplateVersionForm">
+        @Html.HiddenFor(model => model.CreateTemplateVersion.TemplateId)
+    </form>
+    <form hidden method="post" asp-page-handler="MarkAsActive" id="MarkAsActiveForm">
+        @Html.HiddenFor(model => model.MarkAsActive.ProjectId)
+        @Html.HiddenFor(model => model.MarkAsActive.TemplateId)
+        @Html.HiddenFor(model => model.MarkAsActive.VersionId)
+    </form>
+    <form hidden method="post" asp-page-handler="DuplicateTemplateVersion" id="DuplicateTemplateVersionForm">
+        @Html.HiddenFor(model => model.DuplicateTemplateVersion.ProjectId)
+        @Html.HiddenFor(model => model.DuplicateTemplateVersion.TemplateId)
+        @Html.HiddenFor(model => model.DuplicateTemplateVersion.VersionId)
+    </form>
+
+    <div class="modal modal-lg" id="preview">
+        <a class="modal-overlay" href="#modals" aria-label="Close"></a>
+        <div class="modal-container" role="document">
+            <div class="modal-header">
+                <div class="template-navbar">
+                    <div class="modal-title h5">Preview</div>
+                    <a style="margin-left: auto" class="d-inline" href="#modals" aria-label="Close">
+                        <ion-icon name="close-outline" size="large"></ion-icon>
+                    </a>
+                </div>
+
+            </div>
+            <div class="modal-body">
+                <img id="preview-image" width="100%" />
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-outline" id="preview-edit">Edit</a>
+            </div>
         </div>
     </div>
 }
@@ -193,6 +294,34 @@ else
             </div>
         </div>
     </div>
+
+
+    @*Delete template panel*@
+    <div class="cd-panel cd-panel--from-right js-cd-panel-deleteTemplateVersion">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Delete template</h3>
+                <p>Are you sure you want to delete this template version?</p>
+                <p>If this is the only version in the template or is the active version, any pending email or future emails using this template will fail to send.</p>
+                <p>To confirm the deletion of this template version please re-enter the template version name <strong>'<span id="deleteTemplateVersion-name"></span>'</strong></p>
+                <form class="form-horizontal" method="post" style="max-width: 800px" asp-page-handler="DeleteTemplateVersion">
+                    <div class="form-group">
+                        @Html.HiddenFor(model => model.DeleteTemplateVersion.ProjectId)
+                        @Html.HiddenFor(model => model.DeleteTemplateVersion.TemplateId)
+                        @Html.HiddenFor(model => model.DeleteTemplateVersion.VersionId)
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="deleteTemplateNameConfirmation">@Html.DisplayNameFor(model => model.UpdateTemplateName.Name):</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="deleteTemplateVersionNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.UpdateTemplateName.Name)">
+                        </div>
+                    </div>
+                    <button type="submit" id="deleteTemplateVersionSubmitBtn" class="btn float-right btn-outline-error">I understand the consequences, delete this template</button>
+                </form>
+            </div>
+        </div>
+    </div>
 }
 
 @section Scripts
@@ -210,7 +339,7 @@ else
     </script>
 
     @*Trigger row to shake, indicating new entry*@
-    <script>
+<script>
         $(document).one("scrollToId",
             function(event) {
                 var scrollToId = null;
@@ -222,8 +351,34 @@ else
                 }
 
                 if (scrollToId != null) {
+                    if (scrollToId.includes("version")) {
+                        var templateId = document.getElementById(scrollToId).getAttribute("data-templateId");
+                        document.getElementById(templateId).checked = true;
+                        document.getElementById(scrollToId).classList.remove('new-row');
+                    }
                     // TODO: Fade to green
                     document.getElementById(scrollToId).classList.add('animate__animated', 'animate__headShake');
+                }
+            });
+</script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded",
+            function() {
+                var scrollToId = null;
+                @{
+                    if (!string.IsNullOrWhiteSpace(TempData["scrollToId"]?.ToString()))
+                    {
+                        <text>scrollToId = "@TempData["scrollToId"]";</text>
+                    }
+                }
+
+                if (scrollToId != null) {
+                    if (scrollToId.includes("version")) {
+                        var templateId = document.getElementById(scrollToId).getAttribute("data-templateId");
+                        document.getElementById(templateId).checked = true;
+                        document.getElementById(scrollToId).classList.add('new-row');
+                    }
                 }
             });
     </script>
@@ -232,15 +387,16 @@ else
     <script>
         var updateTemplateName;
         document.querySelectorAll('.edit-name').forEach(item => {
-            item.addEventListener('click', event => {
-                var templateId = item.getAttribute("data-templateId");
-                updateTemplateName = item.getAttribute("data-templateName");
+            item.addEventListener('click',
+                event => {
+                    var templateId = item.getAttribute("data-templateId");
+                    updateTemplateName = item.getAttribute("data-templateName");
 
-                document.getElementById("UpdateTemplateName_TemplateId").value = templateId;
-                document.getElementById("UpdateTemplateName_Name").value = updateTemplateName;
+                    document.getElementById("UpdateTemplateName_TemplateId").value = templateId;
+                    document.getElementById("UpdateTemplateName_Name").value = updateTemplateName;
 
-                document.getElementById("updateTmeplateNameSubmitBtn").disabled = true;
-            });
+                    document.getElementById("updateTmeplateNameSubmitBtn").disabled = true;
+                });
         });
 
         document.getElementById("UpdateTemplateName_Name").addEventListener('input',
@@ -257,15 +413,16 @@ else
     <script>
         var updateTemplateName;
         document.querySelectorAll('.delete-template').forEach(item => {
-            item.addEventListener('click', event => {
-                var templateId = item.getAttribute("data-templateId");
-                updateTemplateName = item.getAttribute("data-templateName");
+            item.addEventListener('click',
+                event => {
+                    var templateId = item.getAttribute("data-templateId");
+                    updateTemplateName = item.getAttribute("data-templateName");
 
-                document.getElementById("DeleteTemplate_TemplateId").value = templateId;
-                document.getElementById("deleteTemplate-name").textContent = updateTemplateName;
+                    document.getElementById("DeleteTemplate_TemplateId").value = templateId;
+                    document.getElementById("deleteTemplate-name").textContent = updateTemplateName;
 
-                document.getElementById("deleteTemplateSubmitBtn").disabled = true;
-            });
+                    document.getElementById("deleteTemplateSubmitBtn").disabled = true;
+                });
         });
 
         document.getElementById("deleteTemplateNameConfirmation").addEventListener('input',
@@ -276,5 +433,65 @@ else
                     document.getElementById("deleteTemplateSubmitBtn").disabled = false;
                 }
             });
+    </script>
+
+    @*New template version*@
+    <script>
+        function CreateNewTemplateVersion(templateId) {
+            document.getElementById("CreateTemplateVersion_TemplateId").value = templateId;
+            document.getElementById("CreateTemplateVersionForm").submit();
+        }
+    </script>
+
+    @*Make active*@
+    <script>
+        function MarkAsActive(templateId, versionId) {
+            document.getElementById("MarkAsActive_TemplateId").value = templateId;
+            document.getElementById("MarkAsActive_VersionId").value = versionId;
+            document.getElementById("MarkAsActiveForm").submit();
+        }
+    </script>
+    @*Duplicate*@
+    <script>
+        function Duplicate(templateId, versionId) {
+            document.getElementById("DuplicateTemplateVersion_TemplateId").value = templateId;
+            document.getElementById("DuplicateTemplateVersion_VersionId").value = versionId;
+            document.getElementById("DuplicateTemplateVersionForm").submit();
+        }
+    </script>
+    @*Delete template version*@
+    <script>
+        var deleteTemplateVersionName;
+
+        document.querySelectorAll('.delete-template-version').forEach(item => {
+            item.addEventListener('click',
+                event => {
+                    deleteTemplateVersionName = item.getAttribute("data-templateName");
+
+                    document.getElementById("DeleteTemplateVersion_TemplateId").value = item.getAttribute("data-templateId");
+                    document.getElementById("DeleteTemplateVersion_VersionId").value = item.getAttribute("data-versionId");
+                    document.getElementById("deleteTemplateVersion-name").textContent = deleteTemplateVersionName;
+
+                    document.getElementById("deleteTemplateVersionSubmitBtn").disabled = true;
+                });
+        });
+
+        document.getElementById("deleteTemplateVersionNameConfirmation").addEventListener('input',
+            function (e) {
+                if (e.target.value == null || e.target.value.trim() == "" || e.target.value.trim().toLowerCase() != deleteTemplateVersionName.toLowerCase()) {
+                    document.getElementById("deleteTemplateVersionSubmitBtn").disabled = true;
+                } else {
+                    document.getElementById("deleteTemplateVersionSubmitBtn").disabled = false;
+                }
+            });
+    </script>
+
+    @*Preview*@
+    <script>
+        function Preview(imageUrl, projectId, templateId, versionId) {
+            document.getElementById("preview-image").src = imageUrl;
+            document.getElementById("preview-edit").href = `/Project/${projectId}/Template/${templateId}/Version/${versionId}`;
+
+        }
     </script>
 }

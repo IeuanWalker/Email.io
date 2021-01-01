@@ -1,4 +1,5 @@
 ﻿@page
+@using App.Database.Models
 @using Humanizer;
 @model App.Pages.Project.IndexModel
 @{
@@ -13,16 +14,17 @@
     </h3>
 </div>
 
-<div class="clearfix">
-    <a asp-page="/project/Add" type="button" class="btn float-right">Create project</a>
-</div>
+
 @if (Model.Projects.Any())
 {
+    <div class="clearfix">
+        <a asp-page="/project/Create" type="button" class="btn float-right mt-2">Create project</a>
+    </div>
     <div class="columns">
 
-        @foreach (var project in Model.Projects)
+        @foreach (ProjectTbl project in Model.Projects)
         {
-            <a asp-page="/Project/Details" asp-route-id="@project.Id" class="column col-3 col-md-6 col-sm-12">
+            <a asp-page="/Project/Details" asp-route-id="@project.Id" class="column col-3 col-lg-4 col-md-6 col-sm-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title h5">@project.Name</div>
@@ -36,7 +38,16 @@
 }
 else
 {
-    <p>No project, create a project</p>
+    <div class="empty mt-2">
+        <div class="empty-icon">
+            <ion-icon name="file-tray-full-outline" size="large"></ion-icon>
+        </div>
+        <p class="empty-title h5">Create your first project</p>
+        <p class="empty-subtitle">Project allow you to group 1 or more email templates together</p>
+        <div class="empty-action">
+            <a asp-page="/project/Create" class="btn" type="button">Create project</a>
+        </div>
+    </div>
 }
 
 @section Scripts{

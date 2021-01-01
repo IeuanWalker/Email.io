@@ -68,6 +68,7 @@ namespace App.Database.Context
 
         public DbSet<ProjectTbl> ProjectTbl { get; set; }
         public DbSet<TemplateTbl> TemplateTbl { get; set; }
+        public DbSet<TemplateVersionTbl> TemplateVersionTbl { get; set; }
 
         #endregion DbSet's
     }

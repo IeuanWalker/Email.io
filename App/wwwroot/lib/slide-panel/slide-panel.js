@@ -17,7 +17,7 @@
 					if( hasClass(event.target, 'js-cd-close') || hasClass(event.target, panelClass)) {
 						event.preventDefault();
 						removeClass(panel, 'cd-panel--is-visible');
-                        document.body.style.overflow = 'visible';
+                        document.body.style.overflow = null;
 					}
 				});
 			})(i);

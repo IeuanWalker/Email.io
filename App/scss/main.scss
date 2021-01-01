@@ -19,8 +19,9 @@ a {
 .cursor-pointer {
     cursor: pointer;
 }
-.align-items-center{
-    align-items:center;
+
+.align-items-center {
+    align-items: center;
 }
 
 .text-caption {
@@ -50,4 +51,81 @@ a {
 .sticky-header {
     justify-content: space-between;
     align-items: center;
+}
+
+.tagify__tag > div > * {
+    white-space: nowrap;
+}
+
+
+.template-version-table {
+    header {
+        display: grid;
+        grid-template-columns: auto 260px;
+        grid-column-gap: 6px;
+        padding: 12px 0 12px 0;
+    }
+
+    .square-image {
+        width: 75px;
+        min-height: 75px;
+        max-height: 75px;
+        border: 1px solid #d4dadf;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: auto
+        }
+    }
+
+    .row-container {
+        border: 1px solid #e9ecef;
+
+        .overlay {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+        }
+
+
+        .row {
+            position: relative;
+            border-bottom: 1px solid #e9ecef;
+            background-color: #fff;
+            transition: all 0.25s ease;
+
+            &.new-row {
+                background-color: #32b643;
+            }
+
+            &:last-child {
+                border: none;
+            }
+
+            &:hover {
+                background-color: #e9ecef;
+            }
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: min-content auto 200px 38px;
+            grid-column-gap: 6px;
+            -ms-flex-align: center;
+            align-items: center;
+            padding: 12px 12px 12px 12px;
+            color: inherit;
+        }
+    }
+}
+
+.accordion-body {
+    overflow: no-content;
+}
+
+.accordion input:checked ~ .accordion-body, .accordion[open] .accordion-body {
+    overflow: inherit;
 }

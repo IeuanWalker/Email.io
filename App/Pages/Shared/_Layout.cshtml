@@ -13,7 +13,7 @@
         <partial name="_sidebar" />
 
         <div class="content">
-            <div class="container">
+            <div class="container" id="container">
                 @RenderBody()
             </div>
             <partial name="_footer" />
@@ -25,25 +25,40 @@
     <script src="~/js/bundle.min.js" asp-append-version="true"></script>
     <script src="/js/dragsort.js" asp-append-version="true"></script>
     <script src="/js/toast.js" asp-append-version="true"></script>
-    <script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
 
     <!-- Triggers toasts -->
     <script>
         var toastMessage = null;
         var toastStatus = null;
         @{
-            if (!string.IsNullOrEmpty(TempData["toastMessage"]?.ToString()))
-            {
+        if (!string.IsNullOrEmpty(TempData["toastMessage"]?.ToString()))
+        {
             <text>toastMessage = "@TempData["toastMessage"]";</text>
-            }
+        }
 
-            if (!string.IsNullOrEmpty(TempData["toastStatus"]?.ToString()))
-            {
+        if (!string.IsNullOrEmpty(TempData["toastStatus"]?.ToString()))
+        {
             <text>toastStatus = "@TempData["toastStatus"]";</text>
-            }
+        }
     }
         loadToests(toastMessage, toastStatus);
     </script>
+
+    <script>
+        const el = document.querySelector(".sticky-header")
+        const observer = new IntersectionObserver(
+            ([e]) => e.target.classList.toggle("sticky-header-border", e.intersectionRatio < 1),
+            { threshold: [1] },
+        );
+
+        observer.observe(el);
+    </script>
+
+
+    @RenderSection("Scripts", required: false)
+
     <script>
         var scrollToId = null;
         @{
@@ -62,6 +77,5 @@
             });
         }
     </script>
-    @RenderSection("Scripts", required: false)
 </body>
 </html>
