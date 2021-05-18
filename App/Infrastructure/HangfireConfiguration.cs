@@ -1,6 +1,8 @@
 ﻿using System;
 using App.Models.AppSettings;
 using Hangfire;
+using Hangfire.Annotations;
+using Hangfire.Dashboard;
 using Hangfire.Heartbeat;
 using Hangfire.RecurringJobAdmin;
 using Hangfire.SqlServer;
@@ -42,7 +44,20 @@ namespace App.Infrastructure
 
         public static void Configure(IApplicationBuilder app)
         {
-            app.UseHangfireDashboard("/dev/Hangfire");
+            app.UseHangfireDashboard("/dev/Hangfire", new DashboardOptions()
+            {
+                Authorization = new[] { new NoAuthFilter() },
+                IgnoreAntiforgeryToken = true
+            });
+        }
+    }
+
+
+    public class NoAuthFilter : IDashboardAuthorizationFilter
+    {
+        public bool Authorize([NotNull] DashboardContext context)
+        {
+            return true;
         }
     }
 }

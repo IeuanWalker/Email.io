@@ -116,7 +116,7 @@
     <script src="/js/viewpr.min.js"></script>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded",
-            function () {
+            function() {
                 viewpr(params = {
                     svg: true
                 });
@@ -128,18 +128,18 @@
         var tabLinks = document.querySelectorAll(".tablinks");
         var tabContent = document.querySelectorAll(".tabcontent");
 
-        tabLinks.forEach(function (el) {
+        tabLinks.forEach(function(el) {
             el.addEventListener("click", openTabs);
         });
 
         function openTabs(el) {
             var btnTarget = el.currentTarget;
             var tabId = btnTarget.getAttribute('data-tabId');
-            tabContent.forEach(function (el) {
+            tabContent.forEach(function(el) {
                 el.classList.remove("active");
             });
 
-            tabLinks.forEach(function (el) {
+            tabLinks.forEach(function(el) {
                 el.classList.remove("active");
             });
 
@@ -169,17 +169,17 @@
                 autoCloseBrackets: true,
                 matchBrackets: true,
                 extraKeys: {
-                    "F11": function (cm) {
+                    "F11": function(cm) {
                         cm.setOption("fullScreen", !cm.getOption("fullScreen"));
                     },
-                    "Esc": function (cm) {
+                    "Esc": function(cm) {
                         if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
                     }
                 }
             });
 
         testDataEditor.on("change",
-            function (resultEditor, change) {
+            function(resultEditor, change) {
                 UpdatePreview();
             });
     </script>
@@ -202,19 +202,49 @@
                 autoRefresh: true,
                 matchTags: true,
                 extraKeys: {
-                    "F11": function (cm) {
+                    "F11": function(cm) {
                         cm.setOption("fullScreen", !cm.getOption("fullScreen"));
                     },
-                    "Esc": function (cm) {
+                    "Esc": function(cm) {
                         if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
                     }
                 }
             });
 
         codeEditor.on("change",
-            function (resultEditor, change) {
+            function(resultEditor, change) {
                 UpdatePreview();
             });
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded",
+             function () {
+            Handlebars.registerHelper('ifCond',
+                function(v1, operator, v2, options) {
+                    switch (operator) {
+                    case '==':
+                        return (v1 == v2) ? options.fn(this) : options.inverse(this);
+                    case '===':
+                        return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                    case '!=':
+                        return (v1 != v2) ? options.fn(this) : options.inverse(this);
+                    case '!==':
+                        return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+                    case '<':
+                        return (v1 < v2) ? options.fn(this) : options.inverse(this);
+                    case '<=':
+                        return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+                    case '>':
+                        return (v1 > v2) ? options.fn(this) : options.inverse(this);
+                    case '>=':
+                        return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+                    default:
+                        return options.inverse(this);
+                    }
+                });
+        });
     </script>
 
     @*Preview handling*@

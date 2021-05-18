@@ -1,3 +1,4 @@
+using App.Database.Context;
 using App.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -36,7 +37,7 @@ namespace App
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dataContext)
         {
             if (env.IsDevelopment())
             {
@@ -62,6 +63,8 @@ namespace App
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => endpoints.MapRazorPages());
+
+            DatabaseConfiguration.Configure(app, dataContext);
         }
     }
 }

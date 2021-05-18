@@ -1,0 +1,36 @@
+version: '3.4'
+volumes:
+  db-data:
+services:
+  sql-server-db:
+    container_name: sql-server-db
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    volumes:
+      - db-data:/var/opt/mssql/data
+    environment:
+        ACCEPT_EULA: "Y"
+        SA_PASSWORD: "Pa55w0rd2019"
+        MSSQL_PID: Express
+    ports:
+        - "1433:1433"
+  smtp-server:
+    container_name: smtp-server
+    image: mailhog/mailhog:latest
+    logging:
+     driver: 'none'  # disable saving logs
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+  app:
+    depends_on:
+        - sql-server-db
+        - smtp-server
+    image: ${DOCKER_REGISTRY-}app
+    build:
+      context: .
+      dockerfile: App/Dockerfile
+    ports:
+        - "8080:80"
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Developement
+        - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
