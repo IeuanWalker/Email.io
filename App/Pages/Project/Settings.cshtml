@@ -158,6 +158,7 @@
                 onUpdate: function (el) {
                     if (500 - simplemde.value().length > 0) {
                         el.innerHTML = 500 - simplemde.value().length;
+                        el.classList.remove('warn');
                         el.style.color = '#3b4351';
                     } else {
                         el.innerHTML = 500 - simplemde.value().length;
@@ -217,10 +218,6 @@
             target: '#Project_SubHeading',
             maxChars: 200
         });
-        //VCountdown({
-        //    target: '#Project_Description',
-        //    maxChars: 500
-        //});
     </script>
 
     <!-- Tags -->

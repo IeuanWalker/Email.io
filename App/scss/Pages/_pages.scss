@@ -1,1 +1,10 @@
-﻿@import 'Project/_project.scss';
+﻿
+/* tab content */
+.tabcontent {
+    display: none;
+}
+
+.tabcontent.active {
+    display: block;
+}
+@import 'Project/_project.scss';

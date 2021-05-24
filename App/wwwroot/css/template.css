@@ -89,13 +89,6 @@ iframe {
   .template-navbar-buttons.active p {
     opacity: 1; }
 
-/* tab content */
-.tabcontent {
-  display: none; }
-
-.tabcontent.active {
-  display: block; }
-
 .test-responsive-navbar {
   display: flex;
   flex-direction: row;

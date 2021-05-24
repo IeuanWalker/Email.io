@@ -7791,6 +7791,13 @@ footer {
     .accordian-table .accordion-wrapper .accordion-body > div {
       padding: 20px; }
 
+/* tab content */
+.tabcontent {
+  display: none; }
+
+.tabcontent.active {
+  display: block; }
+
 .empty-template {
   background-color: #fff;
   min-height: 150px;
