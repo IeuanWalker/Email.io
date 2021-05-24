@@ -1,5 +1,6 @@
 ﻿@page "/Project/{id}"
-@using App.Database.Models
+@using App.Database.Models;
+@using Microsoft.AspNetCore.Html;
 @using Humanizer;
 @model App.Pages.Project.DetailsModel
 @{
@@ -29,7 +30,7 @@
     </a>
 </div>
 
-<p>@Model.Project.Description</p>
+<p>@(new HtmlString(CommonMark.CommonMarkConverter.Convert(Model.Project.Description)))</p>
 <div class="d-flex align-items-center mb-2">
     <span class="text-caption"><span class="user-select-none">Project ID: </span>@Model.Project.Id</span>
     <div class="popover popover-bottom ml-2 cursor-pointer">

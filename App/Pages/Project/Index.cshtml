@@ -1,6 +1,7 @@
 ﻿@page
 @using App.Database.Models
 @using Humanizer;
+@using Microsoft.AspNetCore.Html;
 @model App.Pages.Project.IndexModel
 @{
     ViewData["Title"] = "Projects";
@@ -30,7 +31,7 @@
                         <div class="card-title h5">@project.Name</div>
                         <div class="card-subtitle text-gray">@project.SubHeading</div>
                     </div>
-                    <div class="card-body text-clip">@project.Description</div>
+                    <div class="card-body text-clip">@(new HtmlString(CommonMark.CommonMarkConverter.Convert(project.Description)))</div>
                 </div>
             </a>
         }
