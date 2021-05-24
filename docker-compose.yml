@@ -16,6 +16,7 @@ services:
   smtp-server:
     container_name: smtp-server
     image: mailhog/mailhog:latest
+    restart: always
     logging:
      driver: 'none'  # disable saving logs
     ports:
@@ -34,3 +35,5 @@ services:
     environment:
         - ASPNETCORE_ENVIRONMENT=Developement
         - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
+        - MailHostUrl=smtp-server
+        - MailPort=1025

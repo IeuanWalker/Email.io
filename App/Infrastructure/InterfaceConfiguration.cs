@@ -1,6 +1,7 @@
 ﻿using App.Database.Repositories.Project;
 using App.Database.Repositories.Template;
 using App.Database.Repositories.TemplateVersion;
+using App.Services.Email;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Infrastructure
@@ -16,6 +17,7 @@ namespace App.Infrastructure
             services.AddTransient<IProjectRepository, ProjectRepository>();
             services.AddTransient<ITemplateRepository, TemplateRepository>();
             services.AddTransient<ITemplateVersionRepository, TemplateVersionRepository>();
+            services.AddSingleton<IEmailService, EmailService>();
         }
     }
 }

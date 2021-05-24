@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
@@ -8,6 +9,7 @@ using App.Database.Models;
 using App.Database.Repositories.Project;
 using App.Database.Repositories.Template;
 using App.Database.Repositories.TemplateVersion;
+using App.Services.Email;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
@@ -16,6 +18,7 @@ using HandlebarsDotNet;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MimeKit;
 using Newtonsoft.Json.Linq;
 
 namespace App.Pages.Project
@@ -26,16 +29,19 @@ namespace App.Pages.Project
         private readonly ITemplateRepository _templateTbl;
         private readonly ITemplateVersionRepository _templateVersionTbl;
         private IBackgroundJobClient _jobClient;
+        private readonly IEmailService _emailService;
         public TemplateModel(
             IProjectRepository projectTbl,
             ITemplateRepository templateTbl,
             ITemplateVersionRepository templateVersionTbl,
-            IBackgroundJobClient jobClient)
+            IBackgroundJobClient jobClient,
+            IEmailService emailService)
         {
             _projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
             _templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
             _templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
             _jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
+            _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         }
 
         public TemplateVersionTbl Version { get; set; }
@@ -67,6 +73,12 @@ namespace App.Pages.Project
                 VersionId = versionId,
                 Name = Version.Name,
                 Subject = Version.Subject
+            };
+            TestSend = new TestSendModel
+            {
+                ProjectId = projectId,
+                TemplateId = templateId,
+                VersionId = versionId
             };
         }
 
@@ -248,7 +260,35 @@ namespace App.Pages.Project
                 versionId = UpdateTemplate.VersionId
             });
         }
+        [BindProperty]
+        public TestSendModel TestSend { get; set; }
+        public async Task<IActionResult> OnPostTestSend()
+        {
+            // Get template 
+            TemplateVersionTbl version = (await _templateVersionTbl.Get(x =>
+                    x.Id.Equals(UpdateSettings.VersionId) &&
+                    x.TemplateId.Equals(UpdateSettings.TemplateId) &&
+                    x.Template.ProjectId.Equals(UpdateSettings.ProjectId)))
+                .FirstOrDefault();
 
+            if (version == null)
+                throw new NullReferenceException();
+
+            // Generate body
+            HandlebarsTemplate<object, object> subjectTemplate = Handlebars.Compile(version.Subject);
+            string subjectResult = subjectTemplate(JObject.Parse(version.TestData));
+
+            HandlebarsTemplate<object, object> bodyTemplate = Handlebars.Compile(version.Html);
+            string bodyResult = bodyTemplate(JObject.Parse(version.TestData));
+
+            await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, subjectResult, bodyResult, version.TestData);
+            return RedirectToPage("/Project/Template", new
+            {
+                projectId = TestSend.ProjectId,
+                templateId = TestSend.TemplateId,
+                versionId = TestSend.VersionId
+            });
+        }
 
         public async Task GenerateThumbnailAndPreview(int versionId)
         {
@@ -325,5 +365,20 @@ namespace App.Pages.Project
         [Required]
         [MaxLength(200)]
         public string Name { get; set; }
+    }
+
+    public class TestSendModel
+    {
+        [Required]
+        public Guid ProjectId { get; set; }
+        [Required]
+        public Guid TemplateId { get; set; }
+        [Required]
+        public int VersionId { get; set; }
+
+        public string Name { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
     }
 }
