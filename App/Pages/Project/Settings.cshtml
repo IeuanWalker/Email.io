@@ -150,10 +150,21 @@
             status: [{
 		        className: "chars-length",
 		        defaultValue: function(el) {
-			        el.innerHTML = "0";
-		        },
-		        onUpdate: function(el) {
-                    el.innerHTML = simplemde.value().length;
+                    el.innerHTML = "0";
+                    el.style.marginRight = '-10px';
+                    el.style.fontSize = 'unset';
+                    el.style.color = '#3b4351';
+                },
+                onUpdate: function (el) {
+                    if (500 - simplemde.value().length > 0) {
+                        el.innerHTML = 500 - simplemde.value().length;
+                        el.style.color = '#3b4351';
+                    } else {
+                        el.innerHTML = 500 - simplemde.value().length;
+                        el.classList.add('warn');
+                        el.style.color = '#fff';
+                    }
+                    
                 }
 	        }], //  // Another optional usage, with a custom status bar item that counts keystrokes
         });
