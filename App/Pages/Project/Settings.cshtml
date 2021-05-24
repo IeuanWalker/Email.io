@@ -4,6 +4,15 @@
     ViewData["Title"] = "Settings";
 }
 
+@section Styles
+{
+    <style>
+        .CodeMirror-scroll {
+            height: unset
+        }
+    </style>
+}
+
 <div class="sticky-header">
     <h3 class="pb-0 m-0">Settings</h3>
     <p class="card-subtitle text-gray m-0">@Model.Project.Name</p>
@@ -66,8 +75,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-9 col-sm-12">
-                            <textarea class="form-input" type="text" asp-for="Project.Description" placeholder="@Html.DisplayNameFor(model => model.Project.Description)"></textarea>
+                        <div class="col-9 col-sm-12" style="z-index: 999">
+                            <textarea  class="form-input" type="text" asp-for="Project.Description" placeholder="@Html.DisplayNameFor(model => model.Project.Description)"></textarea>
                             <span class="form-input-hint" asp-validation-for="Project.Description"></span>
                         </div>
                     </div>
@@ -133,6 +142,22 @@
 }
 
 @section Scripts{
+    @*Markdown editor*@
+    <script>
+        var simplemde = new SimpleMDE({
+            element: document.getElementById("Project_Description"),
+            status: false,
+            status: [{
+		        className: "chars-length",
+		        defaultValue: function(el) {
+			        el.innerHTML = "0";
+		        },
+		        onUpdate: function(el) {
+                    el.innerHTML = simplemde.value().length;
+                }
+	        }], //  // Another optional usage, with a custom status bar item that counts keystrokes
+        });
+    </script>
     @*Tabs*@
     <script type="text/javascript">
         var tabLinks = document.querySelectorAll(".tablinks");
@@ -181,10 +206,10 @@
             target: '#Project_SubHeading',
             maxChars: 200
         });
-        VCountdown({
-            target: '#Project_Description',
-            maxChars: 500
-        });
+        //VCountdown({
+        //    target: '#Project_Description',
+        //    maxChars: 500
+        //});
     </script>
 
     <!-- Tags -->

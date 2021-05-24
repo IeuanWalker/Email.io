@@ -1,1 +1,1 @@
-﻿///<binding BeforeBuild='wwwroot/scss/main.scss' />
+﻿///<binding BeforeBuild='scss/Pages/Template/template.scss, scss/main.scss' />

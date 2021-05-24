@@ -35,7 +35,7 @@
     <Content Include="scss\Pages\Template\_layout.scss" />
     <Content Include="scss\Pages\Template\_nvabar.scss" />
     <Content Include="scss\Pages\Template\_responsive-previewer.scss" />
-    <Content Include="scss\Pages\Template\_template.scss" />
+    <Content Include="scss\Pages\Template\template.scss" />
     <Content Include="scss\Pages\_pages.scss" />
   </ItemGroup>
 

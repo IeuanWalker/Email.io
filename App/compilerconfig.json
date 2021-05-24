@@ -2,5 +2,9 @@
   {
     "inputFile": "scss/main.scss",
     "outputFile": "wwwroot/css/main.css"
+  },
+  {
+    "inputFile": "scss/Pages/Template/template.scss",
+    "outputFile": "wwwroot/css/template.css"
   }
 ]
