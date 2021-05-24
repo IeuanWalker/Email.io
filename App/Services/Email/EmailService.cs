@@ -8,13 +8,10 @@ namespace App.Services.Email
 {
     public class EmailService : IEmailService
     {
-        private const string MailHost = "mail";
-        private const int MailPort = 1025;
         public async Task SendEmail(IEnumerable<MailboxAddress> to, string subject, string htmlBody, string textBody)
         {
-            MimeMessage message = new MimeMessage();
-            string mailHost = MailHost;
-            int mailPort = MailPort;
+            string mailHost = string.Empty;
+            int mailPort = 0;
 
             if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MailHostUrl")))
             {
@@ -25,6 +22,7 @@ namespace App.Services.Email
                 mailPort = Convert.ToInt32(Environment.GetEnvironmentVariable("MailPort"));
             }
 
+            MimeMessage message = new MimeMessage();
             message.From.Add(new MailboxAddress("Test", "noreply@test.com"));
             foreach (MailboxAddress email in to)
             {
@@ -42,6 +40,7 @@ namespace App.Services.Email
             using SmtpClient mailClient = new SmtpClient();
             await mailClient.ConnectAsync(mailHost, mailPort, MailKit.Security.SecureSocketOptions.None);
             await mailClient.SendAsync(message);
+            await mailClient.DisconnectAsync(true);
         }
     }
 

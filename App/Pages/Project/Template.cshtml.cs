@@ -275,6 +275,81 @@ namespace App.Pages.Project
                 throw new NullReferenceException();
 
             // Generate body
+            Handlebars.RegisterHelper("ifCond", (output, options, context, arguments) =>
+               {
+                   if (arguments.Length != 3)
+                   {
+                       throw new HandlebarsException("{{#StringEqualityBlockHelper}} helper must have exactly 3 arguments");
+                   }
+
+                   string v1 = arguments.At<string>(0);
+                   string @operator = arguments.At<string>(1);
+                   string v2 = arguments.At<string>(0);
+
+                   switch (@operator)
+                   {
+                       case "==":
+                           if (v1 == v2)
+                           {
+                               options.Template(output, context);
+                           }
+                           else
+                           {
+                               options.Inverse(output, context);
+                           }
+                           break;
+                       case "!=":
+                           if (v1 != v2)
+                           {
+                               options.Template(output, context);
+                           }
+                           else
+                           {
+                               options.Inverse(output, context);
+                           }
+                           break;
+                       case "<":
+                           if (Convert.ToDouble(v1) < Convert.ToDouble(v2))
+                           {
+                               options.Template(output, context);
+                           }
+                           else
+                           {
+                               options.Inverse(output, context);
+                           }
+                           break;
+                       case "<=":
+                           if (Convert.ToDouble(v1) <= Convert.ToDouble(v2))
+                           {
+                               options.Template(output, context);
+                           }
+                           else
+                           {
+                               options.Inverse(output, context);
+                           }
+                           break;
+                       case ">":
+                           if (Convert.ToDouble(v1) > Convert.ToDouble(v2))
+                           {
+                               options.Template(output, context);
+                           }
+                           else
+                           {
+                               options.Inverse(output, context);
+                           }
+                           break;
+                       case ">=":
+                           if (Convert.ToDouble(v1) >= Convert.ToDouble(v2))
+                           {
+                               options.Template(output, context);
+                           }
+                           else
+                           {
+                               options.Inverse(output, context);
+                           }
+                           break;
+                   }
+               });
             HandlebarsTemplate<object, object> subjectTemplate = Handlebars.Compile(version.Subject);
             string subjectResult = subjectTemplate(JObject.Parse(version.TestData));
 
