@@ -34,6 +34,7 @@ services:
         - "8080:80"
     environment:
         - ASPNETCORE_ENVIRONMENT=Developement
-        - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
         - MailHostUrl=smtp-server
         - MailPort=1025
+        - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
+
