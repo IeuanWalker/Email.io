@@ -44,7 +44,6 @@
             if (toastStatus == "" || toastStatus == null) {
                 toast.info(toastMessage);
             } else {
-
                 switch (toastStatus) {
                     case "info":
                         toast.info(toastMessage);

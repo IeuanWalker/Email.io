@@ -1,11 +1,7 @@
 ﻿using App.Database.Context;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace App.Database.Repositories.Generic
 {
@@ -21,8 +17,8 @@ namespace App.Database.Repositories.Generic
         internal DbSet<T> DbSet;
 
         public virtual async Task<IEnumerable<T>> Get(
-            Expression<Func<T, bool>> filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             string includeProperties = "")
         {
             // Create IQuerayble
@@ -39,7 +35,7 @@ namespace App.Database.Repositories.Generic
             return orderBy == null ? await query.ToListAsync().ConfigureAwait(false) : await orderBy(query).ToListAsync().ConfigureAwait(false);
         }
 
-        public virtual async Task<T> GetById(object id) => await DbSet.FindAsync(id).ConfigureAwait(false);
+        public virtual async Task<T?> GetById(object id) => await DbSet.FindAsync(id).ConfigureAwait(false);
 
         public virtual async Task<T> Add(T entity)
         {
@@ -52,7 +48,8 @@ namespace App.Database.Repositories.Generic
             // Return new database object
             return entity;
         }
-        public virtual async Task BulkAdd(List<T> entities, BulkConfig config = null)
+
+        public virtual async Task BulkAdd(List<T> entities, BulkConfig? config = null)
         {
             await Context.BulkInsertAsync(entities, config).ConfigureAwait(false);
         }
@@ -60,10 +57,13 @@ namespace App.Database.Repositories.Generic
         public virtual async Task Delete(object id)
         {
             // Found object using ID
-            T entityToDelete = await DbSet.FindAsync(id).ConfigureAwait(false);
+            T? entityToDelete = await DbSet.FindAsync(id).ConfigureAwait(false);
 
             // Delete object
-            Delete(entityToDelete);
+            if (entityToDelete is not null)
+            {
+                Delete(entityToDelete);
+            }
         }
 
         public virtual void Delete(T entityToDelete)
@@ -101,11 +101,9 @@ namespace App.Database.Repositories.Generic
             await DbSet.Where(query).BatchUpdateAsync(updateExpression).ConfigureAwait(false);
         }
 
-        public IQueryable<T> Query(Expression<Func<T, bool>> query = null)
+        public IQueryable<T> Query(Expression<Func<T, bool>>? query = null)
         {
-             return query == null ? DbSet : DbSet.Where(query);
+            return query == null ? DbSet : DbSet.Where(query);
         }
-
-
     }
 }

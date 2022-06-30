@@ -1,10 +1,6 @@
 ﻿using App.Database.Models;
 using App.Database.Repositories.Project;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace App.Pages.Project
 {
@@ -17,7 +13,7 @@ namespace App.Pages.Project
             _projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
         }
 
-        public IEnumerable<ProjectTbl> Projects { get; set; }
+        public IEnumerable<ProjectTbl> Projects { get; set; } = new List<ProjectTbl>();
 
         public async Task OnGet()
         {

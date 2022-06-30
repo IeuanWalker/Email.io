@@ -36,8 +36,6 @@
     transition: background 0.3s 0s;
 }
 
-
-
 .cd-panel__close {
     position: absolute;
     top: 0;
@@ -101,8 +99,6 @@
         }
     }
 }
-
-
 
 .cd-panel--is-visible .cd-panel__close {
     &::before {

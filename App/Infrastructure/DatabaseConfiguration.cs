@@ -1,11 +1,6 @@
-﻿using System;
-using App.Database.Context;
+﻿using App.Database.Context;
 using App.Models.AppSettings;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Infrastructure
 {
@@ -26,7 +21,6 @@ namespace App.Infrastructure
                   b => b.MigrationsAssembly($"{nameof(App)}.{nameof(Database)}"));
             });
         }
-
 
         public static void Configure(IApplicationBuilder app, ApplicationDbContext dataContext)
         {

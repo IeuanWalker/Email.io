@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using MimeKit;
+﻿using MimeKit;
 
 namespace App.Services.Email
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace App.Database.Models
+﻿namespace App.Database.Models
 {
     public class BaseEntityModifiedDate
     {

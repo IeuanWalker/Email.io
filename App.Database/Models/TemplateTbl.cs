@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace App.Database.Models
@@ -10,11 +8,13 @@ namespace App.Database.Models
     {
         [Key]
         public Guid Id { get; set; }
+
         [Required]
         [MaxLength(200)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
+
         public Guid ProjectId { get; set; }
-        public ProjectTbl Project { get; set; }
-        public ICollection<TemplateVersionTbl> Versions { get; set; }
+        public ProjectTbl? Project { get; set; }
+        public ICollection<TemplateVersionTbl>? Versions { get; set; }
     }
 }

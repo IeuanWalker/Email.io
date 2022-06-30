@@ -2,6 +2,6 @@
 {
     public class DatabaseConnections
     {
-        public string EmailDb { get; set; }
+        public string EmailDb { get; set; } = string.Empty;
     }
 }

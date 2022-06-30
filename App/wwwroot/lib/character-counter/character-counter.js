@@ -25,7 +25,7 @@
             throw 'Provide a target to count characters';
         }
 
-        this.target   = document.querySelector(options.target);
+        this.target = document.querySelector(options.target);
         this.maxChars = options.maxChars || 140;
 
         this.countdown();
@@ -60,7 +60,7 @@
         update: function () {
             var target = this.target,
                 currentCount = target.value.length,
-                remaining    = this.maxChars - currentCount;
+                remaining = this.maxChars - currentCount;
 
             if (remaining > 10) {
                 this.removeClass(target.nextElementSibling, 'warn');
@@ -74,7 +74,7 @@
             this.target.setAttribute('maxlength', this.maxChars);
         },
         charsLen: function () {
-            var span = this.createEls('span', {className: 'chars-length'});
+            var span = this.createEls('span', { className: 'chars-length' });
             span.innerHTML = this.maxChars;
 
             this.insertAfter(this.target, span);

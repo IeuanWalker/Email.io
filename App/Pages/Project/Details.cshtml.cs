@@ -1,14 +1,11 @@
 ﻿using App.Database.Models;
 using App.Database.Repositories.Project;
 using App.Database.Repositories.Template;
+using App.Database.Repositories.TemplateVersion;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using App.Database.Repositories.TemplateVersion;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace App.Pages.Project
 {
@@ -28,7 +25,7 @@ namespace App.Pages.Project
             _templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
         }
 
-        public ProjectTbl Project { get; set; }
+        public ProjectTbl? Project { get; set; }
 
         public async Task OnGet(Guid id)
         {
@@ -37,7 +34,7 @@ namespace App.Pages.Project
             if (Project == null)
                 throw new NullReferenceException(nameof(Project));
 
-            Project.Templates = Project.Templates.OrderBy(x => x.Name).ToList();
+            Project.Templates = Project.Templates?.OrderBy(x => x.Name).ToList();
             CreateTemplate = new TemplateTbl
             {
                 ProjectId = id
@@ -65,7 +62,8 @@ namespace App.Pages.Project
         }
 
         [BindProperty]
-        public TemplateTbl CreateTemplate { get; set; }
+        public TemplateTbl CreateTemplate { get; set; } = new TemplateTbl();
+
         public async Task<IActionResult> OnPostCreateTemplate()
         {
             // TODO: Error handling
@@ -83,11 +81,12 @@ namespace App.Pages.Project
         }
 
         [BindProperty]
-        public UpdateTemplateNameModel UpdateTemplateName { get; set; }
+        public UpdateTemplateNameModel UpdateTemplateName { get; set; } = new UpdateTemplateNameModel();
+
         public async Task<IActionResult> OnPostUpdateTemplateName()
         {
             // TODO: Error handling
-            TemplateTbl result = await _templateTbl.GetById(UpdateTemplateName.TemplateId);
+            TemplateTbl? result = await _templateTbl.GetById(UpdateTemplateName.TemplateId);
 
             if (result == null)
                 throw new NullReferenceException();
@@ -111,11 +110,12 @@ namespace App.Pages.Project
         }
 
         [BindProperty]
-        public DeleteTemplateModel DeleteTemplate { get; set; }
+        public DeleteTemplateModel DeleteTemplate { get; set; } = new DeleteTemplateModel();
+
         public async Task<IActionResult> OnPostDeleteTemplate()
         {
             // TODO: Error handling
-            Guid projectId = await _templateTbl.Query()
+            Guid? projectId = await _templateTbl.Query()
                 .Where(x => x.Id.Equals(DeleteTemplate.TemplateId))
                 .Select(x => x.ProjectId)
                 .FirstOrDefaultAsync();
@@ -140,11 +140,12 @@ namespace App.Pages.Project
         }
 
         [BindProperty]
-        public TemplateVersionTbl CreateTemplateVersion { get; set; }
+        public TemplateVersionTbl CreateTemplateVersion { get; set; } = new TemplateVersionTbl();
+
         public async Task<IActionResult> OnPostCreateTemplateVersion()
         {
             // TODO: Error handling
-            TemplateTbl template = (await _templateTbl.Get(x => x.Id.Equals(CreateTemplateVersion.TemplateId), null, nameof(TemplateTbl.Versions))).FirstOrDefault();
+            TemplateTbl? template = (await _templateTbl.Get(x => x.Id.Equals(CreateTemplateVersion.TemplateId), null, nameof(TemplateTbl.Versions))).FirstOrDefault();
 
             if (template == null)
                 throw new NullReferenceException();
@@ -153,7 +154,7 @@ namespace App.Pages.Project
             CreateTemplateVersion.Subject = "Default subject";
             CreateTemplateVersion.Html = string.Empty;
             CreateTemplateVersion.TestData = "{}";
-            if (!template.Versions.Any())
+            if (!template.Versions?.Any() ?? true)
             {
                 CreateTemplateVersion.IsActive = true;
             }
@@ -169,24 +170,22 @@ namespace App.Pages.Project
             TempData["toastMessage"] = "Template version created";
             TempData["scrollToId"] = $"version-{result.Id}";
 
-
             return RedirectToPage("/Project/Details", new { id = template.ProjectId });
         }
 
         [BindProperty]
-        public MarkAsActiveModel MarkAsActive { get; set; }
+        public MarkAsActiveModel MarkAsActive { get; set; } = new MarkAsActiveModel();
 
         public async Task<IActionResult> OnPostMarkAsActive()
         {
-            TemplateVersionTbl version = (await _templateVersionTbl.Get(x =>
+            TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
                     x.Id.Equals(MarkAsActive.VersionId) &&
                     x.TemplateId.Equals(MarkAsActive.TemplateId) &&
-                    x.Template.ProjectId.Equals(MarkAsActive.ProjectId)))
+                    x.Template!.ProjectId.Equals(MarkAsActive.ProjectId)))
                 .FirstOrDefault();
 
             if (version == null)
                 throw new NullReferenceException(nameof(version));
-
 
             version.IsActive = true;
 
@@ -219,14 +218,15 @@ namespace App.Pages.Project
         }
 
         [BindProperty]
-        public DuplicateTemplateVersionModel DuplicateTemplateVersion { get; set; }
+        public DuplicateTemplateVersionModel DuplicateTemplateVersion { get; set; } = new DuplicateTemplateVersionModel();
+
         public async Task<IActionResult> OnPostDuplicateTemplateVersion()
         {
             // TODO: Error handling
-            TemplateVersionTbl version = (await _templateVersionTbl.Get(x =>
+            TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
                    x.Id.Equals(DuplicateTemplateVersion.VersionId) &&
                    x.TemplateId.Equals(DuplicateTemplateVersion.TemplateId) &&
-                   x.Template.ProjectId.Equals(DuplicateTemplateVersion.ProjectId)))
+                   x.Template!.ProjectId.Equals(DuplicateTemplateVersion.ProjectId)))
                .FirstOrDefault();
 
             if (version == null)
@@ -255,23 +255,23 @@ namespace App.Pages.Project
             TempData["toastMessage"] = "Template version duplicated";
             TempData["scrollToId"] = $"version-{result.Id}";
 
-
             return RedirectToPage("/Project/Details", new { id = DuplicateTemplateVersion.ProjectId });
         }
+
         [BindProperty]
-        public DeleteTemplateVersionModel DeleteTemplateVersion { get; set; }
+        public DeleteTemplateVersionModel DeleteTemplateVersion { get; set; } = new DeleteTemplateVersionModel();
+
         public async Task<IActionResult> OnPostDeleteTemplateVersion()
         {
             // TODO: Error handling
-            TemplateVersionTbl version = (await _templateVersionTbl.Get(x =>
+            TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
                     x.Id.Equals(DeleteTemplateVersion.VersionId) &&
                     x.TemplateId.Equals(DeleteTemplateVersion.TemplateId) &&
-                    x.Template.ProjectId.Equals(DeleteTemplateVersion.ProjectId)))
+                    x.Template!.ProjectId.Equals(DeleteTemplateVersion.ProjectId)))
                 .FirstOrDefault();
 
             if (version == null)
                 throw new NullReferenceException();
-
 
             await _templateVersionTbl.Delete(DeleteTemplateVersion.VersionId);
 
@@ -290,24 +290,26 @@ namespace App.Pages.Project
 
             return RedirectToPage("/Project/Details", new { id = DeleteTemplateVersion.ProjectId });
         }
-
     }
 
     public class UpdateTemplateNameModel
     {
         [Required]
         public Guid ProjectId { get; set; }
+
         [Required]
         public Guid TemplateId { get; set; }
+
         [Required]
         [MinLength(1)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 
     public class DeleteTemplateModel
     {
         [Required]
         public Guid ProjectId { get; set; }
+
         [Required]
         public Guid TemplateId { get; set; }
     }
@@ -316,26 +318,34 @@ namespace App.Pages.Project
     {
         [Required]
         public Guid ProjectId { get; set; }
+
         [Required]
         public Guid TemplateId { get; set; }
+
         [Required]
         public int VersionId { get; set; }
     }
+
     public class DuplicateTemplateVersionModel
     {
         [Required]
         public Guid ProjectId { get; set; }
+
         [Required]
         public Guid TemplateId { get; set; }
+
         [Required]
         public int VersionId { get; set; }
     }
+
     public class DeleteTemplateVersionModel
     {
         [Required]
         public Guid ProjectId { get; set; }
+
         [Required]
         public Guid TemplateId { get; set; }
+
         [Required]
         public int VersionId { get; set; }
     }

@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using App.Database.Models;
 using App.Database.Repositories.Project;
 using Microsoft.AspNetCore.Mvc;
@@ -16,8 +13,9 @@ namespace App.Pages.Project
         {
             _projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
         }
+
         [BindProperty]
-        public ProjectTbl Project { get; set; }
+        public ProjectTbl? Project { get; set; }
 
         public async Task OnGet(Guid id)
         {
@@ -36,6 +34,8 @@ namespace App.Pages.Project
                 return Page();
             }
 
+            if (Project == null) return Page();
+
             _projectTbl.Update(Project);
 
             TempData["toastStatus"] = "success";
@@ -46,6 +46,7 @@ namespace App.Pages.Project
 
         [BindProperty]
         public Guid DeleteProjectId { get; set; }
+
         public async Task<IActionResult> OnPostDeleteProject()
         {
             // TODO: Error handling

@@ -1,5 +1,4 @@
-﻿
-.docs-container {
+﻿.docs-container {
     min-height: 100vh;
 }
 
@@ -47,7 +46,6 @@
 
 @supports ((position: -webkit-sticky) or (position: sticky)) {
     .content {
-
         .sticky-header {
             padding-bottom: 1rem;
             padding-top: 1rem;
@@ -70,7 +68,6 @@
         }
     }
 }
-
 
 @media (max-width: 960px) {
     .content {

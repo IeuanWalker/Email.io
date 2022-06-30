@@ -2,7 +2,6 @@
 using App.Database.Repositories.Template;
 using App.Database.Repositories.TemplateVersion;
 using App.Services.Email;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Infrastructure
 {

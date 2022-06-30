@@ -1,5 +1,4 @@
-﻿
-@import 'Library/_library.scss';
+﻿@import 'Library/_library.scss';
 @import 'Layout/_layout.scss';
 @import 'Components/_components.scss';
 @import 'Pages/_pages.scss';
@@ -57,7 +56,6 @@ a {
     white-space: nowrap;
 }
 
-
 .template-version-table {
     header {
         display: grid;
@@ -89,7 +87,6 @@ a {
             bottom: 0;
             right: 0;
         }
-
 
         .row {
             position: relative;

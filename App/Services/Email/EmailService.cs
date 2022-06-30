@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MimeKit;
 
 namespace App.Services.Email
@@ -10,7 +7,7 @@ namespace App.Services.Email
     {
         public async Task SendEmail(IEnumerable<MailboxAddress> to, string subject, string htmlBody, string textBody)
         {
-            string mailHost = string.Empty;
+            string? mailHost = string.Empty;
             int mailPort = 0;
 
             if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("MailHostUrl")))
@@ -34,7 +31,6 @@ namespace App.Services.Email
             {
                 HtmlBody = htmlBody,
                 TextBody = textBody
-
             }.ToMessageBody();
 
             using SmtpClient mailClient = new SmtpClient();
@@ -43,6 +39,4 @@ namespace App.Services.Email
             await mailClient.DisconnectAsync(true);
         }
     }
-
-
 }

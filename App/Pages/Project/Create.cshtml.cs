@@ -2,8 +2,6 @@
 using App.Database.Repositories.Project;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
-using System.Threading.Tasks;
 
 namespace App.Pages.Project
 {
@@ -21,7 +19,7 @@ namespace App.Pages.Project
         }
 
         [BindProperty]
-        public ProjectTbl Project { get; set; }
+        public ProjectTbl Project { get; set; } = null!;
 
         public async Task<IActionResult> OnPost()
         {

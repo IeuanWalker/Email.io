@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using App.Database.Models;
 using App.Database.Repositories.Project;
 using App.Database.Repositories.Template;
@@ -20,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MimeKit;
 using Newtonsoft.Json.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace App.Pages.Project
 {
@@ -30,6 +24,7 @@ namespace App.Pages.Project
         private readonly ITemplateVersionRepository _templateVersionTbl;
         private IBackgroundJobClient _jobClient;
         private readonly IEmailService _emailService;
+
         public TemplateModel(
             IProjectRepository projectTbl,
             ITemplateRepository templateTbl,
@@ -44,7 +39,7 @@ namespace App.Pages.Project
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         }
 
-        public TemplateVersionTbl Version { get; set; }
+        public TemplateVersionTbl? Version { get; set; }
         public Guid ProjectId { get; set; }
 
         public async Task OnGet(Guid projectId, Guid templateId, int versionId)
@@ -54,7 +49,7 @@ namespace App.Pages.Project
             Version = (await _templateVersionTbl.Get(x =>
                     x.Id.Equals(versionId) &&
                     x.TemplateId.Equals(templateId) &&
-                    x.Template.ProjectId.Equals(projectId)))
+                    x.Template!.ProjectId.Equals(projectId)))
                 .FirstOrDefault();
 
             if (Version == null)
@@ -83,7 +78,8 @@ namespace App.Pages.Project
         }
 
         [BindProperty]
-        public UpdateTemplateModel UpdateTemplate { get; set; }
+        public UpdateTemplateModel UpdateTemplate { get; set; } = new UpdateTemplateModel();
+
         public async Task<IActionResult> OnPostUpdateTemplate()
         {
             UpdateTemplate.Html = string.IsNullOrWhiteSpace(UpdateTemplate.Html) ? string.Empty : UpdateTemplate.Html;
@@ -113,6 +109,7 @@ namespace App.Pages.Project
                                 options.Inverse(output, context);
                             }
                             break;
+
                         case "!=":
                             if (v1 != v2)
                             {
@@ -123,6 +120,7 @@ namespace App.Pages.Project
                                 options.Inverse(output, context);
                             }
                             break;
+
                         case "<":
                             if (Convert.ToDouble(v1) < Convert.ToDouble(v2))
                             {
@@ -133,6 +131,7 @@ namespace App.Pages.Project
                                 options.Inverse(output, context);
                             }
                             break;
+
                         case "<=":
                             if (Convert.ToDouble(v1) <= Convert.ToDouble(v2))
                             {
@@ -143,6 +142,7 @@ namespace App.Pages.Project
                                 options.Inverse(output, context);
                             }
                             break;
+
                         case ">":
                             if (Convert.ToDouble(v1) > Convert.ToDouble(v2))
                             {
@@ -153,6 +153,7 @@ namespace App.Pages.Project
                                 options.Inverse(output, context);
                             }
                             break;
+
                         case ">=":
                             if (Convert.ToDouble(v1) >= Convert.ToDouble(v2))
                             {
@@ -163,12 +164,12 @@ namespace App.Pages.Project
                                 options.Inverse(output, context);
                             }
                             break;
-                    } 
+                    }
                 });
                 HandlebarsTemplate<object, object> template = Handlebars.Compile(UpdateTemplate.Html);
                 template(JObject.Parse(UpdateTemplate.TestData));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 TempData["toastStatus"] = "error";
                 TempData["toastMessage"] = "Parsing template failed. Please check ";
@@ -181,12 +182,11 @@ namespace App.Pages.Project
                 });
             }
 
-
             // TODO: Error handling
-            TemplateVersionTbl version = (await _templateVersionTbl.Get(x =>
+            TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
                   x.Id.Equals(UpdateTemplate.VersionId) &&
                   x.TemplateId.Equals(UpdateTemplate.TemplateId) &&
-                  x.Template.ProjectId.Equals(UpdateTemplate.ProjectId)))
+                  x.Template!.ProjectId.Equals(UpdateTemplate.ProjectId)))
               .FirstOrDefault();
 
             if (version == null)
@@ -209,8 +209,6 @@ namespace App.Pages.Project
             // TODO: Generate thumbnail
             _jobClient.Enqueue(() => GenerateThumbnailAndPreview(version.Id));
 
-
-
             TempData["toastStatus"] = "success";
             TempData["toastMessage"] = "Template updated";
 
@@ -223,13 +221,14 @@ namespace App.Pages.Project
         }
 
         [BindProperty]
-        public UpdateSettingsModel UpdateSettings { get; set; }
+        public UpdateSettingsModel UpdateSettings { get; set; } = new UpdateSettingsModel();
+
         public async Task<IActionResult> OnPostUpdateSettings()
         {
-            TemplateVersionTbl version = (await _templateVersionTbl.Get(x =>
+            TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
                x.Id.Equals(UpdateSettings.VersionId) &&
                x.TemplateId.Equals(UpdateSettings.TemplateId) &&
-               x.Template.ProjectId.Equals(UpdateSettings.ProjectId)))
+               x.Template!.ProjectId.Equals(UpdateSettings.ProjectId)))
            .FirstOrDefault();
 
             if (version == null)
@@ -239,7 +238,6 @@ namespace App.Pages.Project
             version.Subject = UpdateSettings.Subject;
 
             _templateVersionTbl.Update(version);
-
 
             await _templateTbl.UpdateFromQuery(x => x.Id.Equals(UpdateSettings.TemplateId), _ => new TemplateTbl
             {
@@ -260,15 +258,17 @@ namespace App.Pages.Project
                 versionId = UpdateTemplate.VersionId
             });
         }
+
         [BindProperty]
-        public TestSendModel TestSend { get; set; }
+        public TestSendModel TestSend { get; set; } = new TestSendModel();
+
         public async Task<IActionResult> OnPostTestSend()
         {
-            // Get template 
-            TemplateVersionTbl version = (await _templateVersionTbl.Get(x =>
+            // Get template
+            TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
                     x.Id.Equals(UpdateSettings.VersionId) &&
                     x.TemplateId.Equals(UpdateSettings.TemplateId) &&
-                    x.Template.ProjectId.Equals(UpdateSettings.ProjectId)))
+                    x.Template!.ProjectId.Equals(UpdateSettings.ProjectId)))
                 .FirstOrDefault();
 
             if (version == null)
@@ -298,6 +298,7 @@ namespace App.Pages.Project
                                options.Inverse(output, context);
                            }
                            break;
+
                        case "!=":
                            if (v1 != v2)
                            {
@@ -308,6 +309,7 @@ namespace App.Pages.Project
                                options.Inverse(output, context);
                            }
                            break;
+
                        case "<":
                            if (Convert.ToDouble(v1) < Convert.ToDouble(v2))
                            {
@@ -318,6 +320,7 @@ namespace App.Pages.Project
                                options.Inverse(output, context);
                            }
                            break;
+
                        case "<=":
                            if (Convert.ToDouble(v1) <= Convert.ToDouble(v2))
                            {
@@ -328,6 +331,7 @@ namespace App.Pages.Project
                                options.Inverse(output, context);
                            }
                            break;
+
                        case ">":
                            if (Convert.ToDouble(v1) > Convert.ToDouble(v2))
                            {
@@ -338,6 +342,7 @@ namespace App.Pages.Project
                                options.Inverse(output, context);
                            }
                            break;
+
                        case ">=":
                            if (Convert.ToDouble(v1) >= Convert.ToDouble(v2))
                            {
@@ -351,12 +356,12 @@ namespace App.Pages.Project
                    }
                });
             HandlebarsTemplate<object, object> subjectTemplate = Handlebars.Compile(version.Subject);
-            string subjectResult = subjectTemplate(JObject.Parse(version.TestData));
+            string subjectResult = subjectTemplate(JObject.Parse(version.TestData!));
 
             HandlebarsTemplate<object, object> bodyTemplate = Handlebars.Compile(version.Html);
-            string bodyResult = bodyTemplate(JObject.Parse(version.TestData));
+            string bodyResult = bodyTemplate(JObject.Parse(version.TestData!));
 
-            await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, subjectResult, bodyResult, version.TestData);
+            await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, subjectResult, bodyResult, version.TestData!);
             return RedirectToPage("/Project/Template", new
             {
                 projectId = TestSend.ProjectId,
@@ -367,17 +372,21 @@ namespace App.Pages.Project
 
         public async Task GenerateThumbnailAndPreview(int versionId)
         {
-            TemplateVersionTbl version = (await _templateVersionTbl.Get(
+            TemplateVersionTbl? version = (await _templateVersionTbl.Get(
                 x => x.Id.Equals(versionId),
                 null,
                 nameof(TemplateVersionTbl.Template)))
                 .FirstOrDefault();
 
+            if (version == null)
+            {
+                return;
+            }
+
             // Compile HTML and test data
             HandlebarsTemplate<object, object> template = Handlebars.Compile(version.Html);
-            string result = template(JObject.Parse(version.TestData));
+            string result = template(JObject.Parse(version.TestData!));
 
-            //
             HtmlConverter converter = new HtmlConverter();
             byte[] preview = converter.FromHtmlString(result, format: ImageFormat.Png);
             byte[] thumbnail = converter.FromHtmlString(result, 75, ImageFormat.Png, 50);
@@ -392,10 +401,8 @@ namespace App.Pages.Project
             });
         }
 
-
         public async Task<Uri> SaveImage(Guid projectId, byte[] file, string name)
         {
-
             BlobContainerClient blobContainerClient = new BlobContainerClient(
                 "AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;",
                 $"project-{projectId.ToString().ToLower()}");
@@ -408,7 +415,6 @@ namespace App.Pages.Project
 
             BlobBaseClient client = new BlobBaseClient("AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;", $"project-{projectId.ToString().ToLower()}", name);
             return client.Uri;
-
         }
     }
 
@@ -416,44 +422,55 @@ namespace App.Pages.Project
     {
         [Required]
         public Guid ProjectId { get; set; }
+
         [Required]
         public Guid TemplateId { get; set; }
+
         [Required]
         public int VersionId { get; set; }
+
         [Required]
-        public string TestData { get; set; }
+        public string TestData { get; set; } = string.Empty;
+
         [Required]
-        public string Html { get; set; }
+        public string Html { get; set; } = string.Empty;
     }
 
     public class UpdateSettingsModel
     {
         [Required]
         public Guid ProjectId { get; set; }
+
         [Required]
         public Guid TemplateId { get; set; }
+
         [Required]
         public int VersionId { get; set; }
+
         [Required]
         [MaxLength(200)]
-        public string Subject { get; set; }
+        public string Subject { get; set; } = string.Empty;
+
         [Required]
         [MaxLength(200)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 
     public class TestSendModel
     {
         [Required]
         public Guid ProjectId { get; set; }
+
         [Required]
         public Guid TemplateId { get; set; }
+
         [Required]
         public int VersionId { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
+
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
     }
 }

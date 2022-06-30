@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using EFCore.BulkExtensions;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
-using EFCore.BulkExtensions;
 
 namespace App.Database.Repositories.Generic
 {
@@ -24,7 +20,7 @@ namespace App.Database.Repositories.Generic
         /// Filter: <c> x => x.FirstName == "Ieuan" </c>
         /// OrderBy: <c> x => x.OrderByDescending(a => a.Id) </c>
         /// </example>
-        Task<IEnumerable<T>> Get(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = "");
+        Task<IEnumerable<T>> Get(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string includeProperties = "");
 
         /// <summary>
         /// Get object using ID (primary key).
@@ -34,7 +30,7 @@ namespace App.Database.Repositories.Generic
         /// <remarks>
         /// This is based on the primary key, meaning that its possible to search for any type of ids - i.e. int, Guids, string etc.
         /// </remarks>
-        Task<T> GetById(object id);
+        Task<T?> GetById(object id);
 
         /// <summary>
         /// Add object to database
@@ -51,7 +47,7 @@ namespace App.Database.Repositories.Generic
         /// </remarks>
         /// <param name="entities"></param>
         /// <param name="config"></param>
-        Task BulkAdd(List<T> entities, BulkConfig config = null);
+        Task BulkAdd(List<T> entities, BulkConfig? config = null);
 
         /// <summary>
         /// Delete object using the ID (primary key)
@@ -98,6 +94,6 @@ namespace App.Database.Repositories.Generic
         /// <summary>
         /// Enable to generate specific queries
         /// </summary>
-        IQueryable<T> Query(Expression<Func<T, bool>> query = null);
+        IQueryable<T> Query(Expression<Func<T, bool>>? query = null);
     }
 }

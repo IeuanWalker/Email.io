@@ -1,14 +1,10 @@
-﻿using System;
-using App.Models.AppSettings;
+﻿using App.Models.AppSettings;
 using Hangfire;
 using Hangfire.Annotations;
 using Hangfire.Dashboard;
 using Hangfire.Heartbeat;
 using Hangfire.RecurringJobAdmin;
 using Hangfire.SqlServer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace App.Infrastructure
 {
@@ -51,7 +47,6 @@ namespace App.Infrastructure
             });
         }
     }
-
 
     public class NoAuthFilter : IDashboardAuthorizationFilter
     {

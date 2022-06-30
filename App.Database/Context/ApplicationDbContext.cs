@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
 
 namespace App.Database.Context
 {
@@ -66,9 +64,9 @@ namespace App.Database.Context
 
         #region DbSet's
 
-        public DbSet<ProjectTbl> ProjectTbl { get; set; }
-        public DbSet<TemplateTbl> TemplateTbl { get; set; }
-        public DbSet<TemplateVersionTbl> TemplateVersionTbl { get; set; }
+        public DbSet<ProjectTbl> ProjectTbl { get; set; } = null!;
+        public DbSet<TemplateTbl> TemplateTbl { get; set; } = null!;
+        public DbSet<TemplateVersionTbl> TemplateVersionTbl { get; set; } = null!;
 
         #endregion DbSet's
     }
