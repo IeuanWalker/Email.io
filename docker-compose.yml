@@ -27,10 +27,10 @@ services:
     depends_on:
         - sql-server-db
         - smtp-server
-    image: ${DOCKER_REGISTRY-}app
+    image: ${DOCKER_REGISTRY-}admin
     build:
       context: .
-      dockerfile: App/Dockerfile
+      dockerfile: Admin/Dockerfile
     ports:
         - "8080:80"
     environment:
