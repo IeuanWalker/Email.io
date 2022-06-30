@@ -3,63 +3,69 @@ using App.Database.Repositories.Project;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace App.Pages.Project
+namespace App.Pages.Project;
+
+public class SettingsModel : PageModel
 {
-    public class SettingsModel : PageModel
-    {
-        private readonly IProjectRepository _projectTbl;
+	readonly IProjectRepository _projectTbl;
 
-        public SettingsModel(IProjectRepository projectTbl)
-        {
-            _projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
-        }
+	public SettingsModel(IProjectRepository projectTbl)
+	{
+		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
+	}
 
-        [BindProperty]
-        public ProjectTbl? Project { get; set; }
+	[BindProperty]
+	public ProjectTbl? Project { get; set; }
 
-        public async Task OnGet(Guid id)
-        {
-            // TODO: Error handling
-            Project = (await _projectTbl.Get(x => x.Id.Equals(id), null, nameof(ProjectTbl.Templates)).ConfigureAwait(false)).Single();
-            if (Project == null)
-                throw new NullReferenceException(nameof(Project));
+	public async Task OnGet(Guid id)
+	{
+		// TODO: Error handling
+		Project = (await _projectTbl.Get(x => x.Id.Equals(id), null, nameof(ProjectTbl.Templates)).ConfigureAwait(false)).Single();
+		if (Project == null)
+		{
+			throw new NullReferenceException(nameof(Project));
+		}
 
-            DeleteProjectId = Project.Id;
-        }
+		DeleteProjectId = Project.Id;
+	}
 
-        public IActionResult OnPostUpdateProject()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+	public IActionResult OnPostUpdateProject()
+	{
+		if (!ModelState.IsValid)
+		{
+			return Page();
+		}
 
-            if (Project == null) return Page();
+		if (Project == null)
+		{
+			return Page();
+		}
 
-            _projectTbl.Update(Project);
+		_projectTbl.Update(Project);
 
-            TempData["toastStatus"] = "success";
-            TempData["toastMessage"] = "Project updated";
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "Project updated";
 
-            return Page();
-        }
+		return Page();
+	}
 
-        [BindProperty]
-        public Guid DeleteProjectId { get; set; }
+	[BindProperty]
+	public Guid DeleteProjectId { get; set; }
 
-        public async Task<IActionResult> OnPostDeleteProject()
-        {
-            // TODO: Error handling
-            Project = await _projectTbl.GetById(DeleteProjectId);
-            if (Project == null)
-                throw new NullReferenceException(nameof(Project));
+	public async Task<IActionResult> OnPostDeleteProject()
+	{
+		// TODO: Error handling
+		Project = await _projectTbl.GetById(DeleteProjectId);
+		if (Project == null)
+		{
+			throw new NullReferenceException(nameof(Project));
+		}
 
-            await _projectTbl.Delete(Project.Id);
+		await _projectTbl.Delete(Project.Id);
 
-            TempData["toastStatus"] = "success";
-            TempData["toastMessage"] = "Project deleted";
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "Project deleted";
 
-            return RedirectToPage("/Project/index");
-        }
-    }
+		return RedirectToPage("/Project/index");
+	}
 }

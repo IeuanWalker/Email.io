@@ -1,7 +1,6 @@
-﻿namespace App.Database.Models
+﻿namespace App.Database.Models;
+
+public class BaseEntityModifiedDate
 {
-    public class BaseEntityModifiedDate
-    {
-        public DateTime? DateModified { get; set; }
-    }
+	public DateTime? DateModified { get; set; }
 }

@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace App.Pages
+namespace App.Pages;
+
+public class Template1Model : PageModel
 {
-    public class Template1Model : PageModel
-    {
-        public void OnGet()
-        {
-        }
-    }
+	public void OnGet()
+	{
+	}
 }

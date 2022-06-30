@@ -1,9 +1,8 @@
 ﻿using MimeKit;
 
-namespace App.Services.Email
+namespace App.Services.Email;
+
+public interface IEmailService
 {
-    public interface IEmailService
-    {
-        Task SendEmail(IEnumerable<MailboxAddress> to, string subject, string htmlBody, string textBody);
-    }
+	Task SendEmail(IEnumerable<MailboxAddress> to, string subject, string htmlBody, string textBody);
 }

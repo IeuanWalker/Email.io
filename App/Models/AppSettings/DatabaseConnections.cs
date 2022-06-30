@@ -1,7 +1,6 @@
-﻿namespace App.Models.AppSettings
+﻿namespace App.Models.AppSettings;
+
+public class DatabaseConnections
 {
-    public class DatabaseConnections
-    {
-        public string EmailDb { get; set; } = string.Empty;
-    }
+	public string EmailDb { get; set; } = string.Empty;
 }

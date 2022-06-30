@@ -3,34 +3,33 @@ using App.Database.Repositories.Project;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace App.Pages.Project
+namespace App.Pages.Project;
+
+public class CreateModel : PageModel
 {
-    public class CreateModel : PageModel
-    {
-        private readonly IProjectRepository _projectTbl;
+	readonly IProjectRepository _projectTbl;
 
-        public CreateModel(IProjectRepository projectTbl)
-        {
-            _projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
-        }
+	public CreateModel(IProjectRepository projectTbl)
+	{
+		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
+	}
 
-        public void OnGet()
-        {
-        }
+	public void OnGet()
+	{
+	}
 
-        [BindProperty]
-        public ProjectTbl Project { get; set; } = null!;
+	[BindProperty]
+	public ProjectTbl Project { get; set; } = null!;
 
-        public async Task<IActionResult> OnPost()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+	public async Task<IActionResult> OnPost()
+	{
+		if (!ModelState.IsValid)
+		{
+			return Page();
+		}
 
-            Project = await _projectTbl.Add(Project).ConfigureAwait(false);
+		Project = await _projectTbl.Add(Project).ConfigureAwait(false);
 
-            return RedirectToPage("/Project/Details", new { id = Project.Id });
-        }
-    }
+		return RedirectToPage("/Project/Details", new { id = Project.Id });
+	}
 }
