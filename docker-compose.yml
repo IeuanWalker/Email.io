@@ -39,3 +39,6 @@ services:
         - MailPort=1025
         - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
 
+
+        dfgdfg
+
