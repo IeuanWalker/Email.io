@@ -3,7 +3,7 @@ using MailKit.Security;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using EmailApi.Models;
-using EmailApi.Services;
+using Domain.Services.Email;
 
 namespace EmailApi.Controllers;
 
@@ -21,7 +21,7 @@ public class EmailController : Controller
 	[HttpPost]
 	public IActionResult SendEmail(EmailModel request)
 	{
-		_emailService.SendEmail(request);
+		_emailService.SendEmail(request.ToAddresses, request.Subject, request.HtmlBody, request.TextBody);
 		return Ok();
 	}
 }

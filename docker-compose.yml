@@ -39,3 +39,20 @@ services:
         - MailPort=1025
         - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
 
+      
+  api:
+    depends_on:
+        - sql-server-db
+        - smtp-server
+    image: ${DOCKER_REGISTRY-}api
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+    ports:
+        - "8080:70"
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Developement
+        - MailHostUrl=smtp-server
+        - MailPort=1025
+        - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
+

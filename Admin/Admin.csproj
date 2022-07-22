@@ -76,6 +76,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Database\Database.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties compilerconfig_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

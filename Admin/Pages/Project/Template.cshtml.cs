@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Admin.Services.Email;
+using Domain.Services.Email;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
