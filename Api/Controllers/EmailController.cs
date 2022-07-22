@@ -1,6 +1,4 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using EmailApi.Models;
 using Domain.Services.Email;
