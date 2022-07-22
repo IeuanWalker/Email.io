@@ -23,11 +23,10 @@ services:
     ports:
       - "1025:1025" # SMTP
       - "8025:8025" # Web UI
-  app:
+  admin:
     depends_on:
         - sql-server-db
         - smtp-server
-    image: ${DOCKER_REGISTRY-}admin
     build:
       context: .
       dockerfile: Admin/Dockerfile
@@ -39,17 +38,15 @@ services:
         - MailPort=1025
         - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
 
-      
   api:
     depends_on:
         - sql-server-db
         - smtp-server
-    image: ${DOCKER_REGISTRY-}api
     build:
       context: .
       dockerfile: Api/Dockerfile
     ports:
-        - "8080:70"
+        - "8010:80"
     environment:
         - ASPNETCORE_ENVIRONMENT=Developement
         - MailHostUrl=smtp-server
