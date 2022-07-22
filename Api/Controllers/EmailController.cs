@@ -21,7 +21,13 @@ public class EmailController : Controller
 	[HttpPost]
 	public IActionResult SendEmail(EmailModel request)
 	{
-		_emailService.SendEmail(request.ToAddresses, request.Subject, request.HtmlBody, request.TextBody);
+		List<MailboxAddress> addresses = new();
+		foreach (EmailAddresses? address in request.ToAddresses)
+		{
+			addresses.Add(new MailboxAddress(address.Name, address.Email));
+		}
+
+		_emailService.SendEmail(addresses, request.Subject, request.HtmlBody, request.TextBody);
 		return Ok();
 	}
 }
