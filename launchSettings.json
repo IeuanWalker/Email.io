@@ -21,7 +21,6 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "admin": "StartDebugging",
-        "api": "StartDebugging",
         "smtp-server": "StartWithoutDebugging",
         "sql-server-db": "StartWithoutDebugging"
       }
