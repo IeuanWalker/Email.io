@@ -1,6 +1,6 @@
 ﻿using MimeKit;
 
-namespace Admin.Services.Email;
+namespace Domain.Services.Email;
 
 public interface IEmailService
 {

@@ -17,24 +17,23 @@ RUN apt install -y \
                 xfonts-base
  
 RUN dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb
-WORKDIR /admin
+WORKDIR /api
 EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Admin/Admin.csproj", "Admin/"]
-COPY ["Database/Database.csproj", "Database/"]
+COPY ["Api/Api.csproj", "Api/"]
 COPY ["Domain/Domain.csproj", "Domain/"]
-RUN dotnet restore "Admin/Admin.csproj"
+RUN dotnet restore "Api/Api.csproj"
 COPY . .
-WORKDIR "/src/Admin"
-RUN dotnet build "Admin.csproj" -c Release -o /admin/build
+WORKDIR "/src/Api"
+RUN dotnet build "Api.csproj" -c Release -o /api/build
 
 FROM build AS publish
-RUN dotnet publish "Admin.csproj" -c Release -o /admin/publish /p:UseAppHost=false
+RUN dotnet publish "Api.csproj" -c Release -o /api/publish /p:UseAppHost=false
 
 FROM base AS final
-WORKDIR /admin
-COPY --from=publish /admin/publish .
-ENTRYPOINT ["dotnet", "Admin.dll"]
+WORKDIR /api
+COPY --from=publish /api/publish .
+ENTRYPOINT ["dotnet", "Api.dll"]

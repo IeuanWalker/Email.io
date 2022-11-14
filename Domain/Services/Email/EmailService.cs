@@ -2,7 +2,7 @@
 using MailKit.Security;
 using MimeKit;
 
-namespace Admin.Services.Email;
+namespace Domain.Services.Email;
 
 public class EmailService : IEmailService
 {

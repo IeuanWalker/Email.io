@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Admin.Services.Email;
+using Domain.Services.Email;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
@@ -412,7 +412,7 @@ public class TemplateModel : PageModel
 	public async Task<Uri> SaveImage(Guid projectId, byte[] file, string name)
 	{
 		BlobContainerClient blobContainerClient = new(
-			"AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;",
+			"UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite",
 			$"project-{projectId.ToString().ToLower()}");
 		await blobContainerClient.CreateIfNotExistsAsync();
 		await blobContainerClient.SetAccessPolicyAsync(PublicAccessType.Blob);
@@ -421,7 +421,13 @@ public class TemplateModel : PageModel
 		Stream stream = new MemoryStream(file);
 		await blobContainerClient.UploadBlobAsync(name, stream);
 
-		BlobBaseClient client = new("AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;", $"project-{projectId.ToString().ToLower()}", name);
+		BlobBaseClient client = new("UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite", $"project-{projectId.ToString().ToLower()}", name);
+
+		if (client.Uri.AbsoluteUri.Contains("azurite"))
+		{
+			return new Uri(client.Uri.AbsoluteUri.Replace("azurite", "localhost"));
+		}
+		
 		return client.Uri;
 	}
 }

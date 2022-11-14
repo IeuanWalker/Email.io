@@ -1,4 +1,4 @@
-﻿using Admin.Services.Email;
+﻿using Domain.Services.Email;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;

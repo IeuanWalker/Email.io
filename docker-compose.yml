@@ -23,11 +23,22 @@ services:
     ports:
       - "1025:1025" # SMTP
       - "8025:8025" # Web UI
-  app:
+
+  azurite:
+    container_name: azurite
+    image: mcr.microsoft.com/azure-storage/azurite
+    hostname: azurite
+    command: "azurite-blob --loose --blobHost 0.0.0.0"
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./test/azurite:/data
+
+  admin:
     depends_on:
         - sql-server-db
         - smtp-server
-    image: ${DOCKER_REGISTRY-}admin
+        - azurite
     build:
       context: .
       dockerfile: Admin/Dockerfile
@@ -39,3 +50,20 @@ services:
         - MailPort=1025
         - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
 
+  api:
+    depends_on:
+        - sql-server-db
+        - smtp-server
+        - azurite
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+    ports:
+        - "8010:80"
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Developement
+        - MailHostUrl=smtp-server
+        - MailPort=1025
+        - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
+
+ 

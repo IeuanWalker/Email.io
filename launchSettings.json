@@ -1,0 +1,42 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "admin",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "admin": "StartDebugging",
+        "api": "StartDebugging",
+        "smtp-server": "StartWithoutDebugging",
+        "sql-server-db": "StartWithoutDebugging"
+      }
+    },
+    "Docker Compose - Admin": {
+      "commandName": "DockerCompose",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "admin",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "admin": "StartDebugging",
+        "smtp-server": "StartWithoutDebugging",
+        "sql-server-db": "StartWithoutDebugging"
+      }
+    },
+    "Docker Compose - API": {
+      "commandName": "DockerCompose",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "api",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "admin": "StartDebugging",
+        "api": "StartDebugging",
+        "smtp-server": "StartWithoutDebugging",
+        "sql-server-db": "StartWithoutDebugging"
+      }
+    }
+  }
+}
