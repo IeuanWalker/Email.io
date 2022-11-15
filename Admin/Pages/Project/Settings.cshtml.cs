@@ -55,7 +55,7 @@ public class SettingsModel : PageModel
 	public async Task<IActionResult> OnPostDeleteProject()
 	{
 		// TODO: Error handling
-		Project = await _projectTbl.GetById(DeleteProjectId);
+		Project = await _projectTbl.GetByID(DeleteProjectId);
 		if (Project == null)
 		{
 			throw new NullReferenceException(nameof(Project));

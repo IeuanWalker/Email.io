@@ -126,3 +126,7 @@ a {
 .accordion input:checked ~ .accordion-body, .accordion[open] .accordion-body {
     overflow: inherit;
 }
+
+.CodeMirror{
+    padding:0px;
+}

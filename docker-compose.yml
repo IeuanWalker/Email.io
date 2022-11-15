@@ -35,6 +35,7 @@ services:
       - ./test/azurite:/data
 
   admin:
+    container_name: admin
     depends_on:
         - sql-server-db
         - smtp-server
@@ -51,6 +52,7 @@ services:
         - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=Email;User ID =SA;Password=Pa55w0rd2019
 
   api:
+    container_name: api
     depends_on:
         - sql-server-db
         - smtp-server

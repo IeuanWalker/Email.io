@@ -7,19 +7,20 @@ namespace Database.Repositories.Generic;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
+	internal ApplicationDbContext context;
+	internal DbSet<T> dbSet;
+
 	public GenericRepository(ApplicationDbContext context)
 	{
 		this.context = context;
 		dbSet = context.Set<T>();
 	}
 
-	internal ApplicationDbContext context;
-	internal DbSet<T> dbSet;
-
 	public virtual async Task<IEnumerable<T>> Get(
 		Expression<Func<T, bool>>? filter = null,
 		Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-		string includeProperties = "")
+		string includeProperties = "",
+		bool track = false)
 	{
 		// Create IQuerayble
 		IQueryable<T> query = dbSet;
@@ -31,16 +32,26 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		}
 
 		// Include properties for relationship loading
+		// ReSharper disable once LoopCanBeConvertedToQuery
 		foreach (string includeProperty in includeProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
 		{
 			query = query.Include(includeProperty.Trim());
 		}
 
+		if (!track)
+		{
+			query.AsNoTracking();
+		}
+
 		// Order results and execute request
-		return orderBy == null ? await query.ToListAsync().ConfigureAwait(false) : await orderBy(query).ToListAsync().ConfigureAwait(false);
+		return orderBy == null ? await query.ToListAsync() : await orderBy(query).ToListAsync();
 	}
 
-	public virtual async Task<T?> GetById(object id) => await dbSet.FindAsync(id).ConfigureAwait(false);
+	public virtual async Task<T?> GetByID(object id)
+	{
+		// Find result matching the id to the primary key of the object
+		return await dbSet.FindAsync(id).ConfigureAwait(false);
+	}
 
 	public virtual async Task<T> Add(T entity)
 	{
@@ -64,9 +75,9 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		// Found object using ID
 		T? entityToDelete = await dbSet.FindAsync(id).ConfigureAwait(false);
 
-		// Delete object
 		if (entityToDelete is not null)
 		{
+			// Delete object
 			Delete(entityToDelete);
 		}
 	}
@@ -87,9 +98,13 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		context.SaveChanges();
 	}
 
-	public virtual async Task DeleteFromQuery(Expression<Func<T, bool>> query)
+	public virtual async Task DeleteFromQuery(Expression<Func<T, bool>> query, int batchSize = 10000)
 	{
-		await dbSet.Where(query).BatchDeleteAsync().ConfigureAwait(false);
+		int rowsAffected;
+		do
+		{
+			rowsAffected = await dbSet.Where(query).Take(batchSize).BatchDeleteAsync().ConfigureAwait(false);
+		} while (rowsAffected >= batchSize);
 	}
 
 	public virtual void Update(T entityToUpdate)
@@ -109,8 +124,16 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		await dbSet.Where(query).BatchUpdateAsync(updateExpression).ConfigureAwait(false);
 	}
 
-	public IQueryable<T> Query(Expression<Func<T, bool>>? query = null)
+	public IQueryable<T> Where(Expression<Func<T, bool>>? filter = null, bool track = false)
 	{
-		return query == null ? dbSet : dbSet.Where(query);
+		// Create IQuerayble
+		IQueryable<T> query = dbSet;
+
+		if (!track)
+		{
+			query.AsNoTracking();
+		}
+
+		return filter == null ? query : query.Where(filter);
 	}
 }

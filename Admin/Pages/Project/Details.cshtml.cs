@@ -88,7 +88,7 @@ public class DetailsModel : PageModel
 	public async Task<IActionResult> OnPostUpdateTemplateName()
 	{
 		// TODO: Error handling
-		TemplateTbl? result = await _templateTbl.GetById(UpdateTemplateName.TemplateId);
+		TemplateTbl? result = await _templateTbl.GetByID(UpdateTemplateName.TemplateId);
 
 		if (result == null)
 		{
@@ -121,7 +121,7 @@ public class DetailsModel : PageModel
 	public async Task<IActionResult> OnPostDeleteTemplate()
 	{
 		// TODO: Error handling
-		Guid? projectId = await _templateTbl.Query()
+		Guid? projectId = await _templateTbl
 			.Where(x => x.Id.Equals(DeleteTemplate.TemplateId))
 			.Select(x => x.ProjectId)
 			.FirstOrDefaultAsync();

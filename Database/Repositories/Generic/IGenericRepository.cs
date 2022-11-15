@@ -12,7 +12,7 @@ public interface IGenericRepository<T> where T : class
 	/// <summary>
 	/// Get data from the database using the different options
 	/// </summary>
-	/// <param name="filter">This is a simple linq query to query the database</param>
+	/// <param name="filter">This is a simple LINQ query to query the database</param>
 	/// <param name="orderBy">Order of the data</param>
 	/// <param name="includeProperties">Provide a comma-delimited list of navigation properties for eager loading</param>
 	/// <returns>List of <c>T</c></returns>
@@ -20,7 +20,7 @@ public interface IGenericRepository<T> where T : class
 	/// Filter: <c> x => x.FirstName == "Ieuan" </c>
 	/// OrderBy: <c> x => x.OrderByDescending(a => a.Id) </c>
 	/// </example>
-	Task<IEnumerable<T>> Get(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string includeProperties = "");
+	Task<IEnumerable<T>> Get(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string includeProperties = "", bool track = false);
 
 	/// <summary>
 	/// Get object using ID (primary key).
@@ -30,7 +30,7 @@ public interface IGenericRepository<T> where T : class
 	/// <remarks>
 	/// This is based on the primary key, meaning that its possible to search for any type of ids - i.e. int, Guids, string etc.
 	/// </remarks>
-	Task<T?> GetById(object id);
+	Task<T?> GetByID(object id);
 
 	/// <summary>
 	/// Add object to database
@@ -68,11 +68,10 @@ public interface IGenericRepository<T> where T : class
 	/// Delete rows using query
 	/// </summary>
 	/// <remarks>
-	/// Doesn't support Enum inside the query - https://github.com/borisdj/EFCore.BulkExtensions/issues/397
 	/// More info - https://github.com/borisdj/EFCore.BulkExtensions
 	/// </remarks>
 	/// <param name="query"></param>
-	Task DeleteFromQuery(Expression<Func<T, bool>> query);
+	Task DeleteFromQuery(Expression<Func<T, bool>> query, int batchSize = 10000);
 
 	/// <summary>
 	/// Update object
@@ -84,7 +83,6 @@ public interface IGenericRepository<T> where T : class
 	/// Update rows using query
 	/// </summary>
 	/// <remarks>
-	/// Doesn't support Enum inside the query - https://github.com/borisdj/EFCore.BulkExtensions/issues/397
 	/// More info - https://github.com/borisdj/EFCore.BulkExtensions
 	/// </remarks>
 	/// <param name="query"></param>
@@ -94,5 +92,5 @@ public interface IGenericRepository<T> where T : class
 	/// <summary>
 	/// Enable to generate specific queries
 	/// </summary>
-	IQueryable<T> Query(Expression<Func<T, bool>>? query = null);
+	IQueryable<T> Where(Expression<Func<T, bool>>? filter = null, bool track = false);
 }

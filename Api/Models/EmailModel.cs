@@ -1,17 +1,26 @@
-﻿using MimeKit;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Nodes;
 
 namespace EmailApi.Models;
 
 public class EmailModel
 {
-	public IEnumerable<EmailAddresses> ToAddresses { get; set; } = new List<EmailAddresses>();
-	public string Subject { get; set; } = string.Empty;
-	public string TextBody { get; set; } = string.Empty;
-	public string HtmlBody { get; set; } = string.Empty;
+	public IEnumerable<EmailAddresses>? ToAddresses { get; set; }
+	public IEnumerable<EmailAddresses>? CCAddresses { get; set; }
+	public IEnumerable<EmailAddresses>? BCCAddresses { get; set; }
+	[Required]
+	public JsonObject Data { get; set; }
+	[MaxLength(5)]
+	public string Language { get; set; } = "en-GB";
+	[Required]
+	public Guid ProjectId { get; set; }
+	[Required]
+	public Guid TemplateId { get; set; }
 }
 
 public class EmailAddresses
 {
-	public string Name { get; set; } = string.Empty;
-	public string Email { get; set; } = string.Empty;
+	public string? Name { get; set; }
+	[EmailAddress]
+	public string? Email { get; set; }
 }
