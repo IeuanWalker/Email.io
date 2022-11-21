@@ -34,8 +34,7 @@ public class EmailController : Controller
 		_templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
 		_emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 	}
-
-	// TODO: Authenticate using API Key
+	
 	[HttpPost]
 	[Authorize]
 	public async Task<IActionResult> SendEmail([FromBody][Required]EmailModel request)
