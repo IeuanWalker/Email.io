@@ -1,4 +1,4 @@
-﻿function loadToests(message, status) {
+function loadToests(message, status) {
     document.addEventListener("DOMContentLoaded", function () {
         var toastMessage = message;
         var toastStatus = status;

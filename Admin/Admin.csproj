@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="compilerconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="scss\Components\_accordian-table.scss" />
     <Content Include="scss\Components\_cards.scss" />
     <Content Include="scss\Components\_character-counter.scss" />
@@ -28,8 +24,6 @@
     <Content Include="scss\Library\spectre\_spectre.scss" />
     <Content Include="scss\Library\_library.scss" />
     <Content Include="scss\Library\slide-panel\_slide-panel.scss" />
-    <Content Include="scss\main.css" />
-    <Content Include="scss\main.min.css" />
     <Content Include="scss\main.scss" />
     <Content Include="scss\Pages\Project\_empty-template.scss" />
     <Content Include="scss\Pages\Project\_project.scss" />
@@ -43,7 +37,6 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="compilerconfig.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,6 +72,10 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties compilerconfig_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="wwwroot\css\" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

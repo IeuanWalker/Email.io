@@ -1,6 +1,7 @@
 ﻿using Database.Context;
 using Database.Models;
 using Database.Repositories.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Database.Repositories.Project;
 
@@ -10,5 +11,10 @@ public class ProjectRepository : GenericRepository<ProjectTbl>, IProjectReposito
 	{
 		base.context = context;
 		dbSet = context.Set<ProjectTbl>();
+	}
+
+	public async Task<Dictionary<string, Guid>> GetAllApiKeysAndProjectIds()
+	{
+		return await dbSet.ToDictionaryAsync(x => x.ApiKey, x => x.Id);
 	}
 }

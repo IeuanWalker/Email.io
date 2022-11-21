@@ -25,6 +25,9 @@
                     <a class="tablinks cursor-pointer" data-tabId="General">General</a>
                 </li>
                 <li class="menu-item">
+                    <a class="tablinks cursor-pointer" data-tabId="ApiKey">Api key</a>
+                </li>
+                <li class="menu-item">
                     <a class="tablinks cursor-pointer" data-tabId="DeleteProject">Delete project</a>
                 </li>
             </ul>
@@ -104,6 +107,23 @@
                 </form>
 
             </div>
+            <div id="ApiKey" class="tabcontent">
+                <h2>API key</h2>
+                <p>API key is used to call the REST api, by adding the projects API key to the calls header <i>'x-api-key'</i></p>
+                <div class="api-key-container">
+                    <span class="ml-2 user-select-none" id="apiKey" onclick="copyContent()">@Model.Project.ApiKey</span>
+                    <div class="dropdown dropdown-right">
+                        <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
+                            <i class="icon icon-more-vert"></i>
+                        </button>
+                    </div>
+                    <div class="dropdown dropdown-right">
+                        <button type="submit" class="btn btn-link js-cd-panel-trigger" data-panel="resetApiKey">
+                            <i class="icon icon-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
             <div id="DeleteProject" class="tabcontent">
                 <h2>Delete project</h2>
                 <p>Once you delete a project, there is no going back. Please be certain.</p>
@@ -114,6 +134,32 @@
 </div>
 
 @section Panels{
+    @*Reset api key panel*@
+    <div class="cd-panel cd-panel--from-right js-cd-panel-resetApiKey">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Reset project API key</h3>
+                <p>Are you sure you want to reset this projects API key?</p>
+                <p>This action cannot be undone. This will permanently change the <strong>'@Model.Project.Name'</strong> project API key. This means anything calling the API with the current API key will receive a 401 authentication error, until the API key has been updated.</p>
+
+                <p>To confirm the reset of this project API key, please re-enter the project name <strong>'@Model.Project.Name'</strong></p>
+                <form class="form-horizontal" method="post" style="max-width: 800px" asp-page-handler="ResetApiKey">
+                    @Html.HiddenFor(model => model.ResetApiKeyProjectId)
+                    <div class="form-group">
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="resetApiKeyProjectNameConfirmation">@Html.DisplayNameFor(model => model.Project.Name):</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input class="form-input" type="text" id="resetApiKeyProjectNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.Project.Name)" value="">
+                        </div>
+                    </div>
+                    <button type="submit" id="resetApiKeySubmitBtn" class="btn float-right btn-outline-error" disabled>I understand the consequences, reset API key</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @*Delete template panel*@
     <div class="cd-panel cd-panel--from-right js-cd-panel-delete">
         <div class="cd-panel__container">
@@ -195,6 +241,32 @@
             btnTarget.classList.add("active");
         }
     </script>
+    @*Copy API key*@
+    <script>
+        let text = document.getElementById('apiKey').innerHTML;
+        const copyContent = async () => {
+            try {
+                await navigator.clipboard.writeText(text);
+                console.log('Content copied to clipboard');
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+        }
+    </script>
+
+     @*Reset API key*@
+    <script>
+        document.getElementById("resetApiKeyProjectNameConfirmation").addEventListener('input',
+            function (e) {
+                var projectName = "@Model.Project.Name";
+                if (e.target.value == null || e.target.value.trim() == "" || e.target.value.trim().toLowerCase() != projectName.toLowerCase()) {
+                    document.getElementById("resetApiKeySubmitBtn").disabled = true;
+                } else {
+                    document.getElementById("resetApiKeySubmitBtn").disabled = false;
+                }
+            });
+    </script>
+
     @*Delete project*@
     <script>
         document.getElementById("deleteProjectNameConfirmation").addEventListener('input',

@@ -9,6 +9,8 @@ using Database.Repositories.TemplateVersion;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 using MimeKit;
+using Microsoft.AspNetCore.Authorization;
+using Api.Infrastructure;
 
 namespace EmailApi.Controllers;
 
@@ -35,12 +37,18 @@ public class EmailController : Controller
 
 	// TODO: Authenticate using API Key
 	[HttpPost]
+	[Authorize]
 	public async Task<IActionResult> SendEmail([FromBody][Required]EmailModel request)
 	{
-		// Validate ID's
-		if (!await _projectTbl.Where(x => x.Id.Equals(request.ProjectId)).AnyAsync())
+		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out var apiKey);
+		if (!User.Identity?.Name?.Equals(request.ProjectId.ToString()) ?? true)
 		{
-			return BadRequest($"{nameof(request.ProjectId)}: {request.ProjectId}, does not exist");
+			return BadRequest($"{nameof(request.ProjectId)}: {request.ProjectId}, does not exist with API key {apiKey}");
+		}
+		// Validate ID's
+		if (!await _projectTbl.Where(x => x.Id.Equals(request.ProjectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync())
+		{
+			return BadRequest($"{nameof(request.ProjectId)}: {request.ProjectId}, does not exist with API key {apiKey}");
 		}
 
 		if(!await _templateTbl.Where(x => x.Id.Equals(request.TemplateId) && x.ProjectId.Equals(request.ProjectId)).AnyAsync())

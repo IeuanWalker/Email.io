@@ -22,5 +22,6 @@ public class ProjectTbl : BaseEntityModifiedDate
 	public string? Description { get; set; }
 
 	public string? Tags { get; set; }
+	public string ApiKey { get; set; }
 	public ICollection<TemplateTbl>? Templates { get; set; }
 }

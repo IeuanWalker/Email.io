@@ -1,5 +1,6 @@
 using Database.Models;
 using Database.Repositories.Project;
+using Domain.Services.ApiKey;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,10 +9,12 @@ namespace Admin.Pages.Project;
 public class SettingsModel : PageModel
 {
 	readonly IProjectRepository _projectTbl;
+	readonly IApiKeyService _apiKeyService;
 
-	public SettingsModel(IProjectRepository projectTbl)
+	public SettingsModel(IProjectRepository projectTbl, IApiKeyService apiKeyService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
+		_apiKeyService = apiKeyService ?? throw new ArgumentNullException(nameof(apiKeyService));
 	}
 
 	[BindProperty]
@@ -27,6 +30,7 @@ public class SettingsModel : PageModel
 		}
 
 		DeleteProjectId = Project.Id;
+		ResetApiKeyProjectId = Project.Id;
 	}
 
 	public IActionResult OnPostUpdateProject()
@@ -67,5 +71,29 @@ public class SettingsModel : PageModel
 		TempData["toastMessage"] = "Project deleted";
 
 		return RedirectToPage("/Project/index");
+	}
+
+	[BindProperty]
+	public Guid ResetApiKeyProjectId { get; set; }
+	public async Task<IActionResult> OnPostResetApiKey()
+	{
+		// TODO: Error handling
+		Project = await _projectTbl.GetByID(ResetApiKeyProjectId);
+		if (Project == null)
+		{
+			throw new NullReferenceException(nameof(Project));
+		}
+
+		string apiKey = await _apiKeyService.GenerateUniqueApiKey();
+
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(ResetApiKeyProjectId), _ => new ProjectTbl
+		{
+			ApiKey = apiKey
+		});
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "API key reset";
+
+		return RedirectToPage();
 	}
 }

@@ -2,6 +2,7 @@
 using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
+using Domain.Services.ApiKey;
 
 namespace Admin.Infrastructure;
 
@@ -17,5 +18,6 @@ static class InterfaceConfiguration
 		services.AddTransient<ITemplateRepository, TemplateRepository>();
 		services.AddTransient<ITemplateVersionRepository, TemplateVersionRepository>();
 		services.AddSingleton<IEmailService, EmailService>();
+		services.AddTransient<IApiKeyService, ApiKeyService>();
 	}
 }
