@@ -25,7 +25,16 @@
                     <a class="tablinks cursor-pointer" data-tabId="General">General</a>
                 </li>
                 <li class="menu-item">
-                    <a class="tablinks cursor-pointer" data-tabId="ApiKey">Api key</a>
+                    <a class="tablinks cursor-pointer" data-tabId="UsersAccess">Users access</a>
+                </li>
+                <li class="menu-item">
+                    <a class="tablinks cursor-pointer" data-tabId="ApiKey">API key</a>
+                </li>
+                <li class="menu-item">
+                    <a class="tablinks cursor-pointer" data-tabId="SentEmails">Sent Emails</a>
+                </li>
+                <li class="menu-item">
+                    <a class="tablinks cursor-pointer" data-tabId="ActivityLog">Activity log</a>
                 </li>
                 <li class="menu-item">
                     <a class="tablinks cursor-pointer" data-tabId="DeleteProject">Delete project</a>
@@ -107,6 +116,26 @@
                 </form>
 
             </div>
+            <div id="UsersAccess" class="tabcontent">
+                <h2>Users access</h2>
+                <ul>
+                    <li>Create template</li>
+                    <li>Edit template</li>
+                    <li>Delete template</li>
+                    <li>Add template version</li>
+                    <li>Edit template version</li>
+                    <li>Delete template version</li>
+                    <li>Control users access</li>
+                    <li>View API key</li>
+                    <li>Reset API key</li>
+                    <li>View sent email</li>
+                    <li>View activity log</li>
+                    <li>Delete project</li>
+                    <li>Edit general settings</li>
+                    <li>Edit general settings</li>
+                    <li>Edit general settings</li>
+                </ul>
+            </div>
             <div id="ApiKey" class="tabcontent">
                 <h2>API key</h2>
                 <p>API key is used to call the REST api, by adding the projects API key to the calls header <i>'x-api-key'</i></p>
@@ -123,6 +152,12 @@
                         </button>
                     </div>
                 </div>
+            </div>
+            <div id="SentEmails" class="tabcontent">
+                <h2>Sent emails</h2>
+            </div>
+            <div id="ActivityLog" class="tabcontent">
+                <h2>Activity log</h2>
             </div>
             <div id="DeleteProject" class="tabcontent">
                 <h2>Delete project</h2>
