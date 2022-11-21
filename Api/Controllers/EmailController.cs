@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using EmailApi.Models;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Microsoft.EntityFrameworkCore;
 using Database.Models;
 using Domain.Services.Email;
 using Database.Repositories.TemplateVersion;
-using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
-using MimeKit;
 using Microsoft.AspNetCore.Authorization;
 using Api.Infrastructure;
+using Database.Repositories.Email;
+using Domain.Models;
+using Hangfire;
 
 namespace EmailApi.Controllers;
 
@@ -22,19 +22,25 @@ public class EmailController : Controller
 	readonly ITemplateRepository _templateTbl;
 	readonly ITemplateVersionRepository _templateVersionTbl;
 	readonly IEmailService _emailService;
+	readonly IEmailRepository _emailTbl;
+	readonly IBackgroundJobClient _jobClient;
 
 	public EmailController(
 		IProjectRepository projectTbl,
 		ITemplateRepository templateTbl,
 		ITemplateVersionRepository templateVersionTbl,
-		IEmailService emailService)
+		IEmailService emailService,
+		IEmailRepository emailTbl,
+		IBackgroundJobClient jobClient)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
 		_templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
 		_emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+		_emailTbl = emailTbl ?? throw new ArgumentNullException(nameof(emailTbl));
+		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
 	}
-	
+
 	[HttpPost]
 	[Authorize]
 	public async Task<IActionResult> SendEmail([FromBody][Required]EmailModel request)
@@ -64,19 +70,68 @@ public class EmailController : Controller
 		}
 		if (string.IsNullOrEmpty(template.Html))
 		{
-			return BadRequest($"No html found for {nameof(request.TemplateId)}: {request.TemplateId}");
+			return BadRequest($"No html template found for {nameof(request.TemplateId)}: {request.TemplateId}");
 		}
 		if (string.IsNullOrEmpty(template.Subject))
 		{
-			return BadRequest($"No subject found for {nameof(request.TemplateId)}: {request.TemplateId}");
+			return BadRequest($"No subject template found for {nameof(request.TemplateId)}: {request.TemplateId}");
 		}
 
 		// Construct email
-		var test = _emailService.ConstructEmail(request.Data, template.Html, template.Subject);
+		ConstructedEmail? constructedEmail = null;
+		try
+		{
+			constructedEmail = _emailService.ConstructEmail(request.Data, template.Subject, template.Html, null);
+		}
+		catch (ArgumentException ex)
+		{
+			return BadRequest(ex.Message);
+		}
 
-		// TODO: Move to use hangfire instead
-		await _emailService.SendEmail(request?.ToAddresses.Select(x => new MailboxAddress(x.Name ?? string.Empty, x.Email)), test.Subject, test.HtmlBody, JsonSerializer.Serialize(request!.Data));
+		if(constructedEmail is null)
+		{
+			throw new Exception();
+		}
 
-		return Ok();
+		// TODO: Allow all the emails to be sent at the template version level
+		// TODO: Use automapper
+		EmailTbl email = new()
+		{
+			ProjectId = request.ProjectId,
+			TemplateId = request.TemplateId,
+			Data = request.Data.ToJsonString(),
+			ToAddresses = request.ToAddresses?.Select(x => new EmailAddressTbl 
+			{ 
+				Name = x.Name, 
+				Email = x.Email 
+			}).ToList() ?? new(),
+			CCAddresses = request.CCAddresses?.Select(x => new EmailAddressTbl
+			{
+				Name = x.Name,
+				Email = x.Email
+			}).ToList(),
+			BCCAddresses = request.BCCAddresses?.Select(x => new EmailAddressTbl
+			{
+				Name = x.Name,
+				Email = x.Email
+			}).ToList(),
+			Subject = constructedEmail.Subject,
+			HtmlContent = constructedEmail.HtmlContent,
+			PlainTextContent = constructedEmail.PlainTextContent,
+			Language = request.Language,
+		};
+		await _emailTbl.Add(email);
+		
+		try
+		{
+			email.HangfireId = _jobClient.Enqueue<IEmailService>(x => x.SendEmail(email.Id));
+			_emailTbl.Update(email);
+		}
+		catch (Exception)
+		{
+			// ignore
+		}
+
+		return Ok(email.Id);
 	}
 }

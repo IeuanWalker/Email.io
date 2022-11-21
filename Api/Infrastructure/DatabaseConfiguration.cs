@@ -1,4 +1,4 @@
-﻿using Admin.Models.AppSettings;
+﻿using Api.Models.AppSettings;
 using Database.Context;
 using Microsoft.EntityFrameworkCore;
 

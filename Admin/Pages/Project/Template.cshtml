@@ -122,6 +122,17 @@
 
 @section Scripts
 {
+    @*Listen for ctrl+s*@
+    <script>
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.key === 's') {
+                // Prevent the Save dialog to open
+                e.preventDefault();
+                
+                Save();
+            }
+        });
+    </script>
     <script>
         var originalHtml = "@Model.Version.Html";
         var originalTestData = "@Model.Version.TestData";

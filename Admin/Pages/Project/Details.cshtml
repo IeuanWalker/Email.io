@@ -76,7 +76,7 @@
                             <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
                                 <i class="icon icon-more-vert"></i>
                             </button>
-                            <ul class="menu">
+                            <ul class="menu submenu">
                                 <li class="menu-item user-select-none"><a class="js-cd-panel-trigger edit-name cursor-pointer" data-panel="editName" data-templateId="@template.Id" data-templateName="@template.Name">Edit name</a></li>
                                 <li class="menu-item user-select-none"><a class="js-cd-panel-trigger delete-template cursor-pointer" data-panel="delete" data-templateId="@template.Id" data-templateName="@template.Name">Delete</a></li>
                             </ul>
@@ -129,7 +129,7 @@
                                                         <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
                                                             <i class="icon icon-more-vert"></i>
                                                         </button>
-                                                        <ul class="menu">
+                                                        <ul class="menu submenu">
                                                             @if (!version.IsActive)
                                                             {
                                                                 <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="MarkAsActive('@template.Id', '@version.Id')">Make active</a></li>

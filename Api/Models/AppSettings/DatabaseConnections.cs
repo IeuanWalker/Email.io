@@ -1,4 +1,4 @@
-﻿namespace Admin.Models.AppSettings;
+﻿namespace Api.Models.AppSettings;
 
 public class DatabaseConnections
 {

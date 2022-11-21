@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221121134624_AddedApiKeyColumn")]
-    partial class AddedApiKeyColumn
+    [Migration("20221121195024_Start")]
+    partial class Start
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,87 @@ namespace Database.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Database.Models.EmailAddressTbl", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<Guid?>("BCCAddressesEmailId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CCAddressesEmailId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ToAddressesEmailId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BCCAddressesEmailId");
+
+                    b.HasIndex("CCAddressesEmailId");
+
+                    b.HasIndex("ToAddressesEmailId");
+
+                    b.ToTable("EmailAddress");
+                });
+
+            modelBuilder.Entity("Database.Models.EmailTbl", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HangfireId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HtmlContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("PlainTextContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Sent")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("Email");
+                });
 
             modelBuilder.Entity("Database.Models.ProjectTbl", b =>
                 {
@@ -131,6 +212,32 @@ namespace Database.Migrations
                     b.ToTable("TemplateVersion");
                 });
 
+            modelBuilder.Entity("Database.Models.EmailAddressTbl", b =>
+                {
+                    b.HasOne("Database.Models.EmailTbl", null)
+                        .WithMany("BCCAddresses")
+                        .HasForeignKey("BCCAddressesEmailId");
+
+                    b.HasOne("Database.Models.EmailTbl", null)
+                        .WithMany("CCAddresses")
+                        .HasForeignKey("CCAddressesEmailId");
+
+                    b.HasOne("Database.Models.EmailTbl", null)
+                        .WithMany("ToAddresses")
+                        .HasForeignKey("ToAddressesEmailId");
+                });
+
+            modelBuilder.Entity("Database.Models.EmailTbl", b =>
+                {
+                    b.HasOne("Database.Models.ProjectTbl", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("Database.Models.TemplateTbl", b =>
                 {
                     b.HasOne("Database.Models.ProjectTbl", "Project")
@@ -151,6 +258,15 @@ namespace Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("Database.Models.EmailTbl", b =>
+                {
+                    b.Navigation("BCCAddresses");
+
+                    b.Navigation("CCAddresses");
+
+                    b.Navigation("ToAddresses");
                 });
 
             modelBuilder.Entity("Database.Models.ProjectTbl", b =>

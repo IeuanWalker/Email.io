@@ -147,5 +147,11 @@ a {
 
 .menu {
     box-shadow: none;
+}
+.submenu {
     border: 1px solid #e9ecef;
+}
+
+.popover-container{
+    z-index:1000 !important;
 }

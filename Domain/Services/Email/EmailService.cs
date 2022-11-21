@@ -1,14 +1,24 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Text.Json;
+using System.Text.Json.Nodes;
+using Database.Models;
+using Database.Repositories.Email;
 using HandlebarsDotNet;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.EntityFrameworkCore;
 using MimeKit;
 
 namespace Domain.Services.Email;
 
 public class EmailService : IEmailService
 {
-	public async Task SendEmail(IEnumerable<MailboxAddress> to, string subject, string htmlBody, string textBody)
+	readonly IEmailRepository _emailRepository;
+	public EmailService(IEmailRepository emailRepository)
+	{
+		_emailRepository = emailRepository ?? throw new ArgumentNullException(nameof(emailRepository));
+	}
+	
+	public async Task SendEmail(IEnumerable<MailboxAddress> toAddresses, IEnumerable<MailboxAddress>? ccAddresses, IEnumerable<MailboxAddress>? bccAddresses, string subject, string htmlContent, string plainTextContent)
 	{
 		string? mailHost = string.Empty;
 		int mailPort = 0;
@@ -24,13 +34,15 @@ public class EmailService : IEmailService
 
 		MimeMessage message = new();
 		message.From.Add(new MailboxAddress("Test", "noreply@test.com"));
-		message.To.AddRange(to);
+		message.To.AddRange(toAddresses);
+		message.Cc.AddRange(ccAddresses);
+		message.Bcc.AddRange(bccAddresses);
 		message.Subject = subject;
 
 		message.Body = new BodyBuilder
 		{
-			HtmlBody = htmlBody,
-			TextBody = textBody
+			HtmlBody = htmlContent,
+			TextBody = plainTextContent
 		}.ToMessageBody();
 
 		using SmtpClient mailClient = new();
@@ -38,13 +50,39 @@ public class EmailService : IEmailService
 		await mailClient.SendAsync(message);
 		await mailClient.DisconnectAsync(true);
 	}
+	public async Task SendEmail(Guid emailId)
+	{
+		EmailTbl? email = await _emailRepository.Where(x => x.Id == emailId)
+			.Include(x => x.ToAddresses)
+			.Include(x => x.CCAddresses)
+			.Include(x => x.BCCAddresses)
+			.FirstOrDefaultAsync();
 
-	public ConstructedEmail ConstructEmail(JsonObject data, string templateHtmlBody, string templateSubject)
+		if (email is null || email.Sent is not null)
+		{
+			return;
+		}
+		
+		await SendEmail(
+			email.ToAddresses.Select(x => new MailboxAddress(x.Name, x.Email)),
+			email.CCAddresses?.Select(x => new MailboxAddress(x.Name, x.Email)),
+			email.BCCAddresses?.Select(x => new MailboxAddress(x.Name, x.Email)),
+			email.Subject,
+			email.HtmlContent,
+			email.PlainTextContent);
+
+		email.Sent = DateTime.Now;
+
+		_emailRepository.Update(email);
+	}
+
+	public ConstructedEmail ConstructEmail(JsonObject data, string subjectTemplate, string htmlTemplate, string? plainTextTemplate)
 	{
 		return new ConstructedEmail
 		{
-			Subject = RunHandleBars(data, templateSubject, nameof(ConstructedEmail.Subject)),
-			HtmlBody = RunHandleBars(data, templateHtmlBody, nameof(ConstructedEmail.HtmlBody))
+			Subject = RunHandleBars(data, subjectTemplate, nameof(ConstructedEmail.Subject)),
+			HtmlContent = RunHandleBars(data, htmlTemplate, nameof(ConstructedEmail.HtmlContent)),
+			PlainTextContent = RunHandleBars(data, plainTextTemplate, nameof(ConstructedEmail.PlainTextContent)),
 		};
 	}
 
@@ -56,8 +94,13 @@ public class EmailService : IEmailService
 	/// <param name="nameOfConstruction"></param>
 	/// <returns>Combined handlebars templates with data</returns>
 	/// <exception cref="ArgumentException">Thrown on any error</exception>
-	static string RunHandleBars(JsonObject data, string template, string nameOfConstruction)
+	static string RunHandleBars(JsonObject data, string? template, string nameOfConstruction)
 	{
+		if (string.IsNullOrEmpty(template))
+		{
+			return data.ToJsonString();
+		}
+
 		try
 		{
 			Handlebars.RegisterHelper("ifCond", (output, options, context, arguments) =>
@@ -156,6 +199,7 @@ public class EmailService : IEmailService
 
 public class ConstructedEmail
 {
-	public string HtmlBody { get; set; } = string.Empty;
 	public string Subject { get; set; } = string.Empty;
+	public string HtmlContent { get; set; } = string.Empty;
+	public string PlainTextContent { get; set; } = string.Empty;
 }

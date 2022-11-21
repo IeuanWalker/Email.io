@@ -42,8 +42,7 @@ builder.Services.AddSwaggerGen(setup =>
 builder.Services
 	.AddMemoryCache()
 	.AddScoped<IApiKeyService, ApiKeyService>()
-	.AddScoped<ApiKeyAuthenticationHandler>()
-	.AddSingleton<IEmailService, EmailService>();
+	.AddScoped<ApiKeyAuthenticationHandler>();
 
 // Interface mapping
 InterfaceConfiguration.ConfigureServices(builder.Services);
@@ -53,6 +52,9 @@ builder.Services.AddAuthentication()
 
 // Database
 DatabaseConfiguration.ConfigureServices(builder.Services, builder.Configuration);
+
+// Hangfire
+HangfireConfiguration.ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
@@ -66,6 +68,9 @@ if (app.Environment.IsDevelopment())
 		options.RoutePrefix = string.Empty;
 	});
 }
+
+// Hangfire
+HangfireConfiguration.Configure(app);
 
 app.UseHttpsRedirection();
 

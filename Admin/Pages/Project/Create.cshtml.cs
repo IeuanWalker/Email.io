@@ -1,5 +1,6 @@
 ﻿using Database.Models;
 using Database.Repositories.Project;
+using Domain.Services.ApiKey;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,18 +9,21 @@ namespace Admin.Pages.Project;
 public class CreateModel : PageModel
 {
 	readonly IProjectRepository _projectTbl;
+	readonly IApiKeyService _apiKeyService;
 
-	public CreateModel(IProjectRepository projectTbl)
+	public CreateModel(IProjectRepository projectTbl, IApiKeyService apiKeyService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
+		_apiKeyService = apiKeyService ?? throw new ArgumentNullException(nameof(apiKeyService));
 	}
 
-	public void OnGet()
+	public async Task OnGet()
 	{
+		Project.ApiKey = await _apiKeyService.GenerateUniqueApiKey();
 	}
 
 	[BindProperty]
-	public ProjectTbl Project { get; set; } = null!;
+	public ProjectTbl Project { get; set; } = new ProjectTbl();
 
 	public async Task<IActionResult> OnPost()
 	{

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
 
-namespace EmailApi.Models;
+namespace Domain.Models;
 
 public class EmailModel
 {
@@ -22,5 +22,5 @@ public class EmailAddresses
 {
 	public string? Name { get; set; }
 	[EmailAddress]
-	public string? Email { get; set; }
+	public string Email { get; set; } = string.Empty;
 }

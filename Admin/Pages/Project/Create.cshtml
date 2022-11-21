@@ -8,6 +8,7 @@
     <h3>Create a new project</h3>
 </div>
 <form class="form-horizontal" id="createProjectForm" method="post" style="max-width: 800px" onsubmit="return validationFunction(Event)">
+    @Html.HiddenFor(model => model.Project.ApiKey)
     <div class="form-group">
         <div class="col-3 col-sm-12">
             <label class="form-label" asp-for="Project.Name">@Html.DisplayNameFor(model => model.Project.Name):</label>

@@ -5,14 +5,16 @@ namespace Domain.Services.Email;
 
 public interface IEmailService
 {
-	Task SendEmail(IEnumerable<MailboxAddress> to, string subject, string htmlBody, string textBody);
-	
+	Task SendEmail(IEnumerable<MailboxAddress> toAddresses, IEnumerable<MailboxAddress>? ccAddresses, IEnumerable<MailboxAddress>? bccAddresses, string subject, string htmlContent, string plainTextContent);
+	Task SendEmail(Guid emailId);
+
 	/// <summary>
 	/// Combines handlebars templates with data
 	/// </summary>
 	/// <param name="data"></param>
-	/// <param name="templateHtmlBody"></param>
-	/// <param name="templateSubject"></param>
+	/// <param name="subjectTemplate"></param>
+	/// <param name="htmlTemplate"></param>
+	/// <param name="plainTextTemplate"></param>
 	/// <exception cref="ArgumentException">Thrown on any combining template with data</exception>
-	ConstructedEmail ConstructEmail(JsonObject data, string templateHtmlBody, string templateSubject);
+	ConstructedEmail ConstructEmail(JsonObject data, string subjectTemplate, string htmlTemplate, string? plainTextTemplate);
 }

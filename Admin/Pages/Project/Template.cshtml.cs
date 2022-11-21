@@ -369,7 +369,7 @@ public class TemplateModel : PageModel
 		HandlebarsTemplate<object, object> bodyTemplate = Handlebars.Compile(version.Html);
 		string bodyResult = bodyTemplate(JObject.Parse(version.TestData!));
 
-		await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, subjectResult, bodyResult, version.TestData!);
+		await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, null, null, subjectResult, bodyResult, version.TestData!);
 		return RedirectToPage("/Project/Template", new
 		{
 			projectId = TestSend.ProjectId,

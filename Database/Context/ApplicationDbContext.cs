@@ -65,6 +65,8 @@ public class ApplicationDbContext : DbContext
 	#region DbSet's
 
 	public DbSet<ProjectTbl> ProjectTbl { get; set; } = null!;
+	public DbSet<EmailTbl> EmailTbl { get; set; } = null!;
+	public DbSet<EmailAddressTbl> EmailAddressTbl { get; set; } = null!;
 	public DbSet<TemplateTbl> TemplateTbl { get; set; } = null!;
 	public DbSet<TemplateVersionTbl> TemplateVersionTbl { get; set; } = null!;
 
