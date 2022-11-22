@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MimeKit;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Threading.Tasks;
 
 namespace Admin.Pages.Project;
 
@@ -82,7 +84,8 @@ public class TemplateModel : PageModel
 	[BindProperty]
 	public UpdateTemplateModel UpdateTemplate { get; set; } = new UpdateTemplateModel();
 
-	public async Task<IActionResult> OnPostUpdateTemplate()
+
+	public async Task<JsonResult> OnPostUpdateTemplate([FromBody] UpdateTemplateModel UpdateTemplate)
 	{
 		UpdateTemplate.Html = string.IsNullOrWhiteSpace(UpdateTemplate.Html) ? string.Empty : UpdateTemplate.Html;
 		UpdateTemplate.PlainText = string.IsNullOrWhiteSpace(UpdateTemplate.PlainText) ? string.Empty : UpdateTemplate.PlainText;
@@ -174,14 +177,10 @@ public class TemplateModel : PageModel
 		}
 		catch (Exception)
 		{
-			TempData["toastStatus"] = "error";
-			TempData["toastMessage"] = "Parsing template failed. Please check ";
-
-			return RedirectToPage("/Project/Template", new
+			return new JsonResult(new
 			{
-				projectId = UpdateTemplate.ProjectId,
-				templateId = UpdateTemplate.TemplateId,
-				versionId = UpdateTemplate.VersionId
+				toastStatus = "error",
+				toastTitle = "Error parsing template failed.",
 			});
 		}
 
@@ -215,14 +214,10 @@ public class TemplateModel : PageModel
 		// TODO: Generate thumbnail
 		_jobClient.Enqueue(() => GenerateThumbnailAndPreview(version.Id));
 
-		TempData["toastStatus"] = "success";
-		TempData["toastMessage"] = "Template updated";
-
-		return RedirectToPage("/Project/Template", new
+		return new JsonResult(new
 		{
-			projectId = UpdateTemplate.ProjectId,
-			templateId = UpdateTemplate.TemplateId,
-			versionId = UpdateTemplate.VersionId
+			toastStatus = "success",
+			toastTitle = "Template updated",
 		});
 	}
 

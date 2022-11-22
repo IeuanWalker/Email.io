@@ -1,5 +1,6 @@
 using Admin.Infrastructure;
 using Database.Context;
+using Newtonsoft.Json.Serialization;
 using Westwind.AspNetCore.LiveReload;
 
 namespace Admin;
@@ -29,8 +30,6 @@ public class Startup
 
 		services.AddRazorPages()
 			.AddRazorRuntimeCompilation();
-
-		services.AddLiveReload();
 	}
 
 	// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,8 +48,6 @@ public class Startup
 
 		// Hangfire
 		HangfireConfiguration.Configure(app);
-
-		app.UseLiveReload();
 
 		app.UseHttpsRedirection();
 		app.UseStaticFiles();

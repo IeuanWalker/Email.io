@@ -377,13 +377,33 @@
     @*Update template*@
     <script>
         function Save() {
-            document.getElementById("SaveBtn").classList.add("loading");
-
-            document.getElementById("UpdateTemplate_TestData").value = testDataEditor.getValue();
-            document.getElementById("UpdateTemplate_Html").value = htmlEditor.getValue();
-            document.getElementById("UpdateTemplate_PlainText").value = plainTextEditor.getValue();
-
-            document.getElementById("UpdateTemplateForm").submit();
+            jQuery.ajax({
+                type: "POST",
+                url: '?handler=UpdateTemplate',
+                headers: { 'RequestVerificationToken': $('@Html.AntiForgeryToken()').val() },
+                data: JSON.stringify({
+                    "projectId": document.getElementById("UpdateTemplate_ProjectId").value,
+                    "templateId": document.getElementById("UpdateTemplate_TemplateId").value,
+                    "versionId": document.getElementById("UpdateTemplate_VersionId").value,
+                    "testData": testDataEditor.getValue(),
+                    "html": htmlEditor.getValue(),
+                    "plainText": plainTextEditor.getValue()
+                }),
+                contentType: "application/json",
+                dataType: "json",
+                beforeSend: function () {
+                    document.getElementById("SaveBtn").classList.add("loading");
+                },
+                success: function (data) {
+                    showToast(data['toastTitle'], data['toastStatus']);
+                },
+                error: function (request, status, error) {
+                    showToast('Sorry something has gone wrong', 'error');
+                }
+                complete: function(){
+                    document.getElementById("SaveBtn").classList.remove("loading");
+                }
+            });
         }
     </script>
 
