@@ -8,12 +8,16 @@ public class EmailModel
 	public IEnumerable<EmailAddresses>? ToAddresses { get; set; }
 	public IEnumerable<EmailAddresses>? CCAddresses { get; set; }
 	public IEnumerable<EmailAddresses>? BCCAddresses { get; set; }
+
 	[Required]
 	public JsonObject Data { get; set; }
+
 	[MaxLength(5)]
 	public string Language { get; set; } = "en-GB";
+
 	[Required]
 	public Guid ProjectId { get; set; }
+
 	[Required]
 	public Guid TemplateId { get; set; }
 }
@@ -21,6 +25,7 @@ public class EmailModel
 public class EmailAddresses
 {
 	public string? Name { get; set; }
+
 	[EmailAddress]
 	public string Email { get; set; } = string.Empty;
 }

@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 using Database.Models;
 using Database.Repositories.Email;
 using HandlebarsDotNet;
@@ -13,11 +12,12 @@ namespace Domain.Services.Email;
 public class EmailService : IEmailService
 {
 	readonly IEmailRepository _emailRepository;
+
 	public EmailService(IEmailRepository emailRepository)
 	{
 		_emailRepository = emailRepository ?? throw new ArgumentNullException(nameof(emailRepository));
 	}
-	
+
 	public async Task SendEmail(IEnumerable<MailboxAddress> toAddresses, IEnumerable<MailboxAddress>? ccAddresses, IEnumerable<MailboxAddress>? bccAddresses, string subject, string htmlContent, string plainTextContent)
 	{
 		string? mailHost = string.Empty;
@@ -35,7 +35,7 @@ public class EmailService : IEmailService
 		MimeMessage message = new();
 		message.From.Add(new MailboxAddress("Test", "noreply@test.com"));
 		message.To.AddRange(toAddresses);
-		if(ccAddresses?.Any() ?? false)
+		if (ccAddresses?.Any() ?? false)
 		{
 			message.Cc.AddRange(ccAddresses);
 		}
@@ -56,6 +56,7 @@ public class EmailService : IEmailService
 		await mailClient.SendAsync(message);
 		await mailClient.DisconnectAsync(true);
 	}
+
 	public async Task SendEmail(Guid emailId)
 	{
 		EmailTbl? email = await _emailRepository.Where(x => x.Id == emailId)
@@ -68,7 +69,7 @@ public class EmailService : IEmailService
 		{
 			return;
 		}
-		
+
 		await SendEmail(
 			email.ToAddresses.Select(x => new MailboxAddress(x.Name, x.Email)),
 			email.CCAddresses?.Select(x => new MailboxAddress(x.Name, x.Email)),

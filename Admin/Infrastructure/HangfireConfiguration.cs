@@ -1,5 +1,4 @@
-﻿using Admin;
-using Admin.Models.AppSettings;
+﻿using Admin.Models.AppSettings;
 using Hangfire;
 using Hangfire.Annotations;
 using Hangfire.Dashboard;

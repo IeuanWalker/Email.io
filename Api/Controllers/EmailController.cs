@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.ComponentModel.DataAnnotations;
+using Api.Infrastructure;
+using Database.Models;
+using Database.Repositories.Email;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
-using Microsoft.EntityFrameworkCore;
-using Database.Models;
-using Domain.Services.Email;
 using Database.Repositories.TemplateVersion;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Authorization;
-using Api.Infrastructure;
-using Database.Repositories.Email;
 using Domain.Models;
+using Domain.Services.Email;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmailApi.Controllers;
 
@@ -41,9 +41,10 @@ public class EmailController : Controller
 		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
 	}
 
+	// TODO: Handle attachements
 	[HttpPost]
 	[Authorize]
-	public async Task<IActionResult> SendEmail([FromBody][Required]EmailModel request)
+	public async Task<IActionResult> SendEmail([FromBody][Required] EmailModel request)
 	{
 		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out var apiKey);
 		if (!User.Identity?.Name?.Equals(request.ProjectId.ToString()) ?? true)
@@ -56,15 +57,15 @@ public class EmailController : Controller
 			return BadRequest($"{nameof(request.ProjectId)}: {request.ProjectId}, does not exist with API key {apiKey}");
 		}
 
-		if(!await _templateTbl.Where(x => x.Id.Equals(request.TemplateId) && x.ProjectId.Equals(request.ProjectId)).AnyAsync())
+		if (!await _templateTbl.Where(x => x.Id.Equals(request.TemplateId) && x.ProjectId.Equals(request.ProjectId)).AnyAsync())
 		{
 			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, does not exist for the {nameof(request.ProjectId)}: {request.ProjectId}");
 		}
 
 		// Validate template
 		TemplateVersionTbl? template = await _templateVersionTbl.Where(x => x.TemplateId.Equals(request.TemplateId) && x.IsActive).FirstOrDefaultAsync();
-		
-		if(template is null)
+
+		if (template is null)
 		{
 			return BadRequest($"No active template found for {nameof(request.TemplateId)}: {request.TemplateId}");
 		}
@@ -88,7 +89,7 @@ public class EmailController : Controller
 			return BadRequest(ex.Message);
 		}
 
-		if(constructedEmail is null)
+		if (constructedEmail is null)
 		{
 			throw new Exception();
 		}
@@ -100,10 +101,10 @@ public class EmailController : Controller
 			ProjectId = request.ProjectId,
 			TemplateId = request.TemplateId,
 			Data = request.Data.ToJsonString(),
-			ToAddresses = request.ToAddresses?.Select(x => new EmailAddressTbl 
-			{ 
-				Name = x.Name, 
-				Email = x.Email 
+			ToAddresses = request.ToAddresses?.Select(x => new EmailAddressTbl
+			{
+				Name = x.Name,
+				Email = x.Email
 			}).ToList() ?? new(),
 			CCAddresses = request.CCAddresses?.Select(x => new EmailAddressTbl
 			{
@@ -121,7 +122,7 @@ public class EmailController : Controller
 			Language = request.Language,
 		};
 		await _emailTbl.Add(email);
-		
+
 		try
 		{
 			email.HangfireId = _jobClient.Enqueue<IEmailService>(x => x.SendEmail(email.Id));

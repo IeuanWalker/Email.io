@@ -6,6 +6,7 @@ namespace Domain.Services.Email;
 public interface IEmailService
 {
 	Task SendEmail(IEnumerable<MailboxAddress> toAddresses, IEnumerable<MailboxAddress>? ccAddresses, IEnumerable<MailboxAddress>? bccAddresses, string subject, string htmlContent, string plainTextContent);
+
 	Task SendEmail(Guid emailId);
 
 	/// <summary>

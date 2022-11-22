@@ -1,8 +1,8 @@
-﻿using Domain.Services.Email;
+﻿using Database.Repositories.Email;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
-using Database.Repositories.Email;
+using Domain.Services.Email;
 
 namespace Admin.Infrastructure;
 
@@ -17,7 +17,7 @@ static class InterfaceConfiguration
 		services.AddTransient<IProjectRepository, ProjectRepository>();
 		services.AddTransient<ITemplateRepository, TemplateRepository>();
 		services.AddTransient<ITemplateVersionRepository, TemplateVersionRepository>();
-		services.AddTransient<IEmailRepository, EmailRepository>(); 
+		services.AddTransient<IEmailRepository, EmailRepository>();
 		services.AddTransient<IEmailService, EmailService>();
 	}
 }

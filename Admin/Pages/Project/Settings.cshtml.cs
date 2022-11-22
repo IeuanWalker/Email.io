@@ -75,6 +75,7 @@ public class SettingsModel : PageModel
 
 	[BindProperty]
 	public Guid ResetApiKeyProjectId { get; set; }
+
 	public async Task<IActionResult> OnPostResetApiKey()
 	{
 		// TODO: Error handling

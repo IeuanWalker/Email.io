@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Domain.Services.Email;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
@@ -8,14 +7,13 @@ using Database.Models;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
+using Domain.Services.Email;
 using HandlebarsDotNet;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MimeKit;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Threading.Tasks;
 
 namespace Admin.Pages.Project;
 
@@ -83,7 +81,6 @@ public class TemplateModel : PageModel
 
 	[BindProperty]
 	public UpdateTemplateModel UpdateTemplate { get; set; } = new UpdateTemplateModel();
-
 
 	public async Task<JsonResult> OnPostUpdateTemplate([FromBody] UpdateTemplateModel UpdateTemplate)
 	{
@@ -360,7 +357,7 @@ public class TemplateModel : PageModel
 					   break;
 			   }
 		   });
-		
+
 		HandlebarsTemplate<object, object> subjectTemplate = Handlebars.Compile(version.Subject);
 		string subjectResult = subjectTemplate(JObject.Parse(version.TestData!));
 
@@ -428,7 +425,7 @@ public class TemplateModel : PageModel
 		{
 			return new Uri(client.Uri.AbsoluteUri.Replace("azurite", "localhost"));
 		}
-		
+
 		return client.Uri;
 	}
 }

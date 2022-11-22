@@ -15,7 +15,7 @@ static class DatabaseConfiguration
 	{
 		IConfigurationSection databaseConnections = configuration.GetSection(nameof(DatabaseConnections));
 		string connection = databaseConnections.GetValue<string>(nameof(DatabaseConnections.EmailDb));
-		
+
 		services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly(nameof(Database))));
 	}
 }

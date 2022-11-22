@@ -1,8 +1,8 @@
-﻿using Domain.Services.ApiKey;
+﻿using System.Security.Claims;
+using System.Text.Encodings.Web;
+using Domain.Services.ApiKey;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
 
 namespace Api.Infrastructure;
 

@@ -1,10 +1,10 @@
 ﻿using System.Security.Cryptography;
 using Database.Repositories.Project;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Domain.Services.ApiKey;
+
 public class ApiKeyService : IApiKeyService
 {
 	readonly IMemoryCache _memoryCache;

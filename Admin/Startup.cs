@@ -1,7 +1,5 @@
 using Admin.Infrastructure;
 using Database.Context;
-using Newtonsoft.Json.Serialization;
-using Westwind.AspNetCore.LiveReload;
 
 namespace Admin;
 

@@ -1,9 +1,9 @@
-﻿using Domain.Services.Email;
+﻿using Database.Repositories.Email;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.ApiKey;
-using Database.Repositories.Email;
+using Domain.Services.Email;
 
 namespace Admin.Infrastructure;
 

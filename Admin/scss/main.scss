@@ -127,10 +127,9 @@ a {
     overflow: inherit;
 }
 
-.CodeMirror{
-    padding:0px;
+.CodeMirror {
+    padding: 0px;
 }
-
 
 .api-key-container {
     border: 1px solid #e9ecef;
@@ -148,10 +147,11 @@ a {
 .menu {
     box-shadow: none;
 }
+
 .submenu {
     border: 1px solid #e9ecef;
 }
 
-.popover-container{
-    z-index:1000 !important;
+.popover-container {
+    z-index: 1000 !important;
 }
