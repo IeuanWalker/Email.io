@@ -15,7 +15,8 @@
 
 <header class="template-navbar">
     <a asp-page="/Project/Details" asp-route-id="@Model.ProjectId" class="template-navbar-buttons cursor-pointer"><p><i class="icon icon-back"></i></p></a>
-    <a class="template-navbar-buttons tablinks active cursor-pointer " data-tabId="codeContainer"><p> CODE</p></a>
+    <a class="template-navbar-buttons tablinks active cursor-pointer" data-tabId="htmlContainer"><p>HTML</p></a>
+    <a class="template-navbar-buttons tablinks cursor-pointer" data-tabId="plainTextContainer"><p>PLAIN TEXT</p></a>
     <a class="template-navbar-buttons tablinks mr-2 cursor-pointer" data-tabId="testDataContainer"><p>TEST DATA</p></a>
     <button class="btn btn-lg ml-2 cursor-pointer" onclick="Save()" id="SaveBtn">Save</button>
     <a class="js-cd-panel-trigger btn btn-link cursor-pointer settings" style="line-height: normal; height:auto" data-panel="settings">
@@ -25,11 +26,14 @@
 
 <div class="grid">
     <div class="p-relative">
-        <div id="codeContainer" class="tabcontent active">
-            <textarea id="code">@Model.Version.Html</textarea>
+        <div id="htmlContainer" class="tabcontent active">
+            <textarea id="htmlTextarea">@Model.Version.Html</textarea>
+        </div>
+        <div id="plainTextContainer" class="tabcontent">
+            <textarea id="plainTextTextarea">@Model.Version.PlainText</textarea>
         </div>
         <div id="testDataContainer" class="tabcontent">
-            <textarea id="testData">@Model.Version.TestData</textarea>
+            <textarea id="testDataTextarea">@Model.Version.TestData</textarea>
         </div>
     </div>
     <div class="preview">
@@ -54,6 +58,7 @@
     @Html.HiddenFor(model => model.UpdateTemplate.VersionId)
     @Html.HiddenFor(model => model.UpdateTemplate.TestData)
     @Html.HiddenFor(model => model.UpdateTemplate.Html)
+    @Html.HiddenFor(model => model.UpdateTemplate.PlainText)
 </form>
 
 @section Panels
@@ -162,6 +167,8 @@
 
     @*Tabs*@
     <script type="text/javascript">
+        var currentPreviewTab = "htmlContainer";
+
         var tabLinks = document.querySelectorAll(".tablinks");
         var tabContent = document.querySelectorAll(".tabcontent");
 
@@ -172,6 +179,17 @@
         function openTabs(el) {
             var btnTarget = el.currentTarget;
             var tabId = btnTarget.getAttribute('data-tabId');
+
+            if (tabId == "htmlContainer"){
+                currentPreviewTab = tabId;
+                UpdatePreview();
+            }
+            else if (tabId == "plainTextContainer") {
+                currentPreviewTab = tabId;
+                UpdatePreview();
+            }
+
+
             tabContent.forEach(function(el) {
                 el.classList.remove("active");
             });
@@ -191,7 +209,7 @@
 
     @*CodeMirror JSON editor*@
     <script>
-        let testDataEditor = CodeMirror.fromTextArea(document.getElementById("testData"),
+        let testDataEditor = CodeMirror.fromTextArea(document.getElementById("testDataTextarea"),
             {
                 lineNumbers: true,
                 border: true,
@@ -223,7 +241,7 @@
 
     @*CodeMirror HTML editor*@
     <script>
-        let codeEditor = CodeMirror.fromTextArea(document.getElementById("code"),
+        let htmlEditor = CodeMirror.fromTextArea(document.getElementById("htmlTextarea"),
             {
                 lineNumbers: true,
                 border: true,
@@ -248,7 +266,40 @@
                 }
             });
 
-        codeEditor.on("change",
+        htmlEditor.on("change",
+            function(resultEditor, change) {
+                UpdatePreview();
+            });
+    </script>
+
+    @*CodeMirror Plain text editor*@
+    <script>
+        let plainTextEditor = CodeMirror.fromTextArea(document.getElementById("plainTextTextarea"),
+            {
+                lineNumbers: true,
+                border: true,
+                theme: "eclipse",
+                HtmlMode: true,
+                lineWrapping: false,
+                mode: "text/html",
+                gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"],
+                styleActiveLine: true,
+                lint: true,
+                foldGutter: true,
+                autoCloseTags: true,
+                autoRefresh: true,
+                matchTags: true,
+                extraKeys: {
+                    "F11": function(cm) {
+                        cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                    },
+                    "Esc": function(cm) {
+                        if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                    }
+                }
+            });
+
+        plainTextEditor.on("change",
             function(resultEditor, change) {
                 UpdatePreview();
             });
@@ -293,8 +344,26 @@
             });
 
         function UpdatePreview() {
-            var template = Handlebars.compile(codeEditor.getValue());
+            var template;
+            if (currentPreviewTab == "htmlContainer"){
+                template = Handlebars.compile(htmlEditor.getValue());
+            }
+            else if (currentPreviewTab == "plainTextContainer") {
+                template = Handlebars.compile(
+                    "<html style='background-color: white;'>" +
+                    "<head>" +
+                    "<link rel='preconnect' href='https://fonts.googleapis.com'>" +
+                    "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>" +
+                    "<link href='https://fonts.googleapis.com/css2?family=Roboto&display=swap' rel='stylesheet'>" +
+                    "</head>" +
+                    "<body>" +
+                    "<p style='white-space: pre-wrap; font-family: \"Roboto\", sans-serif;'>" + plainTextEditor.getValue() + "</p>" +
+                    "</body>" +
+                    "</html>");
+            }
+
             var compiled = template(JSON.parse(testDataEditor.getValue()));
+
             document.getElementById("preview-iframe").src = "data:text/html;charset=utf-8," + escape(compiled);
 
             var subject = '@Model.Version.Subject';
@@ -311,7 +380,8 @@
             document.getElementById("SaveBtn").classList.add("loading");
 
             document.getElementById("UpdateTemplate_TestData").value = testDataEditor.getValue();
-            document.getElementById("UpdateTemplate_Html").value = codeEditor.getValue();
+            document.getElementById("UpdateTemplate_Html").value = htmlEditor.getValue();
+            document.getElementById("UpdateTemplate_PlainText").value = plainTextEditor.getValue();
 
             document.getElementById("UpdateTemplateForm").submit();
         }

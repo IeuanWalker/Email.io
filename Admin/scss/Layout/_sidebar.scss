@@ -1,4 +1,7 @@
 ﻿.sidebar {
+    display: flex;
+    flex-direction: column;
+
     .nav {
         bottom: 1.5rem;
         -webkit-overflow-scrolling: touch;
@@ -7,6 +10,7 @@
         position: fixed;
         top: 3.5rem;
         width: 12rem;
+        flex-grow:1;
 
         .nav-item {
             margin-bottom: .75rem;
@@ -81,7 +85,7 @@
         background: #f7f8f9;
         bottom: 0;
         left: 0;
-        min-width: 10rem;
+        min-width: 12rem;
         overflow-y: auto;
         position: fixed;
         top: 0;

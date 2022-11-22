@@ -81,7 +81,7 @@ public class EmailController : Controller
 		ConstructedEmail? constructedEmail = null;
 		try
 		{
-			constructedEmail = _emailService.ConstructEmail(request.Data, template.Subject, template.Html, null);
+			constructedEmail = _emailService.ConstructEmail(request.Data, template.Subject, template.Html, template.PlainText);
 		}
 		catch (ArgumentException ex)
 		{

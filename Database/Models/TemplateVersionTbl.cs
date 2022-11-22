@@ -19,6 +19,7 @@ public class TemplateVersionTbl : BaseEntityModifiedDate
 
 	public string? TestData { get; set; }
 	public string? Html { get; set; }
+	public string? PlainText { get; set; }
 	public string? Categories { get; set; }
 	public bool IsActive { get; set; }
 	public string? ThumbnailImage { get; set; }

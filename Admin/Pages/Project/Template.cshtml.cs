@@ -85,6 +85,7 @@ public class TemplateModel : PageModel
 	public async Task<IActionResult> OnPostUpdateTemplate()
 	{
 		UpdateTemplate.Html = string.IsNullOrWhiteSpace(UpdateTemplate.Html) ? string.Empty : UpdateTemplate.Html;
+		UpdateTemplate.PlainText = string.IsNullOrWhiteSpace(UpdateTemplate.PlainText) ? string.Empty : UpdateTemplate.PlainText;
 		UpdateTemplate.TestData = string.IsNullOrWhiteSpace(UpdateTemplate.TestData) ? "{}" : UpdateTemplate.TestData;
 		try
 		{
@@ -198,6 +199,7 @@ public class TemplateModel : PageModel
 
 		version.TestData = UpdateTemplate.TestData;
 		version.Html = UpdateTemplate.Html;
+		version.PlainText = UpdateTemplate.PlainText;
 
 		_templateVersionTbl.Update(version);
 
@@ -363,13 +365,17 @@ public class TemplateModel : PageModel
 					   break;
 			   }
 		   });
+		
 		HandlebarsTemplate<object, object> subjectTemplate = Handlebars.Compile(version.Subject);
 		string subjectResult = subjectTemplate(JObject.Parse(version.TestData!));
 
 		HandlebarsTemplate<object, object> bodyTemplate = Handlebars.Compile(version.Html);
 		string bodyResult = bodyTemplate(JObject.Parse(version.TestData!));
 
-		await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, null, null, subjectResult, bodyResult, version.TestData!);
+		HandlebarsTemplate<object, object> plainTextTemplate = Handlebars.Compile(version.PlainText);
+		string plainTextResult = plainTextTemplate(JObject.Parse(version.TestData!));
+
+		await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, null, null, subjectResult, bodyResult, plainTextResult);
 		return RedirectToPage("/Project/Template", new
 		{
 			projectId = TestSend.ProjectId,
@@ -448,6 +454,9 @@ public class UpdateTemplateModel
 
 	[Required]
 	public string Html { get; set; } = string.Empty;
+
+	[Required]
+	public string PlainText { get; set; } = string.Empty;
 }
 
 public class UpdateSettingsModel

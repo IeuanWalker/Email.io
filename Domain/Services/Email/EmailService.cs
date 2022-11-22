@@ -35,8 +35,14 @@ public class EmailService : IEmailService
 		MimeMessage message = new();
 		message.From.Add(new MailboxAddress("Test", "noreply@test.com"));
 		message.To.AddRange(toAddresses);
-		message.Cc.AddRange(ccAddresses);
-		message.Bcc.AddRange(bccAddresses);
+		if(ccAddresses?.Any() ?? false)
+		{
+			message.Cc.AddRange(ccAddresses);
+		}
+		if (bccAddresses?.Any() ?? false)
+		{
+			message.Bcc.AddRange(bccAddresses);
+		}
 		message.Subject = subject;
 
 		message.Body = new BodyBuilder
