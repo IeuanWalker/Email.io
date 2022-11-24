@@ -1,0 +1,42 @@
+﻿@import url(https://fonts.googleapis.com/css?family=Open+Sans:300|Titillium+Web:700);
+
+.html-404{
+    height:100%;
+}
+
+.body-404 {
+    height: 100%;
+    display:flex;
+    background: url(http://i.giphy.com/jcxtvm2bsZDH2.gif);
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: 90% cover;
+    font-family: "Titillium Web", sans-serif;
+    color: #fff;
+    background-color: #1BCF00;
+    div{
+        flex-grow:1;
+    }
+}
+
+.travolta {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -ms-flex-align: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.65);
+    min-height: 100%;
+    text-align: center;
+
+    h1 {
+        font-size: 14em;
+        font-weight: 700;
+    }
+    .btn{
+        background-color: transparent;
+    }
+}

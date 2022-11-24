@@ -140,9 +140,9 @@
                 <h2>API key</h2>
                 <p>API key is used to call the REST api, by adding the projects API key to the calls header <i>'x-api-key'</i></p>
                 <div class="api-key-container">
-                    <span class="ml-2 user-select-none" id="apiKey" onclick="copyContent()">@Model.Project.ApiKey</span>
+                    <span class="ml-2 user-select-none" id="apiKey" onclick="copyContent()"></span>
                     <div class="dropdown dropdown-right">
-                        <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
+                        <button id="apiKeyToggleBtn" onclick="toggleApiKeyVisibility()" class="btn btn-link cursor-pointer" tabindex="0">
                             <i class="icon icon-more-vert"></i>
                         </button>
                     </div>
@@ -170,7 +170,7 @@
 
 @section Panels{
     @*Reset api key panel*@
-    <div class="cd-panel cd-panel--from-right js-cd-panel-resetApiKey">
+        <div class="cd-panel cd-panel--from-right js-cd-panel-resetApiKey" id="resetApiKeyPanel">
         <div class="cd-panel__container">
             <div class="cd-panel__content">
                 <a href="#0" class="cd-panel__close js-cd-close">Close</a>
@@ -179,18 +179,18 @@
                 <p>This action cannot be undone. This will permanently change the <strong>'@Model.Project.Name'</strong> project API key. This means anything calling the API with the current API key will receive a 401 authentication error, until the API key has been updated.</p>
 
                 <p>To confirm the reset of this project API key, please re-enter the project name <strong>'@Model.Project.Name'</strong></p>
-                <form class="form-horizontal" method="post" style="max-width: 800px" asp-page-handler="ResetApiKey">
-                    @Html.HiddenFor(model => model.ResetApiKeyProjectId)
+
+                <div class="form-horizontal"  style="max-width: 800px">
                     <div class="form-group">
                         <div class="col-3 col-sm-12">
                             <label class="form-label" for="resetApiKeyProjectNameConfirmation">@Html.DisplayNameFor(model => model.Project.Name):</label>
                         </div>
                         <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" id="resetApiKeyProjectNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.Project.Name)" value="">
+                                <input autocomplete="off" class="form-input" type="text" id="resetApiKeyProjectNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.Project.Name)" value="">
                         </div>
                     </div>
-                    <button type="submit" id="resetApiKeySubmitBtn" class="btn float-right btn-outline-error" disabled>I understand the consequences, reset API key</button>
-                </form>
+                    <button id="resetApiKeySubmitBtn" class="btn float-right btn-outline-error" onclick="resetApiKey()" disabled>I understand the consequences, reset API key</button>
+                </div>
             </div>
         </div>
     </div>
@@ -276,21 +276,39 @@
             btnTarget.classList.add("active");
         }
     </script>
-    @*Copy API key*@
+
+
+    <!-- API key -->
     <script>
-        let text = document.getElementById('apiKey').innerHTML;
-        const copyContent = async () => {
-            try {
-                await navigator.clipboard.writeText(text);
-                console.log('Content copied to clipboard');
-            } catch (err) {
-                console.error('Failed to copy: ', err);
+        // API key visibility
+        var currentApiKey = '@Model.Project.ApiKey';
+
+        hideApiKey();
+
+        function hideApiKey(){
+            var first5Characters = currentApiKey.substring(0, 4);
+            var remainingCharacter = currentApiKey.substring(4);
+            var hiddenApiKey = first5Characters
+            for (let i = 0; i < remainingCharacter.length; i++) {
+                hiddenApiKey += "*";
+            }
+            document.getElementById("apiKey").innerHTML = hiddenApiKey;
+            document.getElementById("apiKeyToggleBtn").setAttribute('data-isVisible', 'false');
+        }
+        function showApiKey(){
+            document.getElementById("apiKey").innerHTML = currentApiKey;
+            document.getElementById("apiKeyToggleBtn").setAttribute('data-isVisible', 'true');
+        }
+
+        function toggleApiKeyVisibility(){
+            var isVisible = document.getElementById("apiKeyToggleBtn").getAttribute('data-isVisible');
+            if(isVisible == 'true'){
+                hideApiKey();
+            }else{
+                showApiKey();
             }
         }
-    </script>
 
-     @*Reset API key*@
-    <script>
         document.getElementById("resetApiKeyProjectNameConfirmation").addEventListener('input',
             function (e) {
                 var projectName = "@Model.Project.Name";
@@ -300,9 +318,65 @@
                     document.getElementById("resetApiKeySubmitBtn").disabled = false;
                 }
             });
+
+        // Copy API key
+        const copyContent = async () => {
+            try {
+                await navigator.clipboard.writeText(currentApiKey);
+
+                tippy(document.getElementById('apiKey'), {
+                    content: 'Copied!',
+                    placement: 'top',
+                    showOnCreate: true, 
+                    arrow: false,
+                    trigger: 'manual',
+                    theme: 'customTheme'
+                });
+
+
+                setTimeout(function () {
+                    var arr = document.querySelectorAll("[data-tippy-root]");
+                    for (var i = 0; i < arr.length; i++) {
+                        arr[i].remove();
+                    }
+                }, 1000);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+        }
+
+        // Reset API key
+        function resetApiKey(){
+            jQuery.ajax({
+                type: "PUT",
+                url: '?handler=ResetApiKey&ProjectId=@Model.Project.Id',
+                headers: { 'RequestVerificationToken': $('@Html.AntiForgeryToken()').val() },
+                contentType: "application/json",
+                dataType: "json",
+                beforeSend: function () {
+                    document.getElementById("resetApiKeySubmitBtn").classList.add("loading");
+                },
+                success: function (data) {
+                    currentApiKey = data["apiKey"];
+                    showApiKey();
+
+                    document.getElementById("resetApiKeyProjectNameConfirmation").value = "";
+
+                    document.getElementById("resetApiKeyPanel").classList.remove('cd-panel--is-visible');
+
+                    showToast(data['toastTitle'], data['toastStatus']);
+                },
+                error: function (request, status, error) {
+                    showToast('Sorry something has gone wrong', 'error');
+                },
+                complete: function(){
+                    document.getElementById("resetApiKeySubmitBtn").classList.remove("loading");
+                }
+            });
+        }
     </script>
 
-    @*Delete project*@
+    <!--Delete project-->
     <script>
         document.getElementById("deleteProjectNameConfirmation").addEventListener('input',
             function (e) {
@@ -374,4 +448,8 @@
             tagify.updateValueByDOMTags()
         }
     </script>
+
+
+        <script src="https://unpkg.com/@@popperjs/core@@2"></script>
+    <script src="https://unpkg.com/tippy.js@@6"></script>
 }

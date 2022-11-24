@@ -44,6 +44,19 @@ public class Startup
 			app.UseHsts();
 		}
 
+		app.Use(async (ctx, next) =>
+		{
+			await next().ConfigureAwait(false);
+
+			if (ctx.Response.StatusCode == 404 && !ctx.Response.HasStarted)
+			{
+				//Re-execute the request so the user gets the error page
+				ctx.Items["originalPath"] = ctx.Request.Path.Value;
+				ctx.Request.Path = "/Error404";
+				await next().ConfigureAwait(false);
+			}
+		});
+
 		// Hangfire
 		HangfireConfiguration.Configure(app);
 

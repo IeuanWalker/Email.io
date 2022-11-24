@@ -1,4 +1,6 @@
-﻿(function () {
+﻿//https://codyhouse.co/demo/slide-in-panel/index.html
+
+(function () {
     // Slide In Panel - by CodyHouse.co
     var panelTriggers = document.getElementsByClassName('js-cd-panel-trigger');
     if (panelTriggers.length > 0) {

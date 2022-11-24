@@ -30,7 +30,6 @@ public class SettingsModel : PageModel
 		}
 
 		DeleteProjectId = Project.Id;
-		ResetApiKeyProjectId = Project.Id;
 	}
 
 	public IActionResult OnPostUpdateProject()
@@ -73,28 +72,27 @@ public class SettingsModel : PageModel
 		return RedirectToPage("/Project/index");
 	}
 
-	[BindProperty]
-	public Guid ResetApiKeyProjectId { get; set; }
-
-	public async Task<IActionResult> OnPostResetApiKey()
+	public async Task<JsonResult> OnPutResetApiKey([FromQuery]Guid projectId)
 	{
 		// TODO: Error handling
-		Project = await _projectTbl.GetByID(ResetApiKeyProjectId);
-		if (Project == null)
+		var project = await _projectTbl.GetByID(projectId);
+		if (project == null)
 		{
 			throw new NullReferenceException(nameof(Project));
 		}
-
+		
 		string apiKey = await _apiKeyService.GenerateUniqueApiKey();
 
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(ResetApiKeyProjectId), _ => new ProjectTbl
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(projectId), _ => new ProjectTbl
 		{
 			ApiKey = apiKey
 		});
 
-		TempData["toastStatus"] = "success";
-		TempData["toastMessage"] = "API key reset";
-
-		return RedirectToPage();
+		return new JsonResult(new
+		{
+			toastStatus = "success",
+			toastTitle = "API key reset",
+			apiKey = apiKey
+		});
 	}
 }
