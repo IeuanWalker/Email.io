@@ -261,6 +261,8 @@
         });
 
         function openTabs(el) {
+            hideApiKey();
+
             var btnTarget = el.currentTarget;
             var tabId = btnTarget.getAttribute('data-tabId');
             tabContent.forEach(function (el) {
@@ -293,16 +295,20 @@
                 hiddenApiKey += "*";
             }
             document.getElementById("apiKey").innerHTML = hiddenApiKey;
+            document.getElementById("apiKey").classList.remove('c-hand');
+            document.getElementById("apiKey").classList.add('c-auto');
             document.getElementById("apiKeyToggleBtn").setAttribute('data-isVisible', 'false');
         }
         function showApiKey(){
             document.getElementById("apiKey").innerHTML = currentApiKey;
+            document.getElementById("apiKey").classList.add('c-hand');
+            document.getElementById("apiKey").classList.remove('c-auto');
             document.getElementById("apiKeyToggleBtn").setAttribute('data-isVisible', 'true');
         }
 
         function toggleApiKeyVisibility(){
             var isVisible = document.getElementById("apiKeyToggleBtn").getAttribute('data-isVisible');
-            if(isVisible == 'true'){
+            if (isVisible == 'true') {
                 hideApiKey();
             }else{
                 showApiKey();
@@ -322,6 +328,11 @@
         // Copy API key
         const copyContent = async () => {
             try {
+                var isVisible = document.getElementById("apiKeyToggleBtn").getAttribute('data-isVisible');
+                if (isVisible == 'false') {
+                    return;
+                }
+
                 await navigator.clipboard.writeText(currentApiKey);
 
                 tippy(document.getElementById('apiKey'), {

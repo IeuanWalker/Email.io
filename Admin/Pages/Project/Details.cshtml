@@ -32,7 +32,7 @@
 
 <p>@(new HtmlString(CommonMark.CommonMarkConverter.Convert(Model.Project.Description)))</p>
 <div class="d-flex align-items-center mb-2">
-    <span class="text-caption"><span class="user-select-none">Project ID: </span>@Model.Project.Id</span>
+    <span class="text-caption user-select-none">Project ID: <span id="projectId" class="c-hand" onclick="copyId('projectId', '@Model.Project.Id')">@Model.Project.Id</span></span>
     <div class="popover popover-bottom ml-2 cursor-pointer">
         <ion-icon name="information-circle-outline" size="large"></ion-icon>
         <div class="popover-container">
@@ -85,7 +85,7 @@
                     <div class="accordion-body">
                         <div>
                             <div class="d-flex align-items-center mb-2">
-                                <span class="text-caption"><span class="user-select-none">Temaplate ID: </span>@template.Id</span>
+                                <span class="text-caption user-select-none">Temaplate ID: <span class="c-hand" Id="copy-@template.Id" onclick="copyId('copy-@template.Id', '@template.Id')">@template.Id</span></span>
                                 <div class="popover popover-bottom ml-2 cursor-pointer">
                                     <ion-icon name="information-circle-outline" size="large"></ion-icon>
                                     <div class="popover-container">
@@ -321,6 +321,36 @@ else
 
 @section Scripts
 {
+    <!-- Copy Ids -->
+    <script>
+            function copyId(elemantId, valueToCopy){
+                copy(document.getElementById(elemantId), valueToCopy);
+            }
+
+            const copy = async (elemant, valueToCopy) => {
+                try {
+                    await navigator.clipboard.writeText(valueToCopy);
+
+                    tippy(elemant, {
+                        content: 'Copied!',
+                        placement: 'top',
+                        showOnCreate: true, 
+                        arrow: false,
+                        trigger: 'manual',
+                        theme: 'customTheme'
+                    });
+
+                    setTimeout(function () {
+                        var arr = document.querySelectorAll("[data-tippy-root]");
+                        for (var i = 0; i < arr.length; i++) {
+                            arr[i].remove();
+                        }
+                    }, 1000);
+                } catch (err) {
+                    console.error('Failed to copy: ', err);
+                }
+            }
+    </script>
     @*Disable and enable create temaplate button*@
     <script>
         document.getElementById("CreateTemplate_Name").addEventListener('input',
@@ -489,4 +519,7 @@ else
 
         }
     </script>
+
+    <script src="https://unpkg.com/@@popperjs/core@@2"></script>
+    <script src="https://unpkg.com/tippy.js@@6"></script>
 }
