@@ -48,10 +48,12 @@ public class TemplateModel : PageModel
 	}
 
 	public TemplateVersionTbl? Version { get; set; }
-	public int ProjectId { get; set; }
+	public string ProjectSlug { get; set; }
 
 	public async Task OnGet(string slug, string templateName, string hashedVersionId)
 	{
+		ProjectSlug = slug;
+
 		int? projectId = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
 		int? versionId = _hashIdService.Decode(hashedVersionId);
 
@@ -61,11 +63,10 @@ public class TemplateModel : PageModel
 			throw new NullReferenceException();
 		}
 
-		ProjectId = (int)projectId;
 		// TODO: Pull minimal data
 		Version = (await _templateVersionTbl.Get(x =>
 				x.Id.Equals(versionId) &&
-				x.Template!.ProjectId.Equals(ProjectId)))
+				x.Template!.ProjectId.Equals(projectId)))
 			.FirstOrDefault();
 
 		// TODO: Error handling
@@ -76,13 +77,13 @@ public class TemplateModel : PageModel
 
 		UpdateTemplate = new UpdateTemplateModel
 		{
-			ProjectId = ProjectId,
+			ProjectId = (int)projectId,
 			TemplateId = Version.TemplateId,
 			VersionId = Version.Id
 		};
 		UpdateSettings = new UpdateSettingsModel
 		{
-			ProjectId = ProjectId,
+			ProjectId = (int)projectId,
 			TemplateId = Version.TemplateId,
 			VersionId = Version.Id,
 			Name = Version.Name,
@@ -90,7 +91,7 @@ public class TemplateModel : PageModel
 		};
 		TestSend = new TestSendModel
 		{
-			ProjectId = ProjectId,
+			ProjectId = (int)projectId,
 			TemplateId = Version.TemplateId,
 			VersionId = Version.Id
 		};
@@ -283,9 +284,9 @@ public class TemplateModel : PageModel
 	{
 		// Get template
 		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
-				x.Id.Equals(UpdateSettings.VersionId) &&
-				x.TemplateId.Equals(UpdateSettings.TemplateId) &&
-				x.Template!.ProjectId.Equals(UpdateSettings.ProjectId)))
+				x.Id.Equals(TestSend.VersionId) &&
+				x.TemplateId.Equals(TestSend.TemplateId) &&
+				x.Template!.ProjectId.Equals(TestSend.ProjectId)))
 			.FirstOrDefault();
 
 		if (version == null)
