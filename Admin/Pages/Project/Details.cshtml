@@ -31,7 +31,10 @@
     </a>
 </div>
 
+@if (!string.IsNullOrWhiteSpace(Model.Project.Description))
+{
 <p>@(new HtmlString(CommonMark.CommonMarkConverter.Convert(Model.Project.Description)))</p>
+}
 <div>
     @foreach (string tag in Model.Project.Tags?.Split(",") ?? new string[0])
     {
@@ -61,7 +64,7 @@
                         <span class="text-capitalize user-select-none">@template.DateModified.Humanize()</span>
                         <div class="dropdown dropdown-right">
                             <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
-                                <i class="icon icon-more-vert"></i>
+                                <ion-icon name="ellipsis-vertical-outline" style="font-size:1.1rem"></ion-icon>
                             </button>
                             <ul class="menu submenu">
                                 <li class="menu-item user-select-none"><a class="js-cd-panel-trigger edit-name cursor-pointer" data-panel="editName" data-templateId="@template.Id" data-templateName="@template.Name">Edit name</a></li>
@@ -71,24 +74,32 @@
                     </label>
                     <div class="accordion-body">
                         <div>
-                            <div class="d-flex align-items-center mb-2">
-                                <span class="text-caption user-select-none">Temaplate ID: <span class="c-hand" Id="copy-@template.HashedApiId" onclick="copyId('copy-@template.HashedApiId', '@template.HashedApiId')">@template.HashedApiId</span></span>
-                                <div class="popover popover-bottom ml-2 cursor-pointer">
-                                    <ion-icon name="information-circle-outline" size="large"></ion-icon>
-                                    <div class="popover-container">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                A template ID is the unique identifier for a template. It's used as part of an API call to identify which template should be used for an email request.
+                            <div class="container p-0">
+                                <div class="columns  col-gapless">
+                                    <div class="column col mb-2 d-flex align-items-center">
+                                        <span class="text-caption user-select-none">Temaplate ID: <span class="c-hand" Id="copy-@template.HashedApiId" onclick="copyId('copy-@template.HashedApiId', '@template.HashedApiId')">@template.HashedApiId</span></span>
+                                        <div class="popover popover-bottom ml-2 cursor-pointer" style="align-self:baseline">
+                                            <ion-icon name="information-circle-outline" style="font-size:1rem"></ion-icon>
+                                            <div class="popover-container">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        A template ID is the unique identifier for a template. It's used as part of an API call to identify which template should be used for an email request.
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    @if (template.Versions?.Any() ?? false)
+                                    {
+                                        <div class="column col-auto">
+                                            <a onclick="CreateNewTemplateVersion('@template.Id')" class="btn float-right">Add version</a>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                             @if (template.Versions?.Any() ?? false)
                             {
-                                <div class="clearfix">
-                                    <a onclick="CreateNewTemplateVersion('@template.Id')" class="btn float-right">Add version</a>
-                                </div>
+                                
                                 <div class="template-version-table">
                                     <header>
                                         <p>Version</p>
@@ -114,7 +125,7 @@
                                                     <span class="text-capitalize user-select-none">@version.DateModified.Humanize()</span>
                                                     <div class="dropdown dropdown-right">
                                                         <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
-                                                            <i class="icon icon-more-vert"></i>
+                                                            <ion-icon name="ellipsis-vertical-outline" style="font-size:1.1rem"></ion-icon>
                                                         </button>
                                                         <ul class="menu submenu">
                                                             @if (!version.IsActive)

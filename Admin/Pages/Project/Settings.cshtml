@@ -70,8 +70,8 @@
                         <div class="col-3 col-sm-12">
                             <div class="d-flex align-items-center">
                                 <label class="form-label d-inline mr-2" asp-for="Project.Description">@Html.DisplayNameFor(model => model.Project.Description):</label>
-                                <div class="popover popover-right cursor-pointer">
-                                    <ion-icon name="information-circle-outline" size="large"></ion-icon>
+                                <div class="popover popover-right cursor-pointer" style="align-self:baseline">
+                                    <ion-icon name="information-circle-outline" style="font-size:1rem;"></ion-icon>
                                     <div class="popover-container">
                                         <div class="card">
                                             <div class="card-header">
@@ -96,8 +96,8 @@
                     <div class="form-group">
                         <div class="col-3 col-sm-12 d-flex align-items-center">
                             <label class="form-label d-inline  mr-2" asp-for="Project.Tags">@Html.DisplayNameFor(model => model.Project.Tags):</label>
-                            <div class="popover popover-right d-flex align-items-center cursor-pointer">
-                                <ion-icon name="information-circle-outline" size="large"></ion-icon>
+                            <div class="popover popover-right d-flex align-items-center cursor-pointer" style="align-self:baseline">
+                                <ion-icon name="information-circle-outline" style="font-size:1rem;"></ion-icon>
                                 <div class="popover-container">
                                     <div class="card">
                                         <div class="card-body">
@@ -144,12 +144,12 @@
                     <span class="ml-2 user-select-none" id="apiKey" onclick="copyContent()"></span>
                     <div class="dropdown dropdown-right">
                         <button id="apiKeyToggleBtn" onclick="toggleApiKeyVisibility()" class="btn btn-link cursor-pointer" tabindex="0">
-                            <i class="icon icon-more-vert"></i>
+                            <ion-icon id="eyeIcon" name="eye-outline" style="font-size:1.3rem"></ion-icon>
                         </button>
                     </div>
                     <div class="dropdown dropdown-right">
                         <button type="submit" class="btn btn-link js-cd-panel-trigger" data-panel="resetApiKey">
-                            <i class="icon icon-refresh"></i>
+                            <ion-icon name="refresh-outline" style="font-size:1.2rem"></ion-icon>
                         </button>
                     </div>
                 </div>
@@ -338,12 +338,14 @@
             document.getElementById("apiKey").classList.remove('c-hand');
             document.getElementById("apiKey").classList.add('c-auto');
             document.getElementById("apiKeyToggleBtn").setAttribute('data-isVisible', 'false');
+            document.getElementById("eyeIcon").setAttribute('name', 'eye-off-outline');
         }
         function showApiKey(){
             document.getElementById("apiKey").innerHTML = currentApiKey;
             document.getElementById("apiKey").classList.add('c-hand');
             document.getElementById("apiKey").classList.remove('c-auto');
             document.getElementById("apiKeyToggleBtn").setAttribute('data-isVisible', 'true');
+            document.getElementById("eyeIcon").setAttribute('name', 'eye-outline');
         }
 
         function toggleApiKeyVisibility(){
