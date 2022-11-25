@@ -14,7 +14,7 @@
             <label class="form-label" asp-for="Project.Name">@Html.DisplayNameFor(model => model.Project.Name):</label>
         </div>
         <div class="col-9 col-sm-12">
-            <input class="form-input" type="text" asp-for="Project.Name" placeholder="@Html.DisplayNameFor(model => model.Project.Name)">
+            <input autocomplete="off" class="form-input" type="text" asp-for="Project.Name" placeholder="@Html.DisplayNameFor(model => model.Project.Name)">
             <span class="form-input-hint" asp-validation-for="Project.Name"></span>
         </div>
     </div>
@@ -23,7 +23,7 @@
             <label class="form-label" asp-for="Project.SubHeading">@Html.DisplayNameFor(model => model.Project.SubHeading):</label>
         </div>
         <div class="col-9 col-sm-12">
-            <input class="form-input" type="text" asp-for="Project.SubHeading" placeholder="@Html.DisplayNameFor(model => model.Project.SubHeading)">
+            <input autocomplete="off" class="form-input" type="text" asp-for="Project.SubHeading" placeholder="@Html.DisplayNameFor(model => model.Project.SubHeading)">
             <span class="form-input-hint" asp-validation-for="Project.SubHeading"></span>
         </div>
     </div>
@@ -50,7 +50,7 @@
             </div>
         </div>
         <div class="col-9 col-sm-12">
-            <textarea class="form-input" type="text" asp-for="Project.Description" placeholder="@Html.DisplayNameFor(model => model.Project.Description)"></textarea>
+            <textarea autocomplete="off" class="form-input" type="text" asp-for="Project.Description" placeholder="@Html.DisplayNameFor(model => model.Project.Description)"></textarea>
             <span class="form-input-hint" asp-validation-for="Project.Description"></span>
         </div>
     </div>

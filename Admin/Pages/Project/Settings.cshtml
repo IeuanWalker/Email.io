@@ -252,7 +252,7 @@
                             <label class="form-label" for="deleteProjectNameConfirmation">@Html.DisplayNameFor(model => model.Project.Name):</label>
                         </div>
                         <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" id="deleteProjectNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.Project.Name)" value="">
+                            <input class="form-input" autocomplete="off" type="text" id="deleteProjectNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.Project.Name)" value="">
                         </div>
                     </div>
                     <button type="submit" id="deleteProjecSubmitBtn" class="btn float-right btn-outline-error" disabled>I understand the consequences, delete this project</button>

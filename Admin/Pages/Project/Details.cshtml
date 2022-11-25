@@ -217,7 +217,7 @@ else
                             <label class="form-label" asp-for="CreateTemplate.Name">@Html.DisplayNameFor(model => model.CreateTemplate.Name):</label>
                         </div>
                         <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" asp-for="CreateTemplate.Name" placeholder="@Html.DisplayNameFor(model => model.CreateTemplate.Name)">
+                            <input autocomplete="off" class="form-input" type="text" asp-for="CreateTemplate.Name" placeholder="@Html.DisplayNameFor(model => model.CreateTemplate.Name)">
                             <span class="form-input-hint" asp-validation-for="CreateTemplate.Name"></span>
                         </div>
                     </div>
@@ -244,7 +244,7 @@ else
                             <label class="form-label" for="deleteTemplateNameConfirmation">@Html.DisplayNameFor(model => model.UpdateTemplateName.Name):</label>
                         </div>
                         <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" id="deleteTemplateNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.UpdateTemplateName.Name)">
+                            <input autocomplete="off" class="form-input" type="text" id="deleteTemplateNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.UpdateTemplateName.Name)">
                         </div>
                     </div>
                     <button type="submit" id="deleteTemplateSubmitBtn" class="btn float-right btn-outline-error">I understand the consequences, delete this template</button>
@@ -267,7 +267,7 @@ else
                             <label class="form-label" asp-for="UpdateTemplateName.Name">@Html.DisplayNameFor(model => model.UpdateTemplateName.Name):</label>
                         </div>
                         <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" asp-for="UpdateTemplateName.Name" placeholder="@Html.DisplayNameFor(model => model.UpdateTemplateName.Name)">
+                            <input autocomplete="off" class="form-input" type="text" asp-for="UpdateTemplateName.Name" placeholder="@Html.DisplayNameFor(model => model.UpdateTemplateName.Name)">
                             <span class="form-input-hint" asp-validation-for="UpdateTemplateName.Name"></span>
                         </div>
                     </div>
@@ -296,7 +296,7 @@ else
                             <label class="form-label" for="deleteTemplateNameConfirmation">@Html.DisplayNameFor(model => model.UpdateTemplateName.Name):</label>
                         </div>
                         <div class="col-9 col-sm-12">
-                            <input class="form-input" type="text" id="deleteTemplateVersionNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.UpdateTemplateName.Name)">
+                            <input autocomplete="off" class="form-input" type="text" id="deleteTemplateVersionNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.UpdateTemplateName.Name)">
                         </div>
                     </div>
                     <button type="submit" id="deleteTemplateVersionSubmitBtn" class="btn float-right btn-outline-error">I understand the consequences, delete this template</button>
