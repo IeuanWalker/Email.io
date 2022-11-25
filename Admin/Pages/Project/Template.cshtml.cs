@@ -50,17 +50,16 @@ public class TemplateModel : PageModel
 	public TemplateVersionTbl? Version { get; set; }
 	public string ProjectSlug { get; set; }
 
-	public async Task OnGet(string slug, string templateName, string hashedVersionId)
+	public async Task<IActionResult> OnGet(string slug, string templateName, string hashedVersionId)
 	{
 		ProjectSlug = slug;
 
 		int? projectId = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
 		int? versionId = _hashIdService.Decode(hashedVersionId);
-
-		// TODO: Error handling
+		
 		if (projectId is null || versionId is null)
 		{
-			throw new NullReferenceException();
+			return NotFound();
 		}
 
 		// TODO: Pull minimal data
@@ -68,11 +67,10 @@ public class TemplateModel : PageModel
 				x.Id.Equals(versionId) &&
 				x.Template!.ProjectId.Equals(projectId)))
 			.FirstOrDefault();
-
-		// TODO: Error handling
-		if (Version == null)
+		
+		if (Version is null)
 		{
-			throw new NullReferenceException();
+			return NotFound();
 		}
 
 		UpdateTemplate = new UpdateTemplateModel
@@ -95,6 +93,8 @@ public class TemplateModel : PageModel
 			TemplateId = Version.TemplateId,
 			VersionId = Version.Id
 		};
+
+		return Page();
 	}
 
 	[BindProperty]
@@ -206,9 +206,13 @@ public class TemplateModel : PageModel
 			  x.Template!.ProjectId.Equals(UpdateTemplate.ProjectId)))
 		  .FirstOrDefault();
 
-		if (version == null)
+		if (version is null)
 		{
-			throw new NullReferenceException();
+			return new JsonResult(new
+			{
+				toastStatus = "error",
+				toastTitle = "Error template not found.",
+			});
 		}
 
 		version.TestData = UpdateTemplate.TestData;
@@ -247,9 +251,9 @@ public class TemplateModel : PageModel
 		   x.Template!.ProjectId.Equals(UpdateSettings.ProjectId)))
 	   .FirstOrDefault();
 
-		if (version == null)
+		if (version is null)
 		{
-			throw new NullReferenceException();
+			return NotFound();
 		}
 
 		version.Name = UpdateSettings.Name;
@@ -289,9 +293,9 @@ public class TemplateModel : PageModel
 				x.Template!.ProjectId.Equals(TestSend.ProjectId)))
 			.FirstOrDefault();
 
-		if (version == null)
+		if (version is null)
 		{
-			throw new NullReferenceException();
+			return NotFound();
 		}
 
 		// Generate body
@@ -402,7 +406,7 @@ public class TemplateModel : PageModel
 			nameof(TemplateVersionTbl.Template)))
 			.FirstOrDefault();
 
-		if (version == null)
+		if (version is null)
 		{
 			return;
 		}

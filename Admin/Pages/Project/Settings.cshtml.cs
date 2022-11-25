@@ -30,23 +30,25 @@ public class SettingsModel : PageModel
 	[BindProperty]
 	public ProjectTbl? Project { get; set; }
 
-	public async Task OnGet(string slug)
+	public async Task<IActionResult> OnGet(string slug)
 	{
 		int? id = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
 
 		if (id is null)
 		{
-			throw new NullReferenceException(nameof(Project));
+			return NotFound();
 		}
 
 		// TODO: Error handling
 		Project = (await _projectTbl.Get(x => x.Id.Equals(id), null, nameof(ProjectTbl.Templates)).ConfigureAwait(false)).Single();
 		if (Project == null)
 		{
-			throw new NullReferenceException(nameof(Project));
+			return NotFound();
 		}
 
 		DeleteProjectId = Project.Id;
+
+		return Page();
 	}
 
 	public IActionResult OnPostUpdateProject()
@@ -56,7 +58,7 @@ public class SettingsModel : PageModel
 			return Page();
 		}
 
-		if (Project == null)
+		if (Project is null)
 		{
 			return Page();
 		}
@@ -74,11 +76,10 @@ public class SettingsModel : PageModel
 
 	public async Task<IActionResult> OnPostDeleteProject()
 	{
-		// TODO: Error handling
 		Project = await _projectTbl.GetByID(DeleteProjectId);
-		if (Project == null)
+		if (Project is null)
 		{
-			throw new NullReferenceException(nameof(Project));
+			return NotFound();
 		}
 
 		await _projectTbl.Delete(Project.Id);
@@ -91,11 +92,12 @@ public class SettingsModel : PageModel
 
 	public async Task<JsonResult> OnPutResetApiKey([FromQuery]int projectId)
 	{
-		// TODO: Error handling
 		var project = await _projectTbl.GetByID(projectId);
-		if (project == null)
+		if (project is null)
 		{
-			throw new NullReferenceException(nameof(Project));
+			var result = new JsonResult(null);
+			result.StatusCode = StatusCodes.Status404NotFound;	
+			return result;
 		}
 		
 		string apiKey = await _apiKeyService.GenerateUniqueApiKey();

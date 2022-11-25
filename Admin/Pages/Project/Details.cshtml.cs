@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
+using AdminSite.Pages;
 using AutoMapper;
 using Database.Models;
 using Database.Repositories.Project;
@@ -12,6 +14,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Pages.Project;
+
+public class NotFoundViewResult : ViewResult
+{
+	public NotFoundViewResult()
+	{
+		ViewName = "Error404";
+		StatusCode = (int)HttpStatusCode.NotFound;
+	}
+}
 
 public class DetailsModel : PageModel
 {
@@ -40,20 +51,20 @@ public class DetailsModel : PageModel
 
 	public ProjectResponseModel Project { get; set; } = new ProjectResponseModel();
 
-	public async Task OnGet(string slug)
+	public async Task<IActionResult> OnGet(string slug)
 	{
 		int? id = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
 
 		if (id is null)
 		{
-			throw new NullReferenceException(nameof(Project));
+			return NotFound();
 		}
 
 		// TODO: Error handling
 		ProjectTbl? project = (await _projectTbl.Get(x => x.Id.Equals(id), null, $"{nameof(ProjectTbl.Templates)}, {nameof(ProjectTbl.Templates)}.{nameof(TemplateTbl.Versions)}").ConfigureAwait(false)).Single();
 		if (Project is null)
 		{
-			throw new NullReferenceException(nameof(Project));
+			return NotFound();
 		}
 
 		Project = _mapper.Map<ProjectResponseModel>(project);
@@ -94,6 +105,8 @@ public class DetailsModel : PageModel
 		{
 			ProjectId = Project.Id
 		};
+
+		return Page();
 	}
 
 	[BindProperty]
@@ -101,7 +114,6 @@ public class DetailsModel : PageModel
 
 	public async Task<IActionResult> OnPostCreateTemplate()
 	{
-		// TODO: Error handling
 		TemplateTbl result = await _templateTbl.Add(CreateTemplate).ConfigureAwait(false);
 		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.ProjectId), _ => new ProjectTbl
 		{
@@ -120,12 +132,11 @@ public class DetailsModel : PageModel
 
 	public async Task<IActionResult> OnPostUpdateTemplateName()
 	{
-		// TODO: Error handling
 		TemplateTbl? result = await _templateTbl.GetByID(UpdateTemplateName.TemplateId);
 
-		if (result == null)
+		if (result is null)
 		{
-			throw new NullReferenceException();
+			return NotFound();
 		}
 
 		if (UpdateTemplateName.ProjectId != result.ProjectId)
@@ -153,15 +164,14 @@ public class DetailsModel : PageModel
 
 	public async Task<IActionResult> OnPostDeleteTemplate()
 	{
-		// TODO: Error handling
 		int? projectId = await _templateTbl
 			.Where(x => x.Id.Equals(DeleteTemplate.TemplateId))
 			.Select(x => x.ProjectId)
 			.FirstOrDefaultAsync();
 
-		if (projectId == null)
+		if (projectId is null)
 		{
-			throw new NullReferenceException();
+			return NotFound();
 		}
 
 		if (DeleteTemplate.ProjectId != projectId)
@@ -187,13 +197,11 @@ public class DetailsModel : PageModel
 
 	public async Task<IActionResult> OnPostCreateTemplateVersion()
 	{
-		// TODO: Error handling
-		// TODO: Optimize query not too pull all columns
 		TemplateTbl? template = (await _templateTbl.Get(x => x.Id.Equals(CreateTemplateVersion.TemplateId), null, nameof(TemplateTbl.Versions))).FirstOrDefault();
 
-		if (template == null)
+		if (template is null)
 		{
-			throw new NullReferenceException();
+			return NotFound();
 		}
 
 		CreateTemplateVersion.Name = "Untitled name";
@@ -230,9 +238,9 @@ public class DetailsModel : PageModel
 				x.Template!.ProjectId.Equals(MarkAsActive.ProjectId)))
 			.FirstOrDefault();
 
-		if (version == null)
+		if (version is null)
 		{
-			throw new NullReferenceException(nameof(version));
+			return NotFound();
 		}
 
 		version.IsActive = true;
@@ -270,7 +278,6 @@ public class DetailsModel : PageModel
 
 	public async Task<IActionResult> OnPostDuplicateTemplateVersion()
 	{
-		// TODO: Error handling
 		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
 			   x.Id.Equals(DuplicateTemplateVersion.VersionId) &&
 			   x.TemplateId.Equals(DuplicateTemplateVersion.TemplateId) &&
@@ -279,7 +286,7 @@ public class DetailsModel : PageModel
 
 		if (version == null)
 		{
-			throw new NullReferenceException(nameof(version));
+			return NotFound();
 		}
 
 		TemplateVersionTbl result = await _templateVersionTbl.Add(new TemplateVersionTbl
@@ -313,7 +320,6 @@ public class DetailsModel : PageModel
 
 	public async Task<IActionResult> OnPostDeleteTemplateVersion()
 	{
-		// TODO: Error handling
 		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
 				x.Id.Equals(DeleteTemplateVersion.VersionId) &&
 				x.TemplateId.Equals(DeleteTemplateVersion.TemplateId) &&
@@ -322,7 +328,7 @@ public class DetailsModel : PageModel
 
 		if (version == null)
 		{
-			throw new NullReferenceException();
+			return NotFound();
 		}
 
 		await _templateVersionTbl.Delete(DeleteTemplateVersion.VersionId);

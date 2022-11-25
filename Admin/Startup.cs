@@ -62,6 +62,8 @@ public class Startup
 			}
 		});
 
+		app.UseStatusCodePagesWithReExecute("/Error");
+
 		// Hangfire
 		HangfireConfiguration.Configure(app);
 

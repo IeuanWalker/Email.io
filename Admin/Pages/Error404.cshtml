@@ -4,6 +4,12 @@
     ViewData["Title"] = "404 - Page not found";
     Layout = "";
 }
+
+@*
+Credit -Kasper De Bruyne
+Codepen - https://codepen.io/kdbkapsere/pen/oNXLbqQ
+*@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -325,7 +331,8 @@ h2 {
           How you got here is a mystery. But you can click the button below
           to go back to the homepage.
         </p>
-        <button class="btn btn-lg" style="place-self:flex-start">GO HOME</button>
+
+        <a asp-page="/index" type="button" class="btn btn-lg" style="place-self:flex-start">GO HOME</a>
       </div>
     </div>
   </div>
