@@ -7,9 +7,9 @@ namespace Database.Models;
 public class EmailTbl
 {
 	[Key]
-	public Guid Id { get; set; }
+	public int Id { get; set; }
 
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 	public string Data { get; set; } = string.Empty;
 
 	[ForeignKey("ToAddressesEmailId")]
@@ -32,7 +32,7 @@ public class EmailTbl
 	public DateTime? Sent { get; set; }
 
 	// Relationship
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	public ProjectTbl? Project { get; set; }
 }

@@ -25,6 +25,6 @@ public class TemplateVersionTbl : BaseEntityModifiedDate
 	public string? ThumbnailImage { get; set; }
 	public string? PreviewImage { get; set; }
 
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 	public TemplateTbl Template { get; set; } = null!;
 }

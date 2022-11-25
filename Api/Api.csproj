@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.32" />
     <PackageReference Include="Hangfire.Heartbeat" Version="0.5.1" />
     <PackageReference Include="Hangfire.RecurringJobAdmin" Version="1.0.5" />

@@ -1,4 +1,4 @@
-﻿@page "/Project/{id}/Settings"
+﻿@page "/project/{slug}/settings"
 @model Admin.Pages.Project.SettingsModel
 @{
     ViewData["Title"] = "Settings";
@@ -47,6 +47,7 @@
                 <form class="form-horizontal" id="createProjectForm" method="post" style="max-width: 800px" onsubmit="return validationFunction(Event)" asp-page-handler="UpdateProject">
                     @Html.HiddenFor(model => model.Project.Id)
                     @Html.HiddenFor(model => model.Project.DateModified)
+                    @Html.HiddenFor(model => model.Project.ApiKey)
                     <div class="form-group">
                         <div class="col-3 col-sm-12">
                             <label class="form-label" asp-for="Project.Name">@Html.DisplayNameFor(model => model.Project.Name):</label>

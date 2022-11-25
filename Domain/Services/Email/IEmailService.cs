@@ -7,7 +7,7 @@ public interface IEmailService
 {
 	Task SendEmail(IEnumerable<MailboxAddress> toAddresses, IEnumerable<MailboxAddress>? ccAddresses, IEnumerable<MailboxAddress>? bccAddresses, string subject, string htmlContent, string plainTextContent);
 
-	Task SendEmail(Guid emailId);
+	Task SendEmail(int emailId);
 
 	/// <summary>
 	/// Combines handlebars templates with data

@@ -7,13 +7,13 @@ namespace Database.Models;
 public class TemplateTbl : BaseEntityModifiedDate
 {
 	[Key]
-	public Guid Id { get; set; }
+	public int Id { get; set; }
 
 	[Required]
 	[MaxLength(200)]
 	public string Name { get; set; } = string.Empty;
 
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 	public ProjectTbl? Project { get; set; }
 	public ICollection<TemplateVersionTbl>? Versions { get; set; }
 }

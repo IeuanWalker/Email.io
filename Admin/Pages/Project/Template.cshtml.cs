@@ -8,6 +8,8 @@ using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.Email;
+using Domain.Services.HashId;
+using Domain.Services.Slug;
 using HandlebarsDotNet;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
@@ -24,34 +26,50 @@ public class TemplateModel : PageModel
 	readonly ITemplateVersionRepository _templateVersionTbl;
 	readonly IBackgroundJobClient _jobClient;
 	readonly IEmailService _emailService;
+	readonly IHashIdService _hashIdService;
+	readonly ISlugService _slugService;
 
 	public TemplateModel(
 		IProjectRepository projectTbl,
 		ITemplateRepository templateTbl,
 		ITemplateVersionRepository templateVersionTbl,
 		IBackgroundJobClient jobClient,
-		IEmailService emailService)
+		IEmailService emailService,
+		IHashIdService hashIdService,
+		ISlugService slugService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
 		_templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
 		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
 		_emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
+		_slugService = slugService ?? throw new ArgumentNullException(nameof(slugService));
 	}
 
 	public TemplateVersionTbl? Version { get; set; }
-	public Guid ProjectId { get; set; }
+	public string ProjectSlug { get; set; }
 
-	public async Task OnGet(Guid projectId, Guid templateId, int versionId)
+	public async Task OnGet(string slug, string templateName, string hashedVersionId)
 	{
-		ProjectId = projectId;
+		ProjectSlug = slug;
+
+		int? projectId = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
+		int? versionId = _hashIdService.Decode(hashedVersionId);
+
 		// TODO: Error handling
+		if (projectId is null || versionId is null)
+		{
+			throw new NullReferenceException();
+		}
+
+		// TODO: Pull minimal data
 		Version = (await _templateVersionTbl.Get(x =>
 				x.Id.Equals(versionId) &&
-				x.TemplateId.Equals(templateId) &&
 				x.Template!.ProjectId.Equals(projectId)))
 			.FirstOrDefault();
 
+		// TODO: Error handling
 		if (Version == null)
 		{
 			throw new NullReferenceException();
@@ -59,23 +77,23 @@ public class TemplateModel : PageModel
 
 		UpdateTemplate = new UpdateTemplateModel
 		{
-			ProjectId = projectId,
-			TemplateId = templateId,
-			VersionId = versionId
+			ProjectId = (int)projectId,
+			TemplateId = Version.TemplateId,
+			VersionId = Version.Id
 		};
 		UpdateSettings = new UpdateSettingsModel
 		{
-			ProjectId = projectId,
-			TemplateId = templateId,
-			VersionId = versionId,
+			ProjectId = (int)projectId,
+			TemplateId = Version.TemplateId,
+			VersionId = Version.Id,
 			Name = Version.Name,
 			Subject = Version.Subject
 		};
 		TestSend = new TestSendModel
 		{
-			ProjectId = projectId,
-			TemplateId = templateId,
-			VersionId = versionId
+			ProjectId = (int)projectId,
+			TemplateId = Version.TemplateId,
+			VersionId = Version.Id
 		};
 	}
 
@@ -251,7 +269,7 @@ public class TemplateModel : PageModel
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "Template updated";
 
-		return RedirectToPage("/Project/Template", new
+		return RedirectToPage("/project/template", new
 		{
 			projectId = UpdateTemplate.ProjectId,
 			templateId = UpdateTemplate.TemplateId,
@@ -266,9 +284,9 @@ public class TemplateModel : PageModel
 	{
 		// Get template
 		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
-				x.Id.Equals(UpdateSettings.VersionId) &&
-				x.TemplateId.Equals(UpdateSettings.TemplateId) &&
-				x.Template!.ProjectId.Equals(UpdateSettings.ProjectId)))
+				x.Id.Equals(TestSend.VersionId) &&
+				x.TemplateId.Equals(TestSend.TemplateId) &&
+				x.Template!.ProjectId.Equals(TestSend.ProjectId)))
 			.FirstOrDefault();
 
 		if (version == null)
@@ -368,7 +386,7 @@ public class TemplateModel : PageModel
 		string plainTextResult = plainTextTemplate(JObject.Parse(version.TestData!));
 
 		await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, null, null, subjectResult, bodyResult, plainTextResult);
-		return RedirectToPage("/Project/Template", new
+		return RedirectToPage("/project/template", new
 		{
 			projectId = TestSend.ProjectId,
 			templateId = TestSend.TemplateId,
@@ -407,7 +425,7 @@ public class TemplateModel : PageModel
 		});
 	}
 
-	public async Task<Uri> SaveImage(Guid projectId, byte[] file, string name)
+	public async Task<Uri> SaveImage(int projectId, byte[] file, string name)
 	{
 		BlobContainerClient blobContainerClient = new(
 			"UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite",
@@ -433,10 +451,10 @@ public class TemplateModel : PageModel
 public class UpdateTemplateModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }
@@ -454,10 +472,10 @@ public class UpdateTemplateModel
 public class UpdateSettingsModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }
@@ -474,10 +492,10 @@ public class UpdateSettingsModel
 public class TestSendModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }

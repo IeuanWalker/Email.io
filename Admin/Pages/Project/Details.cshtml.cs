@@ -1,8 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using Database.Models;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
+using Domain.Services.HashId;
+using Domain.Services.Slug;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -14,52 +18,81 @@ public class DetailsModel : PageModel
 	readonly IProjectRepository _projectTbl;
 	readonly ITemplateRepository _templateTbl;
 	readonly ITemplateVersionRepository _templateVersionTbl;
+	readonly IMapper _mapper;
+	readonly IHashIdService _hashIdService;
+	readonly ISlugService _slugService;
 
 	public DetailsModel(
 		IProjectRepository projectTbl,
 		ITemplateRepository templateTbl,
-		ITemplateVersionRepository templateVersionTbl)
+		ITemplateVersionRepository templateVersionTbl,
+		IMapper mapper,
+		IHashIdService hashIdService,
+		ISlugService slugService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
 		_templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
+		_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
+		_slugService = slugService ?? throw new ArgumentNullException(nameof(slugService));
 	}
 
-	public ProjectTbl? Project { get; set; }
+	public ProjectResponseModel Project { get; set; } = new ProjectResponseModel();
 
-	public async Task OnGet(Guid id)
+	public async Task OnGet(string slug)
 	{
-		// TODO: Error handling
-		Project = (await _projectTbl.Get(x => x.Id.Equals(id), null, $"{nameof(ProjectTbl.Templates)}, {nameof(ProjectTbl.Templates)}.{nameof(TemplateTbl.Versions)}").ConfigureAwait(false)).Single();
-		if (Project == null)
+		int? id = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
+
+		if (id is null)
 		{
 			throw new NullReferenceException(nameof(Project));
 		}
 
+		// TODO: Error handling
+		ProjectTbl? project = (await _projectTbl.Get(x => x.Id.Equals(id), null, $"{nameof(ProjectTbl.Templates)}, {nameof(ProjectTbl.Templates)}.{nameof(TemplateTbl.Versions)}").ConfigureAwait(false)).Single();
+		if (Project is null)
+		{
+			throw new NullReferenceException(nameof(Project));
+		}
+
+		Project = _mapper.Map<ProjectResponseModel>(project);
+
+		Project.Slug = slug;
+		Project.Templates?.ForEach(x =>
+		{
+			x.HashedApiId = _hashIdService.EncodeProjectAndTemplateId(x.ProjectId, x.Id);
+			x.Versions?.ForEach(y =>
+			{
+				y.HashedId = _hashIdService.Encode(y.Id);
+				y.TemplateNameSlug = _slugService.GenerateSlug(x.Name);
+			});
+		});
 		Project.Templates = Project.Templates?.OrderBy(x => x.Name).ToList();
+
 		CreateTemplate = new TemplateTbl
 		{
-			ProjectId = id
+			ProjectId = Project.Id
 		};
 		UpdateTemplateName = new UpdateTemplateNameModel
 		{
-			ProjectId = id
+			ProjectId = Project.Id
 		};
 		DeleteTemplate = new DeleteTemplateModel
 		{
-			ProjectId = id
+			ProjectId = Project.Id
 		};
 		MarkAsActive = new MarkAsActiveModel
 		{
-			ProjectId = id
+			ProjectId = Project.Id
 		};
 		DuplicateTemplateVersion = new DuplicateTemplateVersionModel
 		{
-			ProjectId = id
+			ProjectId = Project.Id
 		};
 		DeleteTemplateVersion = new DeleteTemplateVersionModel
 		{
-			ProjectId = id
+			ProjectId = Project.Id
 		};
 	}
 
@@ -79,7 +112,7 @@ public class DetailsModel : PageModel
 		TempData["toastMessage"] = $"Template created - {result.Name}";
 		TempData["scrollToId"] = $"template-{result.Id}";
 
-		return RedirectToPage("/Project/Details", new { id = CreateTemplate.ProjectId });
+		return RedirectToPage("/project/details", new { id = CreateTemplate.ProjectId });
 	}
 
 	[BindProperty]
@@ -121,7 +154,7 @@ public class DetailsModel : PageModel
 	public async Task<IActionResult> OnPostDeleteTemplate()
 	{
 		// TODO: Error handling
-		Guid? projectId = await _templateTbl
+		int? projectId = await _templateTbl
 			.Where(x => x.Id.Equals(DeleteTemplate.TemplateId))
 			.Select(x => x.ProjectId)
 			.FirstOrDefaultAsync();
@@ -155,6 +188,7 @@ public class DetailsModel : PageModel
 	public async Task<IActionResult> OnPostCreateTemplateVersion()
 	{
 		// TODO: Error handling
+		// TODO: Optimize query not too pull all columns
 		TemplateTbl? template = (await _templateTbl.Get(x => x.Id.Equals(CreateTemplateVersion.TemplateId), null, nameof(TemplateTbl.Versions))).FirstOrDefault();
 
 		if (template == null)
@@ -313,10 +347,10 @@ public class DetailsModel : PageModel
 public class UpdateTemplateNameModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	[MinLength(1)]
@@ -326,19 +360,19 @@ public class UpdateTemplateNameModel
 public class DeleteTemplateModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 }
 
 public class MarkAsActiveModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }
@@ -347,10 +381,10 @@ public class MarkAsActiveModel
 public class DuplicateTemplateVersionModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }
@@ -359,11 +393,47 @@ public class DuplicateTemplateVersionModel
 public class DeleteTemplateVersionModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }
+}
+
+
+public class ProjectResponseModel 
+{
+	public int Id { get; set; }
+	public string Slug { get; set; }
+	public string Name { get; init; }
+	public string? SubHeading { get; set; }
+	public string? Description { get; set; }
+	public string? Tags { get; set; }
+	public string ApiKey { get; init; }
+	public List<TemplateResponseModel>? Templates { get; set; }
+}
+
+public class TemplateResponseModel
+{
+	public int Id { get; set; }
+	public DateTime DateModified { get; set; }
+	public string HashedApiId { get; set; } = null!;
+	public string Name { get; set; } = string.Empty;
+	
+	public int ProjectId { get; set; }
+	public List<TemplateVersionResponseModel>? Versions { get; set; }
+}
+
+public class TemplateVersionResponseModel
+{
+	public int Id { get; set; }
+	public string HashedId { get; set; }
+	public DateTime DateModified { get; set; }
+	public string Name { get; set; } = string.Empty;
+	public string TemplateNameSlug { get; set; } = string.Empty;
+	public bool IsActive { get; set; }
+	public string? ThumbnailImage { get; set; }
+	public string? PreviewImage { get; set; }
 }

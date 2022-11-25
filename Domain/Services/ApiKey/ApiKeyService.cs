@@ -37,9 +37,9 @@ public class ApiKeyService : IApiKeyService
 			.Substring(0, 36);
 	}
 
-	public async ValueTask<Guid?> GetProjectIdFromApiKey(string apiKey)
+	public async ValueTask<int?> GetProjectIdFromApiKey(string apiKey)
 	{
-		if (!_memoryCache.TryGetValue<Dictionary<string, Guid>>($"Authentication_Project_ApiKeys", out var internalKeys))
+		if (!_memoryCache.TryGetValue<Dictionary<string, int>>($"Authentication_Project_ApiKeys", out var internalKeys))
 		{
 			internalKeys = await _projectTbl.GetAllApiKeysAndProjectIds();
 

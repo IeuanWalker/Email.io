@@ -7,6 +7,7 @@ using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
 using Domain.Models;
 using Domain.Services.Email;
+using Domain.Services.HashId;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ public class EmailController : Controller
 	readonly IEmailService _emailService;
 	readonly IEmailRepository _emailTbl;
 	readonly IBackgroundJobClient _jobClient;
+	readonly IHashIdService _hashedService;
 
 	public EmailController(
 		IProjectRepository projectTbl,
@@ -31,7 +33,8 @@ public class EmailController : Controller
 		ITemplateVersionRepository templateVersionTbl,
 		IEmailService emailService,
 		IEmailRepository emailTbl,
-		IBackgroundJobClient jobClient)
+		IBackgroundJobClient jobClient,
+		IHashIdService hashedService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
@@ -39,6 +42,7 @@ public class EmailController : Controller
 		_emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 		_emailTbl = emailTbl ?? throw new ArgumentNullException(nameof(emailTbl));
 		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
+		_hashedService = hashedService ?? throw new ArgumentNullException(nameof(hashedService));
 	}
 
 	// TODO: Handle attachements
@@ -46,24 +50,29 @@ public class EmailController : Controller
 	[Authorize]
 	public async Task<IActionResult> SendEmail([FromBody][Required] EmailModel request)
 	{
-		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out var apiKey);
-		if (!User.Identity?.Name?.Equals(request.ProjectId.ToString()) ?? true)
+		// Get Ids from hash
+		(int projectId, int templateId)? result = _hashedService.DecodeProjectAndTemplateId(request.TemplateId);
+		if(result is null)
 		{
-			return BadRequest($"{nameof(request.ProjectId)}: {request.ProjectId}, does not exist with API key {apiKey}");
+			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, is not valid");
 		}
+		
+		// Get API key from header
+		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out var apiKey);
+
 		// Validate ID's
-		if (!await _projectTbl.Where(x => x.Id.Equals(request.ProjectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync())
+		if (!await _projectTbl.Where(x => x.Id.Equals(result.Value.projectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync())
 		{
-			return BadRequest($"{nameof(request.ProjectId)}: {request.ProjectId}, does not exist with API key {apiKey}");
+			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, does not match the provided API key");
 		}
 
-		if (!await _templateTbl.Where(x => x.Id.Equals(request.TemplateId) && x.ProjectId.Equals(request.ProjectId)).AnyAsync())
+		if (!await _templateTbl.Where(x => x.Id.Equals(result.Value.templateId) && x.ProjectId.Equals(result.Value.projectId)).AnyAsync())
 		{
-			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, does not exist for the {nameof(request.ProjectId)}: {request.ProjectId}");
+			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, does not exist in the matched project");
 		}
 
 		// Validate template
-		TemplateVersionTbl? template = await _templateVersionTbl.Where(x => x.TemplateId.Equals(request.TemplateId) && x.IsActive).FirstOrDefaultAsync();
+		TemplateVersionTbl? template = await _templateVersionTbl.Where(x => x.TemplateId.Equals(result.Value.templateId) && x.IsActive).FirstOrDefaultAsync();
 
 		if (template is null)
 		{
@@ -79,27 +88,22 @@ public class EmailController : Controller
 		}
 
 		// Construct email
-		ConstructedEmail? constructedEmail = null;
+		ConstructedEmail constructedEmail = new ConstructedEmail();
 		try
 		{
 			constructedEmail = _emailService.ConstructEmail(request.Data, template.Subject, template.Html, template.PlainText);
 		}
 		catch (ArgumentException ex)
 		{
-			return BadRequest(ex.Message);
-		}
-
-		if (constructedEmail is null)
-		{
-			throw new Exception();
+			return BadRequest($"Error constructing email: {ex.Message}");
 		}
 
 		// TODO: Allow all the emails to be sent at the template version level
 		// TODO: Use automapper
 		EmailTbl email = new()
 		{
-			ProjectId = request.ProjectId,
-			TemplateId = request.TemplateId,
+			ProjectId = result.Value.projectId,
+			TemplateId = result.Value.templateId,
 			Data = request.Data.ToJsonString(),
 			ToAddresses = request.ToAddresses?.Select(x => new EmailAddressTbl
 			{
@@ -133,6 +137,7 @@ public class EmailController : Controller
 			// ignore
 		}
 
-		return Ok(email.Id);
+
+		return Ok(_hashedService.Encode(email.Id, 30));
 	}
 }

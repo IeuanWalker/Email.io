@@ -13,7 +13,7 @@ public class ProjectRepository : GenericRepository<ProjectTbl>, IProjectReposito
 		dbSet = context.Set<ProjectTbl>();
 	}
 
-	public async Task<Dictionary<string, Guid>> GetAllApiKeysAndProjectIds()
+	public async Task<Dictionary<string, int>> GetAllApiKeysAndProjectIds()
 	{
 		return await dbSet.ToDictionaryAsync(x => x.ApiKey, x => x.Id);
 	}
