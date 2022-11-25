@@ -16,7 +16,7 @@ public class EmailModel
 	public string Language { get; set; } = "en-GB";
 
 	[Required]
-	public string TemplateIt { get; set; }
+	public string TemplateId { get; set; }
 }
 
 public class EmailAddresses

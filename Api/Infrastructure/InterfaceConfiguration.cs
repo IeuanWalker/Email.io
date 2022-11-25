@@ -3,6 +3,7 @@ using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.Email;
+using Domain.Services.HashId;
 
 namespace Admin.Infrastructure;
 
@@ -19,5 +20,6 @@ static class InterfaceConfiguration
 		services.AddTransient<ITemplateVersionRepository, TemplateVersionRepository>();
 		services.AddTransient<IEmailRepository, EmailRepository>();
 		services.AddTransient<IEmailService, EmailService>();
+		services.AddSingleton<IHashIdService, HashIdService>();
 	}
 }

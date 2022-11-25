@@ -9,11 +9,18 @@ public class HashIdService : IHashIdService
 		return new Hashids(_salt, 30).Encode(projectId, templateId);
 	}
 
-	public (int projectId, int templateId) DecodeProjectAndTemplateId(string hash)
+	public (int projectId, int templateId)? DecodeProjectAndTemplateId(string hash)
 	{
-		var test=  new Hashids(_salt).Decode(hash);
+		try
+		{
+			var test = new Hashids(_salt, 30).Decode(hash);
 
-		return (test[0], test[1]);
+			return (test[0], test[1]);
+		}
+		catch (Exception ex)
+		{
+			return null;
+		}
 	}
 
 	public string Encode(int id, int minLength = 10)
@@ -21,11 +28,11 @@ public class HashIdService : IHashIdService
 		return new Hashids(_salt, minLength).Encode(id);
 	}
 
-	public int? Decode(string hash)
+	public int? Decode(string hash, int minLength = 10)
 	{
 		try
 		{
-			return new Hashids(_salt, 10).DecodeSingle(hash);
+			return new Hashids(_salt, minLength).DecodeSingle(hash);
 		} 
 		catch(Exception)
 		{

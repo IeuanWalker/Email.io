@@ -61,6 +61,7 @@ public class DetailsModel : PageModel
 		Project.Slug = slug;
 		Project.Templates?.ForEach(x =>
 		{
+			x.HashedApiId = _hashIdService.EncodeProjectAndTemplateId(x.ProjectId, x.Id);
 			x.Versions?.ForEach(y =>
 			{
 				y.HashedId = _hashIdService.Encode(y.Id);
