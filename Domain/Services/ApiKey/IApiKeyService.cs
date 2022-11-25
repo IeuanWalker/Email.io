@@ -7,5 +7,5 @@ public interface IApiKeyService
 {
 	Task<string> GenerateUniqueApiKey();
 
-	ValueTask<Guid?> GetProjectIdFromApiKey(string apiKey);
+	ValueTask<int?> GetProjectIdFromApiKey(string apiKey);
 }

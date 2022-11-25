@@ -8,7 +8,7 @@ namespace Database.Models;
 public class ProjectTbl : BaseEntityModifiedDate
 {
 	[Key]
-	public Guid Id { get; set; }
+	public int Id { get; set; }
 
 	[Required]
 	[MaxLength(200)]

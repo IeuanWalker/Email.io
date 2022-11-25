@@ -31,20 +31,6 @@
 </div>
 
 <p>@(new HtmlString(CommonMark.CommonMarkConverter.Convert(Model.Project.Description)))</p>
-<div class="d-flex align-items-center mb-2">
-    <span class="text-caption user-select-none">Project ID: <span id="projectId" class="c-hand" onclick="copyId('projectId', '@Model.Project.Id')">@Model.Project.Id</span></span>
-    <div class="popover popover-bottom ml-2 cursor-pointer">
-        <ion-icon name="information-circle-outline" size="large"></ion-icon>
-        <div class="popover-container">
-            <div class="card">
-                <div class="card-body">
-                    A project ID is the unique identifier for a project. It's most often used as part of an API call to validate the template ID used to identify the email to be sent.
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div>
     @foreach (string tag in Model.Project.Tags?.Split(",") ?? new string[0])
     {

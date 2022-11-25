@@ -56,8 +56,8 @@ public class EmailService : IEmailService
 		await mailClient.SendAsync(message);
 		await mailClient.DisconnectAsync(true);
 	}
-
-	public async Task SendEmail(Guid emailId)
+	
+	public async Task SendEmail(int emailId)
 	{
 		EmailTbl? email = await _emailRepository.Where(x => x.Id == emailId)
 			.Include(x => x.ToAddresses)

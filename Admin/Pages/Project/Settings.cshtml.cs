@@ -20,7 +20,7 @@ public class SettingsModel : PageModel
 	[BindProperty]
 	public ProjectTbl? Project { get; set; }
 
-	public async Task OnGet(Guid id)
+	public async Task OnGet(int id)
 	{
 		// TODO: Error handling
 		Project = (await _projectTbl.Get(x => x.Id.Equals(id), null, nameof(ProjectTbl.Templates)).ConfigureAwait(false)).Single();
@@ -53,7 +53,7 @@ public class SettingsModel : PageModel
 	}
 
 	[BindProperty]
-	public Guid DeleteProjectId { get; set; }
+	public int DeleteProjectId { get; set; }
 
 	public async Task<IActionResult> OnPostDeleteProject()
 	{

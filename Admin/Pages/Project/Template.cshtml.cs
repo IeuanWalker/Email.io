@@ -407,7 +407,7 @@ public class TemplateModel : PageModel
 		});
 	}
 
-	public async Task<Uri> SaveImage(Guid projectId, byte[] file, string name)
+	public async Task<Uri> SaveImage(int projectId, byte[] file, string name)
 	{
 		BlobContainerClient blobContainerClient = new(
 			"UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite",

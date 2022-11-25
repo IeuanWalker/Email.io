@@ -30,11 +30,11 @@ namespace Database.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid?>("BCCAddressesEmailId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("BCCAddressesEmailId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid?>("CCAddressesEmailId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("CCAddressesEmailId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -43,8 +43,8 @@ namespace Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ToAddressesEmailId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("ToAddressesEmailId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -59,9 +59,11 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Database.Models.EmailTbl", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Data")
                         .IsRequired()
@@ -83,8 +85,8 @@ namespace Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Sent")
                         .HasColumnType("datetime2");
@@ -93,8 +95,8 @@ namespace Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TemplateId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TemplateId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -105,9 +107,11 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Database.Models.ProjectTbl", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("ApiKey")
                         .IsRequired()
@@ -139,9 +143,11 @@ namespace Database.Migrations
 
             modelBuilder.Entity("Database.Models.TemplateTbl", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("DateModified")
                         .HasColumnType("datetime2");
@@ -151,8 +157,8 @@ namespace Database.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -197,8 +203,8 @@ namespace Database.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<Guid>("TemplateId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TemplateId")
+                        .HasColumnType("int");
 
                     b.Property<string>("TestData")
                         .HasColumnType("nvarchar(max)");

@@ -47,42 +47,42 @@ public class EmailController : Controller
 	public async Task<IActionResult> SendEmail([FromBody][Required] EmailModel request)
 	{
 		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out var apiKey);
-		if (!User.Identity?.Name?.Equals(request.ProjectId.ToString()) ?? true)
-		{
-			return BadRequest($"{nameof(request.ProjectId)}: {request.ProjectId}, does not exist with API key {apiKey}");
-		}
-		// Validate ID's
-		if (!await _projectTbl.Where(x => x.Id.Equals(request.ProjectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync())
-		{
-			return BadRequest($"{nameof(request.ProjectId)}: {request.ProjectId}, does not exist with API key {apiKey}");
-		}
+		//if (!User.Identity?.Name?.Equals(request.ProjectId.ToString()) ?? true)
+		//{
+		//	return BadRequest($"{nameof(request.ProjectId)}: {request.ProjectId}, does not exist with API key {apiKey}");
+		//}
+		//// Validate ID's
+		//if (!await _projectTbl.Where(x => x.Id.Equals(request.ProjectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync())
+		//{
+		//	return BadRequest($"{nameof(request.ProjectId)}: {request.ProjectId}, does not exist with API key {apiKey}");
+		//}
 
-		if (!await _templateTbl.Where(x => x.Id.Equals(request.TemplateId) && x.ProjectId.Equals(request.ProjectId)).AnyAsync())
-		{
-			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, does not exist for the {nameof(request.ProjectId)}: {request.ProjectId}");
-		}
+		//if (!await _templateTbl.Where(x => x.Id.Equals(request.TemplateId) && x.ProjectId.Equals(request.ProjectId)).AnyAsync())
+		//{
+		//	return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, does not exist for the {nameof(request.ProjectId)}: {request.ProjectId}");
+		//}
 
-		// Validate template
-		TemplateVersionTbl? template = await _templateVersionTbl.Where(x => x.TemplateId.Equals(request.TemplateId) && x.IsActive).FirstOrDefaultAsync();
+		//// Validate template
+		//TemplateVersionTbl? template = await _templateVersionTbl.Where(x => x.TemplateId.Equals(request.TemplateId) && x.IsActive).FirstOrDefaultAsync();
 
-		if (template is null)
-		{
-			return BadRequest($"No active template found for {nameof(request.TemplateId)}: {request.TemplateId}");
-		}
-		if (string.IsNullOrEmpty(template.Html))
-		{
-			return BadRequest($"No html template found for {nameof(request.TemplateId)}: {request.TemplateId}");
-		}
-		if (string.IsNullOrEmpty(template.Subject))
-		{
-			return BadRequest($"No subject template found for {nameof(request.TemplateId)}: {request.TemplateId}");
-		}
+		//if (template is null)
+		//{
+		//	return BadRequest($"No active template found for {nameof(request.TemplateId)}: {request.TemplateId}");
+		//}
+		//if (string.IsNullOrEmpty(template.Html))
+		//{
+		//	return BadRequest($"No html template found for {nameof(request.TemplateId)}: {request.TemplateId}");
+		//}
+		//if (string.IsNullOrEmpty(template.Subject))
+		//{
+		//	return BadRequest($"No subject template found for {nameof(request.TemplateId)}: {request.TemplateId}");
+		//}
 
 		// Construct email
 		ConstructedEmail? constructedEmail = null;
 		try
 		{
-			constructedEmail = _emailService.ConstructEmail(request.Data, template.Subject, template.Html, template.PlainText);
+			//constructedEmail = _emailService.ConstructEmail(request.Data, template.Subject, template.Html, template.PlainText);
 		}
 		catch (ArgumentException ex)
 		{
@@ -98,8 +98,8 @@ public class EmailController : Controller
 		// TODO: Use automapper
 		EmailTbl email = new()
 		{
-			ProjectId = request.ProjectId,
-			TemplateId = request.TemplateId,
+			ProjectId = 1,
+			TemplateId = 1,
 			Data = request.Data.ToJsonString(),
 			ToAddresses = request.ToAddresses?.Select(x => new EmailAddressTbl
 			{

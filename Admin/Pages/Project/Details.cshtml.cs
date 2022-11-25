@@ -26,8 +26,8 @@ public class DetailsModel : PageModel
 	}
 
 	public ProjectTbl? Project { get; set; }
-
-	public async Task OnGet(Guid id)
+	
+	public async Task OnGet(int id)
 	{
 		// TODO: Error handling
 		Project = (await _projectTbl.Get(x => x.Id.Equals(id), null, $"{nameof(ProjectTbl.Templates)}, {nameof(ProjectTbl.Templates)}.{nameof(TemplateTbl.Versions)}").ConfigureAwait(false)).Single();
@@ -121,7 +121,7 @@ public class DetailsModel : PageModel
 	public async Task<IActionResult> OnPostDeleteTemplate()
 	{
 		// TODO: Error handling
-		Guid? projectId = await _templateTbl
+		int? projectId = await _templateTbl
 			.Where(x => x.Id.Equals(DeleteTemplate.TemplateId))
 			.Select(x => x.ProjectId)
 			.FirstOrDefaultAsync();
@@ -313,10 +313,10 @@ public class DetailsModel : PageModel
 public class UpdateTemplateNameModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	[MinLength(1)]
@@ -326,19 +326,19 @@ public class UpdateTemplateNameModel
 public class DeleteTemplateModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 }
 
 public class MarkAsActiveModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }
@@ -347,10 +347,10 @@ public class MarkAsActiveModel
 public class DuplicateTemplateVersionModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }
@@ -359,10 +359,10 @@ public class DuplicateTemplateVersionModel
 public class DeleteTemplateVersionModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }
