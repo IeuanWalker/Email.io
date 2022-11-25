@@ -1,6 +1,8 @@
 using Database.Models;
 using Database.Repositories.Project;
 using Domain.Services.ApiKey;
+using Domain.Services.HashId;
+using Domain.Services.Slug;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -10,18 +12,33 @@ public class SettingsModel : PageModel
 {
 	readonly IProjectRepository _projectTbl;
 	readonly IApiKeyService _apiKeyService;
+	readonly IHashIdService _hashIdService;
+	readonly ISlugService _slugService;
 
-	public SettingsModel(IProjectRepository projectTbl, IApiKeyService apiKeyService)
+	public SettingsModel(
+		IProjectRepository projectTbl, 
+		IApiKeyService apiKeyService,
+		IHashIdService hashIdService,
+		ISlugService slugService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_apiKeyService = apiKeyService ?? throw new ArgumentNullException(nameof(apiKeyService));
+		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
+		_slugService = slugService ?? throw new ArgumentNullException(nameof(slugService));
 	}
 
 	[BindProperty]
 	public ProjectTbl? Project { get; set; }
 
-	public async Task OnGet(int id)
+	public async Task OnGet(string slug)
 	{
+		int? id = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
+
+		if (id is null)
+		{
+			throw new NullReferenceException(nameof(Project));
+		}
+
 		// TODO: Error handling
 		Project = (await _projectTbl.Get(x => x.Id.Equals(id), null, nameof(ProjectTbl.Templates)).ConfigureAwait(false)).Single();
 		if (Project == null)
@@ -69,7 +86,7 @@ public class SettingsModel : PageModel
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "Project deleted";
 
-		return RedirectToPage("/Project/index");
+		return RedirectToPage("/project/index");
 	}
 
 	public async Task<JsonResult> OnPutResetApiKey([FromQuery]int projectId)

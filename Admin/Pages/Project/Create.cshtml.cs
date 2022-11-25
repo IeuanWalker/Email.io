@@ -34,6 +34,6 @@ public class CreateModel : PageModel
 
 		Project = await _projectTbl.Add(Project).ConfigureAwait(false);
 
-		return RedirectToPage("/Project/Details", new { id = Project.Id });
+		return RedirectToPage("/project/details", new { id = Project.Id });
 	}
 }

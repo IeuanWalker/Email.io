@@ -1,5 +1,7 @@
+using System.Reflection;
 using Admin.Infrastructure;
 using Database.Context;
+using AutoMapper;
 
 namespace Admin;
 
@@ -22,6 +24,9 @@ public class Startup
 
 		// Database
 		DatabaseConfiguration.ConfigureServices(services, Configuration);
+
+		// AutoMapper
+		services.AddAutoMapper(typeof(Startup).GetTypeInfo().Assembly);
 
 		// Hangfire
 		HangfireConfiguration.ConfigureServices(services, Configuration);

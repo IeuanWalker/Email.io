@@ -1,4 +1,5 @@
-﻿@page "/Project/{id}"
+﻿@page "/project/{slug}"
+@using Admin.Pages.Project;
 @using Database.Models;
 @using Microsoft.AspNetCore.Html;
 @using Humanizer;
@@ -25,7 +26,7 @@
         <h3 class="pb-0 m-0">@Model.Project.Name</h3>
         <p class="card-subtitle text-gray m-0">@Model.Project.SubHeading</p>
     </div>
-    <a asp-page="/Project/Settings" asp-route-id="@Model.Project.Id" class="btn btn-link pt-0 pl-0 pb-0 pr-0">
+    <a asp-page="/project/settings" asp-route-slug="@Model.Project.Slug" class="btn btn-link pt-0 pl-0 pb-0 pr-0">
         <ion-icon name="settings-outline" size="large"></ion-icon>
     </a>
 </div>
@@ -42,7 +43,7 @@
     <a type="button" class="btn float-right mb-4 js-cd-panel-trigger cursor-pointer" data-panel="main">Create template</a>
 </div>
 
-@if (Model.Project.Templates.Any())
+@if (Model.Project.Templates?.Any() ?? false)
 {
     <div class="accordian-table">
         <header>
@@ -50,7 +51,7 @@
             <p>Last edited</p>
         </header>
         <div class="accordion-wrapper">
-            @foreach (TemplateTbl template in Model.Project.Templates)
+            @foreach (TemplateResponseModel template in Model.Project.Templates)
             {
                 <div class="accordion" id="template-@template.Id">
                     <input type="checkbox" id="@template.Id" name="accordion-checkbox" hidden>
@@ -71,19 +72,19 @@
                     <div class="accordion-body">
                         <div>
                             <div class="d-flex align-items-center mb-2">
-                                <span class="text-caption user-select-none">Temaplate ID: <span class="c-hand" Id="copy-@template.Id" onclick="copyId('copy-@template.Id', '@template.Id')">@template.Id</span></span>
+                                <span class="text-caption user-select-none">Temaplate ID: <span class="c-hand" Id="copy-@template.HashedApiId" onclick="copyId('copy-@template.HashedApiId', '@template.HashedApiId')">@template.HashedApiId</span></span>
                                 <div class="popover popover-bottom ml-2 cursor-pointer">
                                     <ion-icon name="information-circle-outline" size="large"></ion-icon>
                                     <div class="popover-container">
                                         <div class="card">
                                             <div class="card-body">
-                                                A template ID is the unique identifier for a template. It's most often used as part of an API call to identify which template should be used for an email request.
+                                                A template ID is the unique identifier for a template. It's used as part of an API call to identify which template should be used for an email request.
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            @if (template.Versions.Any())
+                            @if (template.Versions?.Any() ?? false)
                             {
                                 <div class="clearfix">
                                     <a onclick="CreateNewTemplateVersion('@template.Id')" class="btn float-right">Add version</a>
@@ -95,10 +96,10 @@
                                     </header>
                                     <div class="row-container">
 
-                                        @foreach (TemplateVersionTbl version in template.Versions)
+                                        @foreach (TemplateVersionResponseModel version in template.Versions)
                                         {
                                             <div class="row" id="version-@version.Id" data-templateId="@template.Id">
-                                                <a asp-page="/Project/Template" asp-route-projectId="@Model.Project.Id" asp-route-templateId="@version.TemplateId" asp-route-versionId="@version.Id" class="overlay"></a>
+                                                <a asp-page="/project/template" asp-route-slug="@Model.Project.Slug" asp-route-templateName="@version.TemplateNameSlug" asp-route-hashedVersionId="@version.HashedId" class="overlay"></a>
                                                 <div class="inner table-row">
                                                     <div class="square-image">
                                                         <img src="@version.ThumbnailImage" />
@@ -120,10 +121,10 @@
                                                             {
                                                                 <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="MarkAsActive('@template.Id', '@version.Id')">Make active</a></li>
                                                             }
-                                                            <li class="menu-item user-select-none"><a class="cursor-pointer" asp-page="/Project/Template" asp-route-projectId="@Model.Project.Id" asp-route-templateId="@version.TemplateId" asp-route-versionId="@version.Id">Edit</a></li>
+                                                            <li class="menu-item user-select-none"><a class="cursor-pointer" asp-page="/project/template" asp-route-slug="@Model.Project.Slug" asp-route-templateName="@version.TemplateNameSlug" asp-route-hashedVersionId="@version.HashedId">Edit</a></li>
                                                             @if (!string.IsNullOrEmpty(version.PreviewImage))
                                                             {
-                                                                <li class="menu-item user-select-none"><a href="#preview" class="cursor-pointer" onclick="Preview('@version.PreviewImage', '@Model.Project.Id', '@version.TemplateId', '@version.Id')">Preview</a></li>
+                                                                <li class="menu-item user-select-none"><a href="#preview" class="cursor-pointer" onclick="Preview('@version.PreviewImage', '@Model.Project.Id', '@version.Id', '@version.Id')">Preview</a></li>
                                                             }
                                                             <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="Duplicate('@template.Id', '@version.Id')">Duplicate</a></li>
                                                             <li class="menu-item user-select-none"><a class="js-cd-panel-trigger delete-template-version cursor-pointer" data-panel="deleteTemplateVersion" data-versionId="@version.Id" data-templateId="@template.Id" data-templateName="@version.Name">Delete</a></li>
@@ -233,7 +234,7 @@ else
                 <a href="#0" class="cd-panel__close js-cd-close">Close</a>
                 <h3 class="s-title pb-0">Delete template</h3>
                 <p>Are you sure you want to delete this template?</p>
-                <p>Deleting this tempalate would mean any email pending to send and or any future emails that are using this template would fail to send.</p>
+                <p>Deleting this template would mean any email pending to send and or any future emails that are using this template would fail to send.</p>
                 <p>To confirm the deletion of this template please re-enter the template name <strong>'<span id="deleteTemplate-name"></span>'</strong></p>
                 <form class="form-horizontal" method="post" style="max-width: 800px" asp-page-handler="DeleteTemplate">
                     <div class="form-group">
