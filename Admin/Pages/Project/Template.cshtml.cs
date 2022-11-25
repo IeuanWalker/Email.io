@@ -40,9 +40,9 @@ public class TemplateModel : PageModel
 	}
 
 	public TemplateVersionTbl? Version { get; set; }
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
-	public async Task OnGet(Guid projectId, Guid templateId, int versionId)
+	public async Task OnGet(int projectId, int templateId, int versionId)
 	{
 		ProjectId = projectId;
 		// TODO: Error handling
@@ -433,10 +433,10 @@ public class TemplateModel : PageModel
 public class UpdateTemplateModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }
@@ -454,10 +454,10 @@ public class UpdateTemplateModel
 public class UpdateSettingsModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }
@@ -474,10 +474,10 @@ public class UpdateSettingsModel
 public class TestSendModel
 {
 	[Required]
-	public Guid ProjectId { get; set; }
+	public int ProjectId { get; set; }
 
 	[Required]
-	public Guid TemplateId { get; set; }
+	public int TemplateId { get; set; }
 
 	[Required]
 	public int VersionId { get; set; }

@@ -72,7 +72,7 @@ public class SettingsModel : PageModel
 		return RedirectToPage("/Project/index");
 	}
 
-	public async Task<JsonResult> OnPutResetApiKey([FromQuery]Guid projectId)
+	public async Task<JsonResult> OnPutResetApiKey([FromQuery]int projectId)
 	{
 		// TODO: Error handling
 		var project = await _projectTbl.GetByID(projectId);
@@ -92,7 +92,7 @@ public class SettingsModel : PageModel
 		{
 			toastStatus = "success",
 			toastTitle = "API key reset",
-			apiKey = apiKey
+			apiKey
 		});
 	}
 }
