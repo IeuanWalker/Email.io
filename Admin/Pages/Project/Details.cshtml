@@ -325,9 +325,13 @@ else
                 copy(document.getElementById(elemantId), valueToCopy);
             }
 
+            var removeCopeidPopupTimer;
             const copy = async (elemant, valueToCopy) => {
                 try {
                     await navigator.clipboard.writeText(valueToCopy);
+
+                    clearTimeout(removeCopeidPopupTimer);
+                    removeAllCopiedPopups();
 
                     tippy(elemant, {
                         content: 'Copied!',
@@ -338,14 +342,18 @@ else
                         theme: 'customTheme'
                     });
 
-                    setTimeout(function () {
-                        var arr = document.querySelectorAll("[data-tippy-root]");
-                        for (var i = 0; i < arr.length; i++) {
-                            arr[i].remove();
-                        }
+                    removeCopeidPopupTimer = setTimeout(function () {
+                        removeAllCopiedPopups();
                     }, 1000);
                 } catch (err) {
                     console.error('Failed to copy: ', err);
+                }
+            }
+            
+            function removeAllCopiedPopups(){
+                var arr = document.querySelectorAll("[data-tippy-root]");
+                for (var i = 0; i < arr.length; i++) {
+                    arr[i].remove();
                 }
             }
     </script>

@@ -141,7 +141,9 @@
                 <h2>API key</h2>
                 <p>API key is used to call the REST api, by adding the projects API key to the calls header <i>'x-api-key'</i></p>
                 <div class="api-key-container">
-                    <span class="ml-2 user-select-none" id="apiKey" onclick="copyContent()"></span>
+                    <div class="ml-2 user-select-none">
+                        <span  id="apiKey" onclick="copyContent()"></span>
+                    </div>
                     <div class="dropdown dropdown-right">
                         <button id="apiKeyToggleBtn" onclick="toggleApiKeyVisibility()" class="btn btn-link cursor-pointer" tabindex="0">
                             <ion-icon id="eyeIcon" name="eye-outline" style="font-size:1.3rem"></ion-icon>
@@ -368,6 +370,7 @@
             });
 
         // Copy API key
+        var removeCopeidPopupTimer;
         const copyContent = async () => {
             try {
                 var isVisible = document.getElementById("apiKeyToggleBtn").getAttribute('data-isVisible');
@@ -376,6 +379,9 @@
                 }
 
                 await navigator.clipboard.writeText(currentApiKey);
+
+                clearTimeout(removeCopeidPopupTimer);
+                removeAllCopiedPopups();
 
                 tippy(document.getElementById('apiKey'), {
                     content: 'Copied!',
@@ -387,14 +393,17 @@
                 });
 
 
-                setTimeout(function () {
-                    var arr = document.querySelectorAll("[data-tippy-root]");
-                    for (var i = 0; i < arr.length; i++) {
-                        arr[i].remove();
-                    }
+                removeCopeidPopupTimer = setTimeout(function () {
+                    removeAllCopiedPopups();
                 }, 1000);
             } catch (err) {
                 console.error('Failed to copy: ', err);
+            }
+        }
+        function removeAllCopiedPopups(){
+            var arr = document.querySelectorAll("[data-tippy-root]");
+            for (var i = 0; i < arr.length; i++) {
+                arr[i].remove();
             }
         }
 
