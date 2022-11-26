@@ -53,7 +53,7 @@ public class EmailService : IEmailService
 			TextBody = plainTextContent
 		};
 
-		if(attachments?.Any() ?? false)
+		if (attachments?.Any() ?? false)
 		{
 			foreach (var attachment in attachments)
 			{
@@ -99,7 +99,7 @@ public class EmailService : IEmailService
 		_emailRepository.Update(email);
 	}
 
-	public ConstructedEmail ConstructEmail(JsonObject data, string subjectTemplate, string htmlTemplate, string? plainTextTemplate)
+	public ConstructedEmail ConstructEmail(JsonNode data, string subjectTemplate, string htmlTemplate, string? plainTextTemplate)
 	{
 		return new ConstructedEmail
 		{
@@ -117,7 +117,7 @@ public class EmailService : IEmailService
 	/// <param name="nameOfConstruction"></param>
 	/// <returns>Combined handlebars templates with data</returns>
 	/// <exception cref="ArgumentException">Thrown on any error</exception>
-	static string RunHandleBars(JsonObject data, string? template, string nameOfConstruction)
+	static string RunHandleBars(JsonNode data, string? template, string nameOfConstruction)
 	{
 		if (string.IsNullOrEmpty(template))
 		{

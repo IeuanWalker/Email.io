@@ -18,5 +18,5 @@ public interface IEmailService
 	/// <param name="htmlTemplate"></param>
 	/// <param name="plainTextTemplate"></param>
 	/// <exception cref="ArgumentException">Thrown on any combining template with data</exception>
-	ConstructedEmail ConstructEmail(JsonObject data, string subjectTemplate, string htmlTemplate, string? plainTextTemplate);
+	ConstructedEmail ConstructEmail(JsonNode data, string subjectTemplate, string htmlTemplate, string? plainTextTemplate);
 }

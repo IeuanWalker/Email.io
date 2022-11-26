@@ -63,6 +63,6 @@ public class Startup
 
 		app.UseEndpoints(endpoints => endpoints.MapRazorPages());
 
-		
+
 	}
 }

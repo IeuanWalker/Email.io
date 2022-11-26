@@ -14,7 +14,7 @@ public class EmailModel
 
 	[MaxLength(5)]
 	public string Language { get; set; } = "en-GB";
-	
+
 	[Required]
 	public string TemplateId { get; set; } = null!;
 

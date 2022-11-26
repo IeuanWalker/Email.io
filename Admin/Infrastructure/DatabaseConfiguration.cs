@@ -22,7 +22,7 @@ static class DatabaseConfiguration
 			throw new ArgumentNullException(nameof(configuration), "Missing database connection string");
 		}
 
-		services.AddDbContext<ApplicationDbContext>(options => 
+		services.AddDbContext<ApplicationDbContext>(options =>
 			options.UseSqlServer(connection, b => b.MigrationsAssembly(nameof(Database))));
 	}
 
@@ -44,6 +44,6 @@ static class DatabaseConfiguration
 		//{
 		//	throw new ApplicationException("Database migration need to be applied manually");
 		//}
-		
+
 	}
 }

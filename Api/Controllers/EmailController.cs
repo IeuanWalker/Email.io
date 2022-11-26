@@ -11,7 +11,6 @@ using Domain.Services.Email;
 using Domain.Services.HashId;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,7 +45,7 @@ public class EmailController : Controller
 		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
 		_hashedService = hashedService ?? throw new ArgumentNullException(nameof(hashedService));
 	}
-	
+
 	// TODO: Handle no email addresses
 	[HttpPost]
 	[Authorize]
@@ -59,10 +58,10 @@ public class EmailController : Controller
 			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, is not valid");
 		}
 
-		JsonObject json = default!;
+		JsonNode json = default!;
 		try
 		{
-			json = JsonObject.Parse(request.Data)!.AsObject();
+			json = JsonNode.Parse(request.Data)!.AsObject();
 		}
 		catch (Exception ex)
 		{
