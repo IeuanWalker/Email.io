@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Domain.Services.Slug;
 
-public class SlugService : ISlugService
+public partial class SlugService : ISlugService
 {
 	public string GenerateSlug(string text)
 	{
@@ -19,18 +19,22 @@ public class SlugService : ISlugService
 	{
 		return slug.Split('-')[^1];
 	}
-
+	
+	[GeneratedRegex(@"[^a-z0-9\s-]", RegexOptions.Compiled)]
+	private static partial Regex MatchInValidCharacters();
+	[GeneratedRegex(@"\s+", RegexOptions.Compiled)]
+	private static partial Regex MatchMultipleSpaces();
 	static string TextToUrlSlug(string text)
 	{
-		string str = RemoveAccent(text).ToLower();
+		text = RemoveAccent(text).ToLower();
 
-		// TODO: Use 'GeneratedRegexAttribute' to generate the regular expression implementation at compile-time.Domain
-		str = Regex.Replace(str, @"\.", " "); // replace fullstop with space
-		str = Regex.Replace(str, @"[^a-z0-9\s-]", ""); // remove invalid chars
-		str = Regex.Replace(str, @"\s+", " ").Trim(); // convert multiple spaces into one space
-		str = Regex.Replace(str, @"\s", "-"); // hyphens
+		text = text.Replace(".", " "); // Replaces full stop with a space
+		text = text.Replace("-", " "); // Replaces full stop with a space
+		text = MatchInValidCharacters().Replace(text, string.Empty); // Removes invalid characters
+		text = MatchMultipleSpaces().Replace(text, " "); // Replaces multiple spaces with a single space
+		text = text.Trim().Replace(" ", "-"); // Replaces spaces with a hyphen
 
-		return str;
+		return text;
 	}
 
 	static string RemoveAccent(string txt)
