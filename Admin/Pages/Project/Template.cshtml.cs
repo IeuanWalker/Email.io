@@ -435,8 +435,8 @@ public class TemplateModel : PageModel
 
 		BlobBaseClient client = new("UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite", $"project-{projectId.ToString().ToLower()}", name);
 
-		return client.Uri.AbsoluteUri.Contains("azurite") ? 
-			new Uri(client.Uri.AbsoluteUri.Replace("azurite", "localhost")) : 
+		return client.Uri.AbsoluteUri.Contains("azurite") ?
+			new Uri(client.Uri.AbsoluteUri.Replace("azurite", "localhost")) :
 			client.Uri;
 	}
 }

@@ -57,6 +57,7 @@ public class EmailService : IEmailService
 		await mailClient.DisconnectAsync(true);
 	}
 
+	// TODO: Use polly
 	public async Task SendEmail(int emailId)
 	{
 		EmailTbl? email = await _emailRepository.Where(x => x.Id == emailId)
