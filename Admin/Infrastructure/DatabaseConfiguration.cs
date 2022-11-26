@@ -22,19 +22,28 @@ static class DatabaseConfiguration
 			throw new ArgumentNullException(nameof(configuration), "Missing database connection string");
 		}
 
-		services.AddDbContext<ApplicationDbContext>(options => 
+		services.AddDbContext<ApplicationDbContext>(options =>
 			options.UseSqlServer(connection, b => b.MigrationsAssembly(nameof(Database))));
 	}
 
+	// TODO: Fix
 	public static void Configure(IApplicationBuilder app)
 	{
-		using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-		{
-			Console.WriteLine("Applying migrations");
-			
-			scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+		//try
+		//{
+		//	using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope())
+		//	{
+		//		Console.WriteLine("Applying migrations");
 
-			Console.WriteLine("Migrations applied");
-		}
+		//		scope?.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+
+		//		Console.WriteLine("Migrations applied");
+		//	}
+		//}
+		//catch (Exception)
+		//{
+		//	throw new ApplicationException("Database migration need to be applied manually");
+		//}
+
 	}
 }

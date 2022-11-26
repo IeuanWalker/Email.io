@@ -1,9 +1,11 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.IO;
+using System.Text.Json.Nodes;
 using Database.Models;
 using Database.Repositories.Email;
 using HandlebarsDotNet;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 
@@ -18,7 +20,7 @@ public class EmailService : IEmailService
 		_emailRepository = emailRepository ?? throw new ArgumentNullException(nameof(emailRepository));
 	}
 
-	public async Task SendEmail(IEnumerable<MailboxAddress> toAddresses, IEnumerable<MailboxAddress>? ccAddresses, IEnumerable<MailboxAddress>? bccAddresses, string subject, string htmlContent, string plainTextContent)
+	public async Task SendEmail(IEnumerable<MailboxAddress> toAddresses, IEnumerable<MailboxAddress>? ccAddresses, IEnumerable<MailboxAddress>? bccAddresses, string subject, string htmlContent, string plainTextContent, List<EmailAttachmentTbl>? attachments = null)
 	{
 		string? mailHost = string.Empty;
 		int mailPort = 0;
@@ -45,11 +47,21 @@ public class EmailService : IEmailService
 		}
 		message.Subject = subject;
 
-		message.Body = new BodyBuilder
+		var bodyBuilder = new BodyBuilder
 		{
 			HtmlBody = htmlContent,
 			TextBody = plainTextContent
-		}.ToMessageBody();
+		};
+
+		if (attachments?.Any() ?? false)
+		{
+			foreach (var attachment in attachments)
+			{
+				bodyBuilder.Attachments.Add(attachment.FileName, Convert.FromBase64String(attachment.SavedFile), ContentType.Parse(attachment.ContentType));
+			}
+		}
+
+		message.Body = bodyBuilder.ToMessageBody();
 
 		using SmtpClient mailClient = new();
 		await mailClient.ConnectAsync(mailHost, mailPort, SecureSocketOptions.None);
@@ -64,6 +76,7 @@ public class EmailService : IEmailService
 			.Include(x => x.ToAddresses)
 			.Include(x => x.CCAddresses)
 			.Include(x => x.BCCAddresses)
+			.Include(x => x.Attachements)
 			.FirstOrDefaultAsync();
 
 		if (email is null || email.Sent is not null)
@@ -77,14 +90,15 @@ public class EmailService : IEmailService
 			email.BCCAddresses?.Select(x => new MailboxAddress(x.Name, x.Email)),
 			email.Subject,
 			email.HtmlContent,
-			email.PlainTextContent);
+			email.PlainTextContent,
+			email.Attachements?.ToList());
 
 		email.Sent = DateTime.Now;
 
 		_emailRepository.Update(email);
 	}
 
-	public ConstructedEmail ConstructEmail(JsonObject data, string subjectTemplate, string htmlTemplate, string? plainTextTemplate)
+	public ConstructedEmail ConstructEmail(JsonNode data, string subjectTemplate, string htmlTemplate, string? plainTextTemplate)
 	{
 		return new ConstructedEmail
 		{
@@ -102,7 +116,7 @@ public class EmailService : IEmailService
 	/// <param name="nameOfConstruction"></param>
 	/// <returns>Combined handlebars templates with data</returns>
 	/// <exception cref="ArgumentException">Thrown on any error</exception>
-	static string RunHandleBars(JsonObject data, string? template, string nameOfConstruction)
+	static string RunHandleBars(JsonNode data, string? template, string nameOfConstruction)
 	{
 		if (string.IsNullOrEmpty(template))
 		{

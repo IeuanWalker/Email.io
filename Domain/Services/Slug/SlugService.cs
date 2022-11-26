@@ -19,7 +19,7 @@ public partial class SlugService : ISlugService
 	{
 		return slug.Split('-')[^1];
 	}
-	
+
 	[GeneratedRegex(@"[^a-z0-9\s-]", RegexOptions.Compiled)]
 	private static partial Regex MatchInValidCharacters();
 	[GeneratedRegex(@"\s+", RegexOptions.Compiled)]

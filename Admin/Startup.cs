@@ -1,6 +1,5 @@
 using System.Reflection;
 using Admin.Infrastructure;
-using Database.Context;
 
 namespace Admin;
 
@@ -64,6 +63,6 @@ public class Startup
 
 		app.UseEndpoints(endpoints => endpoints.MapRazorPages());
 
-		
+
 	}
 }

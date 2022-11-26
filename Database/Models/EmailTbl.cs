@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Net.Mail;
 
 namespace Database.Models;
 
@@ -27,6 +28,10 @@ public class EmailTbl
 
 	[MaxLength(5)]
 	public string Language { get; set; } = "en-GB";
+
+	[ForeignKey("AttachementsId")]
+	public ICollection<EmailAttachmentTbl>? Attachements { get; set; }
+	public int AttachementCount { get; set; }
 
 	public string? HangfireId { get; set; }
 	public DateTime? Sent { get; set; }
