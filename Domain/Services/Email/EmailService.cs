@@ -63,7 +63,6 @@ public class EmailService : IEmailService
 
 		message.Body = bodyBuilder.ToMessageBody();
 
-
 		using SmtpClient mailClient = new();
 		await mailClient.ConnectAsync(mailHost, mailPort, SecureSocketOptions.None);
 		await mailClient.SendAsync(message);
@@ -92,7 +91,7 @@ public class EmailService : IEmailService
 			email.Subject,
 			email.HtmlContent,
 			email.PlainTextContent,
-			email.Attachements.ToList());
+			email.Attachements?.ToList());
 
 		email.Sent = DateTime.Now;
 
