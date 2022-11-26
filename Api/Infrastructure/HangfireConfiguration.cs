@@ -8,12 +8,18 @@ using Hangfire.SqlServer;
 
 namespace Api.Infrastructure;
 
+// TODO: Moved to shared project
 static class HangfireConfiguration
 {
 	public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 	{
 		IConfigurationSection databaseConnections = configuration.GetSection(nameof(DatabaseConnections));
-		string dbConnection = databaseConnections.GetValue<string>(nameof(DatabaseConnections.EmailDb));
+		string? dbConnection = databaseConnections.GetValue<string>(nameof(DatabaseConnections.EmailDb));
+
+		if (dbConnection is null)
+		{
+			throw new ArgumentNullException(nameof(configuration), "Missing database connection string");
+		}
 
 		// Add Hangfire services
 		services.AddHangfire(x =>

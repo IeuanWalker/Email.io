@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Database.Repositories.Generic;
 
@@ -40,16 +40,6 @@ public interface IGenericRepository<T> where T : class
 	Task<T> Add(T entity);
 
 	/// <summary>
-	/// Add list of items to database
-	/// </summary>
-	/// <remarks>
-	/// More info - https://github.com/borisdj/EFCore.BulkExtensions
-	/// </remarks>
-	/// <param name="entities"></param>
-	/// <param name="config"></param>
-	Task BulkAdd(List<T> entities, BulkConfig? config = null);
-
-	/// <summary>
 	/// Delete object using the ID (primary key)
 	/// </summary>
 	/// <param name="id">Primary key value of object</param>
@@ -67,9 +57,6 @@ public interface IGenericRepository<T> where T : class
 	/// <summary>
 	/// Delete rows using query
 	/// </summary>
-	/// <remarks>
-	/// More info - https://github.com/borisdj/EFCore.BulkExtensions
-	/// </remarks>
 	/// <param name="query"></param>
 	Task DeleteFromQuery(Expression<Func<T, bool>> query, int batchSize = 10000);
 
@@ -82,12 +69,9 @@ public interface IGenericRepository<T> where T : class
 	/// <summary>
 	/// Update rows using query
 	/// </summary>
-	/// <remarks>
-	/// More info - https://github.com/borisdj/EFCore.BulkExtensions
-	/// </remarks>
 	/// <param name="query"></param>
 	/// <param name="updateExpression"></param>
-	Task UpdateFromQuery(Expression<Func<T, bool>> query, Expression<Func<T, T>> updateExpression);
+	Task UpdateFromQuery(Expression<Func<T, bool>> query, Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyCalls, int? batchSize = null);
 
 	/// <summary>
 	/// Enable to generate specific queries

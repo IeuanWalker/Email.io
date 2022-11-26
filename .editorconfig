@@ -1,4 +1,4 @@
-# Suppress: EC112
+﻿# Suppress: EC112
 # top-most EditorConfig file
 root = true
 
@@ -110,7 +110,19 @@ dotnet_naming_rule.instance_fields_should_be_camel_case.style = instance_field_s
 dotnet_naming_symbols.instance_fields.applicable_kinds = field
 
 dotnet_naming_style.instance_field_style.capitalization = camel_case
-dotnet_naming_style.instance_field_style.required_prefix = 
+dotnet_naming_style.instance_field_style.required_prefix =
+
+## Static fields are camelCase
+dotnet_naming_rule.static_fields_should_be_camel_case.severity = error
+dotnet_naming_rule.static_fields_should_be_camel_case.symbols = static_fields
+dotnet_naming_rule.static_fields_should_be_camel_case.style = instance_field_style
+
+dotnet_naming_symbols.static_fields.applicable_kinds = field
+dotnet_naming_symbols.static_fields.required_modifiers = static
+dotnet_naming_symbols.static_fields.applicable_accessibilities = internal, private, protected, protected_internal, private_protected
+
+dotnet_naming_style.static_field_style.capitalization = camel_case
+dotnet_naming_style.static_field_style.required_prefix =
 
 ## Private fields
 dotnet_naming_rule.private_members_with_underscore.symbols  = private_fields
@@ -143,3 +155,38 @@ csharp_space_around_binary_operators = before_and_after
 
 # CA1826: Do not use Enumerable methods on indexable collections
 dotnet_diagnostic.CA1826.severity = silent
+
+# CA1711: Identifiers should not have incorrect suffix
+dotnet_diagnostic.CA1711.severity = none
+
+# RCS1161: Enum should declare explicit values.
+dotnet_diagnostic.RCS1161.severity = none
+
+# S2344: Enumeration type names should not have "Flags" or "Enum" suffixes
+dotnet_diagnostic.S2344.severity = none
+
+# S1643: Strings should not be concatenated using '+' in a loop
+dotnet_diagnostic.S1643.severity = silent
+
+# CA1822: Member does not access instance data and can be marked as static
+dotnet_diagnostic.CA1822.severity = error
+
+# CA1050: Declare types in namespaces
+dotnet_diagnostic.CA1050.severity = error
+
+# CA2016: Forward the 'cancellationToken' parameter methods that take one
+dotnet_diagnostic.CA2016.severity = error
+
+# CA2208: Method passes parameter as the paramName argument to a ArgumentNullException constructor. Replace this argument with one of the method's parameter names. Note that the provided parameter name should have the exact casing as declared on the method.
+dotnet_diagnostic.CA2208.severity = error
+
+# CA1834: Use 'StringBuilder.Append(char)' instead of 'StringBuilder.Append(string)' when the input is a constant unit string
+dotnet_diagnostic.CA1834.severity = error
+
+# IDE0220: Add explicit cast
+dotnet_diagnostic.IDE0220.severity = error
+csharp_style_prefer_null_check_over_type_check = true:suggestion
+csharp_prefer_simple_default_expression = true:suggestion
+
+# RCS1075: Avoid empty catch clause that catches System.Exception.
+dotnet_diagnostic.RCS1075.severity = none

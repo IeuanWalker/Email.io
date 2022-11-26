@@ -1,7 +1,5 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
-using AdminSite.Pages;
 using AutoMapper;
 using Database.Models;
 using Database.Repositories.Project;
@@ -60,7 +58,6 @@ public class DetailsModel : PageModel
 			return NotFound();
 		}
 
-		// TODO: Error handling
 		ProjectTbl? project = (await _projectTbl.Get(x => x.Id.Equals(id), null, $"{nameof(ProjectTbl.Templates)}, {nameof(ProjectTbl.Templates)}.{nameof(TemplateTbl.Versions)}").ConfigureAwait(false)).Single();
 		if (Project is null)
 		{
@@ -78,6 +75,7 @@ public class DetailsModel : PageModel
 				y.HashedId = _hashIdService.Encode(y.Id);
 				y.TemplateNameSlug = _slugService.GenerateSlug(x.Name);
 			});
+			x.Versions = x.Versions?.OrderByDescending(x => x.IsActive).ThenByDescending(x => x.DateModified).ToList();
 		});
 		Project.Templates = Project.Templates?.OrderBy(x => x.Name).ToList();
 
@@ -115,10 +113,9 @@ public class DetailsModel : PageModel
 	public async Task<IActionResult> OnPostCreateTemplate()
 	{
 		TemplateTbl result = await _templateTbl.Add(CreateTemplate).ConfigureAwait(false);
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.ProjectId), _ => new ProjectTbl
-		{
-			DateModified = DateTime.Now
-		});
+
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(CreateTemplate.ProjectId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
 
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = $"Template created - {result.Name}";
@@ -147,10 +144,8 @@ public class DetailsModel : PageModel
 		result.Name = UpdateTemplateName.Name;
 		_templateTbl.Update(result);
 
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.ProjectId), _ => new ProjectTbl
-		{
-			DateModified = DateTime.Now
-		});
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(UpdateTemplateName.ProjectId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
 
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = $"Template name update - {result.Name}";
@@ -181,10 +176,8 @@ public class DetailsModel : PageModel
 
 		await _templateTbl.Delete(DeleteTemplate.TemplateId);
 
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.ProjectId), _ => new ProjectTbl
-		{
-			DateModified = DateTime.Now
-		});
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(DeleteTemplate.ProjectId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
 
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "Template deleted";
@@ -215,10 +208,8 @@ public class DetailsModel : PageModel
 
 		TemplateVersionTbl result = await _templateVersionTbl.Add(CreateTemplateVersion);
 
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.ProjectId), _ => new ProjectTbl
-		{
-			DateModified = DateTime.Now
-		});
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(CreateTemplateVersion.Template.ProjectId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
 
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "Template version created";
@@ -251,20 +242,14 @@ public class DetailsModel : PageModel
 			x.IsActive &&
 			!x.Id.Equals(version.Id) &&
 			x.TemplateId.Equals(version.TemplateId),
-			_ =>
-			new TemplateVersionTbl
-			{
-				IsActive = false
-			});
+			s => s
+				.SetProperty(b => b.IsActive, _ => false));
 
-		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.TemplateId), _ => new TemplateTbl
-		{
-			DateModified = DateTime.Now
-		});
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.ProjectId), _ => new ProjectTbl
-		{
-			DateModified = DateTime.Now
-		});
+		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.TemplateId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
+
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.ProjectId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
 
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "Template version marked as active";
@@ -284,7 +269,7 @@ public class DetailsModel : PageModel
 			   x.Template!.ProjectId.Equals(DuplicateTemplateVersion.ProjectId)))
 		   .FirstOrDefault();
 
-		if (version == null)
+		if (version is null)
 		{
 			return NotFound();
 		}
@@ -299,14 +284,11 @@ public class DetailsModel : PageModel
 			TemplateId = version.TemplateId
 		});
 
-		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.TemplateId), _ => new TemplateTbl
-		{
-			DateModified = DateTime.Now
-		});
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.ProjectId), _ => new ProjectTbl
-		{
-			DateModified = DateTime.Now
-		});
+		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(DuplicateTemplateVersion.TemplateId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
+
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(DuplicateTemplateVersion.ProjectId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
 
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "Template version duplicated";
@@ -326,21 +308,18 @@ public class DetailsModel : PageModel
 				x.Template!.ProjectId.Equals(DeleteTemplateVersion.ProjectId)))
 			.FirstOrDefault();
 
-		if (version == null)
+		if (version is null)
 		{
 			return NotFound();
 		}
 
 		await _templateVersionTbl.Delete(DeleteTemplateVersion.VersionId);
 
-		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.TemplateId), _ => new TemplateTbl
-		{
-			DateModified = DateTime.Now
-		});
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(MarkAsActive.ProjectId), _ => new ProjectTbl
-		{
-			DateModified = DateTime.Now
-		});
+		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(DeleteTemplateVersion.TemplateId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
+
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(DeleteTemplateVersion.ProjectId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
 
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "Template version deleted";
@@ -408,16 +387,15 @@ public class DeleteTemplateVersionModel
 	public int VersionId { get; set; }
 }
 
-
-public class ProjectResponseModel 
+public class ProjectResponseModel
 {
 	public int Id { get; set; }
-	public string Slug { get; set; }
-	public string Name { get; init; }
+	public string Slug { get; set; } = default!;
+	public string Name { get; init; } = default!;
 	public string? SubHeading { get; set; }
 	public string? Description { get; set; }
 	public string? Tags { get; set; }
-	public string ApiKey { get; init; }
+	public string ApiKey { get; init; } = default!;
 	public List<TemplateResponseModel>? Templates { get; set; }
 }
 
@@ -427,7 +405,7 @@ public class TemplateResponseModel
 	public DateTime DateModified { get; set; }
 	public string HashedApiId { get; set; } = null!;
 	public string Name { get; set; } = string.Empty;
-	
+
 	public int ProjectId { get; set; }
 	public List<TemplateVersionResponseModel>? Versions { get; set; }
 }
@@ -435,7 +413,7 @@ public class TemplateResponseModel
 public class TemplateVersionResponseModel
 {
 	public int Id { get; set; }
-	public string HashedId { get; set; }
+	public string HashedId { get; set; } = default!;
 	public DateTime DateModified { get; set; }
 	public string Name { get; set; } = string.Empty;
 	public string TemplateNameSlug { get; set; } = string.Empty;

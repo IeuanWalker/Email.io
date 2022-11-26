@@ -64,11 +64,11 @@ public class ApplicationDbContext : DbContext
 
 	#region DbSet's
 
-	public DbSet<ProjectTbl> ProjectTbl { get; set; } = null!;
-	public DbSet<EmailTbl> EmailTbl { get; set; } = null!;
-	public DbSet<EmailAddressTbl> EmailAddressTbl { get; set; } = null!;
-	public DbSet<TemplateTbl> TemplateTbl { get; set; } = null!;
-	public DbSet<TemplateVersionTbl> TemplateVersionTbl { get; set; } = null!;
+	public DbSet<ProjectTbl> ProjectTbl => Set<ProjectTbl>();
+	public DbSet<EmailTbl> EmailTbl => Set<EmailTbl>();
+	public DbSet<EmailAddressTbl> EmailAddressTbl => Set<EmailAddressTbl>();
+	public DbSet<TemplateTbl> TemplateTbl => Set<TemplateTbl>();
+	public DbSet<TemplateVersionTbl> TemplateVersionTbl => Set<TemplateVersionTbl>();
 
 	#endregion DbSet's
 }

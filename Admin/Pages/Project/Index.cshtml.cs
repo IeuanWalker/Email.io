@@ -42,5 +42,5 @@ public class IndexModel : PageModel
 
 public class ProjectResponseModel1 : ProjectTbl
 {
-	public string Slug { get; set; }
+	public string Slug { get; set; } = default!;
 }

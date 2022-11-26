@@ -16,7 +16,7 @@ public class SettingsModel : PageModel
 	readonly ISlugService _slugService;
 
 	public SettingsModel(
-		IProjectRepository projectTbl, 
+		IProjectRepository projectTbl,
 		IApiKeyService apiKeyService,
 		IHashIdService hashIdService,
 		ISlugService slugService)
@@ -39,9 +39,8 @@ public class SettingsModel : PageModel
 			return NotFound();
 		}
 
-		// TODO: Error handling
 		Project = (await _projectTbl.Get(x => x.Id.Equals(id), null, nameof(ProjectTbl.Templates)).ConfigureAwait(false)).Single();
-		if (Project == null)
+		if (Project is null)
 		{
 			return NotFound();
 		}
@@ -90,28 +89,25 @@ public class SettingsModel : PageModel
 		return RedirectToPage("/project/index");
 	}
 
-	public async Task<JsonResult> OnPutResetApiKey([FromQuery]int projectId)
+	public async Task<JsonResult> OnPutResetApiKey([FromQuery] int projectId)
 	{
-		var project = await _projectTbl.GetByID(projectId);
+		ProjectTbl? project = await _projectTbl.GetByID(projectId);
 		if (project is null)
 		{
-			var result = new JsonResult(null);
-			result.StatusCode = StatusCodes.Status404NotFound;	
-			return result;
+			return new JsonResult(null)
+			{
+				StatusCode = StatusCodes.Status404NotFound
+			};
 		}
-		
-		string apiKey = await _apiKeyService.GenerateUniqueApiKey();
 
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(projectId), _ => new ProjectTbl
-		{
-			ApiKey = apiKey
-		});
+		project.ApiKey = await _apiKeyService.GenerateUniqueApiKey();
+		_projectTbl.Update(project);
 
 		return new JsonResult(new
 		{
 			toastStatus = "success",
 			toastTitle = "API key reset",
-			apiKey
+			project.ApiKey
 		});
 	}
 }

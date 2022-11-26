@@ -34,23 +34,18 @@ public class ApiKeyService : IApiKeyService
 			.Replace("/", "")
 			.Replace("+", "")
 			.Replace("=", "")
-			.Substring(0, 36);
+			[..36];
 	}
 
 	public async ValueTask<int?> GetProjectIdFromApiKey(string apiKey)
 	{
-		if (!_memoryCache.TryGetValue<Dictionary<string, int>>($"Authentication_Project_ApiKeys", out var internalKeys))
+		if (!_memoryCache.TryGetValue<Dictionary<string, int>>("Authentication_Project_ApiKeys", out var internalKeys))
 		{
 			internalKeys = await _projectTbl.GetAllApiKeysAndProjectIds();
 
-			_memoryCache.Set($"Authentication_Project_ApiKeys", internalKeys, DateTime.Now.AddHours(2));
+			_memoryCache.Set("Authentication_Project_ApiKeys", internalKeys, DateTime.Now.AddHours(2));
 		}
 
-		if (!internalKeys.TryGetValue(apiKey, out var projectId))
-		{
-			return null;
-		}
-
-		return projectId;
+		return internalKeys is null || !internalKeys.TryGetValue(apiKey, out var projectId) ? null : projectId;
 	}
 }

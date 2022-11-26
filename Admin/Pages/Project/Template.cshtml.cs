@@ -48,15 +48,15 @@ public class TemplateModel : PageModel
 	}
 
 	public TemplateVersionTbl? Version { get; set; }
-	public string ProjectSlug { get; set; }
+	public string ProjectSlug { get; set; } = default!;
 
-	public async Task<IActionResult> OnGet(string slug, string templateName, string hashedVersionId)
+	public async Task<IActionResult> OnGet(string slug, string hashedVersionId)
 	{
 		ProjectSlug = slug;
 
 		int? projectId = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
 		int? versionId = _hashIdService.Decode(hashedVersionId);
-		
+
 		if (projectId is null || versionId is null)
 		{
 			return NotFound();
@@ -67,7 +67,7 @@ public class TemplateModel : PageModel
 				x.Id.Equals(versionId) &&
 				x.Template!.ProjectId.Equals(projectId)))
 			.FirstOrDefault();
-		
+
 		if (Version is null)
 		{
 			return NotFound();
@@ -199,7 +199,6 @@ public class TemplateModel : PageModel
 			});
 		}
 
-		// TODO: Error handling
 		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
 			  x.Id.Equals(UpdateTemplate.VersionId) &&
 			  x.TemplateId.Equals(UpdateTemplate.TemplateId) &&
@@ -221,14 +220,11 @@ public class TemplateModel : PageModel
 
 		_templateVersionTbl.Update(version);
 
-		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(UpdateTemplate.TemplateId), _ => new TemplateTbl
-		{
-			DateModified = DateTime.Now
-		});
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(UpdateTemplate.ProjectId), _ => new ProjectTbl
-		{
-			DateModified = DateTime.Now
-		});
+		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(UpdateTemplate.TemplateId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
+
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(UpdateTemplate.ProjectId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
 
 		// TODO: Generate thumbnail
 		_jobClient.Enqueue(() => GenerateThumbnailAndPreview(version.Id));
@@ -261,14 +257,11 @@ public class TemplateModel : PageModel
 
 		_templateVersionTbl.Update(version);
 
-		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(UpdateSettings.TemplateId), _ => new TemplateTbl
-		{
-			DateModified = DateTime.Now
-		});
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(UpdateSettings.ProjectId), _ => new ProjectTbl
-		{
-			DateModified = DateTime.Now
-		});
+		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(UpdateSettings.TemplateId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
+
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(UpdateSettings.ProjectId), s => s
+			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
 
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "Template updated";
@@ -422,11 +415,9 @@ public class TemplateModel : PageModel
 		Uri previewUri = await SaveImage(version.Template.ProjectId, preview, $"Template-{version.TemplateId}-Version-{version.Id}-preview.png");
 		Uri thumbnailUri = await SaveImage(version.Template.ProjectId, thumbnail, $"Template-{version.TemplateId}-Version-{version.Id}-thumbnail.png");
 
-		await _templateVersionTbl.UpdateFromQuery(x => x.Id.Equals(versionId), _ => new TemplateVersionTbl
-		{
-			PreviewImage = previewUri.ToString(),
-			ThumbnailImage = thumbnailUri.ToString()
-		});
+		await _templateVersionTbl.UpdateFromQuery(x => x.Id.Equals(versionId), s => s
+			.SetProperty(b => b.PreviewImage, _ => previewUri.ToString())
+			.SetProperty(b => b.ThumbnailImage, _ => thumbnailUri.ToString()));
 	}
 
 	public async Task<Uri> SaveImage(int projectId, byte[] file, string name)
@@ -443,12 +434,9 @@ public class TemplateModel : PageModel
 
 		BlobBaseClient client = new("UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite", $"project-{projectId.ToString().ToLower()}", name);
 
-		if (client.Uri.AbsoluteUri.Contains("azurite"))
-		{
-			return new Uri(client.Uri.AbsoluteUri.Replace("azurite", "localhost"));
-		}
-
-		return client.Uri;
+		return client.Uri.AbsoluteUri.Contains("azurite") ?
+			new Uri(client.Uri.AbsoluteUri.Replace("azurite", "localhost")) :
+			client.Uri;
 	}
 }
 
