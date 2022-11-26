@@ -29,6 +29,7 @@ const importFiles = {
     jsDragsort: [
         "node_modules/@yaireo/dragsort/dist/dragsort.js"
     ],
+    // TODO: Migrate codemirror 5-6 - https://codemirror.net/docs/migration/
     cssCodeMirror: [
         "node_modules/codemirror/lib/codemirror.css",
         "node_modules/codemirror/theme/eclipse.css",
