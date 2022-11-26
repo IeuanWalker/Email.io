@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Runtime.Intrinsics.X86;
-using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Domain.Services.Slug;

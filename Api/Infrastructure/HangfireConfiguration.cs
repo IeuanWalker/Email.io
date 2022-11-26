@@ -5,7 +5,6 @@ using Hangfire.Dashboard;
 using Hangfire.Heartbeat;
 using Hangfire.RecurringJobAdmin;
 using Hangfire.SqlServer;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Api.Infrastructure;
 

@@ -116,7 +116,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
 	public virtual async Task UpdateFromQuery(Expression<Func<T, bool>> query, Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyCalls, int? batchSize = null)
 	{
-		if(batchSize is null)
+		if (batchSize is null)
 		{
 			await dbSet.Where(query).ExecuteUpdateAsync(setPropertyCalls).ConfigureAwait(false);
 		}

@@ -1,7 +1,5 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
-using AdminSite.Pages;
 using AutoMapper;
 using Database.Models;
 using Database.Repositories.Project;
