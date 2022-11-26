@@ -56,7 +56,7 @@ public class TemplateModel : PageModel
 
 		int? projectId = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
 		int? versionId = _hashIdService.Decode(hashedVersionId);
-		
+
 		if (projectId is null || versionId is null)
 		{
 			return NotFound();
@@ -67,7 +67,7 @@ public class TemplateModel : PageModel
 				x.Id.Equals(versionId) &&
 				x.Template!.ProjectId.Equals(projectId)))
 			.FirstOrDefault();
-		
+
 		if (Version is null)
 		{
 			return NotFound();

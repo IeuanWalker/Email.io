@@ -2,12 +2,14 @@
 using System.Text.RegularExpressions;
 
 namespace Domain.Services.Slug;
+
 public class SlugService : ISlugService
 {
 	public string GenerateSlug(string text)
 	{
 		return TextToUrlSlug(text);
 	}
+
 	public string GenerateSlug(string text, string id)
 	{
 		return $"{TextToUrlSlug(text)}-{id}";
@@ -30,7 +32,7 @@ public class SlugService : ISlugService
 
 		return str;
 	}
-	
+
 	static string RemoveAccent(string txt)
 	{
 		byte[] bytes = Encoding.GetEncoding("Cyrillic").GetBytes(txt);

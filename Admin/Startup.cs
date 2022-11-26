@@ -1,7 +1,6 @@
 using System.Reflection;
 using Admin.Infrastructure;
 using Database.Context;
-using AutoMapper;
 
 namespace Admin;
 

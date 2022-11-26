@@ -1,9 +1,11 @@
 ﻿using HashidsNet;
 
 namespace Domain.Services.HashId;
+
 public class HashIdService : IHashIdService
 {
 	const string _salt = "my-salt";
+
 	public string EncodeProjectAndTemplateId(int projectId, int templateId)
 	{
 		return new Hashids(_salt, 30).Encode(projectId, templateId);
@@ -33,8 +35,8 @@ public class HashIdService : IHashIdService
 		try
 		{
 			return new Hashids(_salt, minLength).DecodeSingle(hash);
-		} 
-		catch(Exception)
+		}
+		catch (Exception)
 		{
 			return null;
 		}

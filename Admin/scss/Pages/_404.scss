@@ -1,12 +1,12 @@
 ﻿@import url(https://fonts.googleapis.com/css?family=Open+Sans:300|Titillium+Web:700);
 
-.html-404{
-    height:100%;
+.html-404 {
+    height: 100%;
 }
 
 .body-404 {
     height: 100%;
-    display:flex;
+    display: flex;
     background: url(http://i.giphy.com/jcxtvm2bsZDH2.gif);
     background-repeat: no-repeat;
     background-position: bottom center;
@@ -14,8 +14,9 @@
     font-family: "Titillium Web", sans-serif;
     color: #fff;
     background-color: #1BCF00;
-    div{
-        flex-grow:1;
+
+    div {
+        flex-grow: 1;
     }
 }
 
@@ -36,7 +37,8 @@
         font-size: 14em;
         font-weight: 700;
     }
-    a{
+
+    a {
         background-color: transparent;
     }
 }

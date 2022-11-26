@@ -52,11 +52,11 @@ public class EmailController : Controller
 	{
 		// Get Ids from hash
 		(int projectId, int templateId)? result = _hashedService.DecodeProjectAndTemplateId(request.TemplateId);
-		if(result is null)
+		if (result is null)
 		{
 			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, is not valid");
 		}
-		
+
 		// Get API key from header
 		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out var apiKey);
 
@@ -136,7 +136,6 @@ public class EmailController : Controller
 		{
 			// ignore
 		}
-
 
 		return Ok(_hashedService.Encode(email.Id, 30));
 	}

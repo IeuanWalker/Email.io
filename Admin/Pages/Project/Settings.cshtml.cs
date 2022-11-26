@@ -16,7 +16,7 @@ public class SettingsModel : PageModel
 	readonly ISlugService _slugService;
 
 	public SettingsModel(
-		IProjectRepository projectTbl, 
+		IProjectRepository projectTbl,
 		IApiKeyService apiKeyService,
 		IHashIdService hashIdService,
 		ISlugService slugService)
@@ -90,16 +90,16 @@ public class SettingsModel : PageModel
 		return RedirectToPage("/project/index");
 	}
 
-	public async Task<JsonResult> OnPutResetApiKey([FromQuery]int projectId)
+	public async Task<JsonResult> OnPutResetApiKey([FromQuery] int projectId)
 	{
 		var project = await _projectTbl.GetByID(projectId);
 		if (project is null)
 		{
 			var result = new JsonResult(null);
-			result.StatusCode = StatusCodes.Status404NotFound;	
+			result.StatusCode = StatusCodes.Status404NotFound;
 			return result;
 		}
-		
+
 		string apiKey = await _apiKeyService.GenerateUniqueApiKey();
 
 		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(projectId), _ => new ProjectTbl
