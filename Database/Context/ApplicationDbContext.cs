@@ -67,6 +67,7 @@ public class ApplicationDbContext : DbContext
 	public DbSet<ProjectTbl> ProjectTbl => Set<ProjectTbl>();
 	public DbSet<EmailTbl> EmailTbl => Set<EmailTbl>();
 	public DbSet<EmailAddressTbl> EmailAddressTbl => Set<EmailAddressTbl>();
+	public DbSet<EmailAttachmentTbl> EmailAttachmentTbl => Set<EmailAttachmentTbl>();
 	public DbSet<TemplateTbl> TemplateTbl => Set<TemplateTbl>();
 	public DbSet<TemplateVersionTbl> TemplateVersionTbl => Set<TemplateVersionTbl>();
 

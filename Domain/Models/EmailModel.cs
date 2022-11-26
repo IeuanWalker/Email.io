@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Nodes;
+using Microsoft.AspNetCore.Http;
 
 namespace Domain.Models;
 
@@ -10,13 +10,15 @@ public class EmailModel
 	public IEnumerable<EmailAddresses>? BCCAddresses { get; set; }
 
 	[Required]
-	public JsonObject Data { get; set; } = null!;
+	public string Data { get; set; } = null!;
 
 	[MaxLength(5)]
 	public string Language { get; set; } = "en-GB";
-
+	
 	[Required]
 	public string TemplateId { get; set; } = null!;
+
+	public IEnumerable<IFormFile>? Attachments { get; set; }
 }
 
 public class EmailAddresses

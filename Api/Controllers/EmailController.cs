@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Nodes;
 using Api.Infrastructure;
 using Database.Models;
 using Database.Repositories.Email;
@@ -10,6 +11,7 @@ using Domain.Services.Email;
 using Domain.Services.HashId;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,17 +46,27 @@ public class EmailController : Controller
 		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
 		_hashedService = hashedService ?? throw new ArgumentNullException(nameof(hashedService));
 	}
-
-	// TODO: Handle attachements
+	
+	// TODO: Handle no email addresses
 	[HttpPost]
 	[Authorize]
-	public async Task<IActionResult> SendEmail([FromBody][Required] EmailModel request)
+	public async Task<IActionResult> SendEmail([FromForm][Required] EmailModel request)
 	{
 		// Get Ids from hash
 		(int projectId, int templateId)? result = _hashedService.DecodeProjectAndTemplateId(request.TemplateId);
 		if (result is null)
 		{
 			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, is not valid");
+		}
+
+		JsonObject json = default!;
+		try
+		{
+			json = JsonObject.Parse(request.Data)!.AsObject();
+		}
+		catch (Exception ex)
+		{
+			return BadRequest($"{nameof(request.Data)} is not valid JSON. {ex.Message}");
 		}
 
 		// Get API key from header
@@ -91,11 +103,29 @@ public class EmailController : Controller
 		ConstructedEmail constructedEmail = new();
 		try
 		{
-			constructedEmail = _emailService.ConstructEmail(request.Data, template.Subject, template.Html, template.PlainText);
+			constructedEmail = _emailService.ConstructEmail(json, template.Subject, template.Html, template.PlainText);
 		}
 		catch (ArgumentException ex)
 		{
 			return BadRequest($"Error constructing email: {ex.Message}");
+		}
+
+		// Process attachments
+		List<EmailAttachmentTbl> emailAttachments = new();
+		if (request.Attachments is not null)
+		{
+			foreach (var attachment in request.Attachments)
+			{
+				await using var memoryStream = new MemoryStream();
+				await attachment.CopyToAsync(memoryStream);
+
+				emailAttachments.Add(new EmailAttachmentTbl
+				{
+					FileName = attachment.FileName,
+					ContentType = attachment.ContentType,
+					SavedFile = Convert.ToBase64String(memoryStream.ToArray())
+				});
+			}
 		}
 
 		// TODO: Allow all the emails to be sent at the template version level
@@ -104,7 +134,7 @@ public class EmailController : Controller
 		{
 			ProjectId = result.Value.projectId,
 			TemplateId = result.Value.templateId,
-			Data = request.Data.ToJsonString(),
+			Data = request.Data,
 			ToAddresses = request.ToAddresses?.Select(x => new EmailAddressTbl
 			{
 				Name = x.Name,
@@ -124,6 +154,8 @@ public class EmailController : Controller
 			HtmlContent = constructedEmail.HtmlContent,
 			PlainTextContent = constructedEmail.PlainTextContent,
 			Language = request.Language,
+			Attachements = emailAttachments,
+			AttachementCount = emailAttachments.Count
 		};
 		await _emailTbl.Add(email);
 
