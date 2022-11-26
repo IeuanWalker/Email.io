@@ -22,16 +22,19 @@ static class DatabaseConfiguration
 			throw new ArgumentNullException(nameof(configuration), "Missing database connection string");
 		}
 
-		services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly(nameof(Database))));
+		services.AddDbContext<ApplicationDbContext>(options => 
+			options.UseSqlServer(connection, b => b.MigrationsAssembly(nameof(Database))));
 	}
 
-	// TODO: Try removing was added to fix some docker issues
-	// TODO: https://stackoverflow.com/a/43521226
-	public static void Configure(ApplicationDbContext dataContext)
+	public static void Configure(IApplicationBuilder app)
 	{
-		// Apply migrations
-		Console.WriteLine("Applying migrations....");
-		dataContext.Database.Migrate();
-		Console.WriteLine("Migrations applied....");
+		using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+		{
+			Console.WriteLine("Applying migrations");
+			
+			scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+
+			Console.WriteLine("Migrations applied");
+		}
 	}
 }
