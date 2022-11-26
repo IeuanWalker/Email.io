@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 
 namespace Api.Infrastructure;
-
+/// <summary>
+/// https://www.camiloterevinto.com/post/simple-and-secure-api-keys-using-asp-net-core
+/// </summary>
 public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationOptions>
 {
 	readonly IApiKeyService _apiKeyService;
