@@ -12,12 +12,24 @@
     </div>
     <div class="nav">
         <a class="nav-item" asp-area="" asp-page="/project/index">Projects</a>
-        <a class="nav-item">Design library</a>
-        <a class="nav-item">Docs</a>
-        <div class="nav-item accordion">
-            <input id="accordion-getting-started" type="checkbox" hidden="" />
-            <label for="accordion-getting-started">Settings</label>
-            <div class="accordion-body">
+        <div class="accordion nav-item">
+            <input id="accordion-docs" type="checkbox" hidden="" />
+            <label for="accordion-docs">Docs</label>
+            <div class="accordion-body m-0">
+                <ul class="menu menu-nav">
+                    <li class="menu-item">
+                        <a href="#">API</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#">Admin site</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="accordion nav-item">
+            <input id="accordion-Settings" type="checkbox" hidden="" />
+            <label for="accordion-Settings">Settings</label>
+            <div class="accordion-body m-0">
                 <ul class="menu menu-nav">
                     <li class="menu-item">
                         <a href="#">Appearance</a>
