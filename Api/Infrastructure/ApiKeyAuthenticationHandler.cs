@@ -34,7 +34,7 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
 		Logger.BeginScope("{projectId}", projectId);
 		Logger.LogInformation("Client authenticated");
 
-		var claims = new[] { new Claim(ClaimTypes.Name, projectId!.ToString()) };
+		var claims = new[] { new Claim(ClaimTypes.Name, (projectId?.ToString()) ?? string.Empty) };
 		var identity = new ClaimsIdentity(claims, ApiKeyAuthenticationOptions.DefaultScheme);
 		var identities = new List<ClaimsIdentity> { identity };
 		var principal = new ClaimsPrincipal(identities);

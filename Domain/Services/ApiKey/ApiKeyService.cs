@@ -46,11 +46,6 @@ public class ApiKeyService : IApiKeyService
 			_memoryCache.Set("Authentication_Project_ApiKeys", internalKeys, DateTime.Now.AddHours(2));
 		}
 
-		if (!internalKeys.TryGetValue(apiKey, out var projectId))
-		{
-			return null;
-		}
-
-		return projectId;
+		return internalKeys is null || !internalKeys.TryGetValue(apiKey, out var projectId) ? null : projectId;
 	}
 }

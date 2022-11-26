@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Database.Context;
-using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Database.Repositories.Generic;
 
@@ -65,11 +65,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		return entity;
 	}
 
-	public virtual async Task BulkAdd(List<T> entities, BulkConfig? config = null)
-	{
-		await context.BulkInsertAsync(entities, config).ConfigureAwait(false);
-	}
-
 	public virtual async Task Delete(object id)
 	{
 		// Found object using ID
@@ -103,7 +98,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		int rowsAffected;
 		do
 		{
-			rowsAffected = await dbSet.Where(query).Take(batchSize).BatchDeleteAsync().ConfigureAwait(false);
+			rowsAffected = await dbSet.Where(query).Take(batchSize).ExecuteDeleteAsync().ConfigureAwait(false);
 		} while (rowsAffected >= batchSize);
 	}
 
@@ -119,9 +114,20 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		context.SaveChanges();
 	}
 
-	public virtual async Task UpdateFromQuery(Expression<Func<T, bool>> query, Expression<Func<T, T>> updateExpression)
+	public virtual async Task UpdateFromQuery(Expression<Func<T, bool>> query, Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyCalls, int? batchSize = null)
 	{
-		await dbSet.Where(query).BatchUpdateAsync(updateExpression).ConfigureAwait(false);
+		if(batchSize is null)
+		{
+			await dbSet.Where(query).ExecuteUpdateAsync(setPropertyCalls).ConfigureAwait(false);
+		}
+		else
+		{
+			int rowsAffected;
+			do
+			{
+				rowsAffected = await dbSet.Where(query).ExecuteUpdateAsync(setPropertyCalls).ConfigureAwait(false);
+			} while (rowsAffected >= batchSize);
+		}
 	}
 
 	public IQueryable<T> Where(Expression<Func<T, bool>>? filter = null, bool track = false)

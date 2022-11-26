@@ -103,10 +103,8 @@ public class SettingsModel : PageModel
 
 		string apiKey = await _apiKeyService.GenerateUniqueApiKey();
 
-		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(projectId), _ => new ProjectTbl
-		{
-			ApiKey = apiKey
-		});
+		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(projectId), s => s
+			.SetProperty(b => b.ApiKey, _ => apiKey));
 
 		return new JsonResult(new
 		{

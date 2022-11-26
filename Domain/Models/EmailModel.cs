@@ -10,13 +10,13 @@ public class EmailModel
 	public IEnumerable<EmailAddresses>? BCCAddresses { get; set; }
 
 	[Required]
-	public JsonObject Data { get; set; }
+	public JsonObject Data { get; set; } = null!;
 
 	[MaxLength(5)]
 	public string Language { get; set; } = "en-GB";
 
 	[Required]
-	public string TemplateId { get; set; }
+	public string TemplateId { get; set; } = null!;
 }
 
 public class EmailAddresses
@@ -24,5 +24,5 @@ public class EmailAddresses
 	public string? Name { get; set; }
 
 	[EmailAddress]
-	public string Email { get; set; } = string.Empty;
+	public string Email { get; set; } = null!;
 }
