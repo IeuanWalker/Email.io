@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Admin.Pages;
 
@@ -11,8 +12,12 @@ public class IndexModel : PageModel
 		_logger = logger;
 	}
 
-	public void OnGet()
+	public IActionResult OnGet()
 	{
 		_logger.LogInformation("Index page visited");
+
+		// TODO: If authenticated send to project page, else continue to this page
+
+		return RedirectToPage("/project/index");
 	}
 }
