@@ -60,7 +60,6 @@ public class DetailsModel : PageModel
 			return NotFound();
 		}
 
-		// TODO: Error handling
 		ProjectTbl? project = (await _projectTbl.Get(x => x.Id.Equals(id), null, $"{nameof(ProjectTbl.Templates)}, {nameof(ProjectTbl.Templates)}.{nameof(TemplateTbl.Versions)}").ConfigureAwait(false)).Single();
 		if (Project is null)
 		{
@@ -78,6 +77,7 @@ public class DetailsModel : PageModel
 				y.HashedId = _hashIdService.Encode(y.Id);
 				y.TemplateNameSlug = _slugService.GenerateSlug(x.Name);
 			});
+			x.Versions = x.Versions?.OrderByDescending(x => x.IsActive).ThenByDescending(x => x.DateModified).ToList();
 		});
 		Project.Templates = Project.Templates?.OrderBy(x => x.Name).ToList();
 
@@ -271,7 +271,7 @@ public class DetailsModel : PageModel
 			   x.Template!.ProjectId.Equals(DuplicateTemplateVersion.ProjectId)))
 		   .FirstOrDefault();
 
-		if (version == null)
+		if (version is null)
 		{
 			return NotFound();
 		}
