@@ -12,7 +12,7 @@ public class ProjectTbl : BaseEntityModifiedDate
 
 	[Required]
 	[MaxLength(200)]
-	public string Name { get; set; } = string.Empty;
+	public string Name { get; set; } = default!;
 
 	[DisplayName("Sub heading")]
 	[MaxLength(200)]
@@ -22,6 +22,6 @@ public class ProjectTbl : BaseEntityModifiedDate
 	public string? Description { get; set; }
 
 	public string? Tags { get; set; }
-	public string ApiKey { get; set; }
+	public string ApiKey { get; set; } = default!;
 	public ICollection<TemplateTbl>? Templates { get; set; }
 }

@@ -23,18 +23,18 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
 			return AuthenticateResult.Fail("Invalid parameters");
 		}
 
-		var projectId = await _apiKeyService.GetProjectIdFromApiKey(apiKey);
+		var projectId = await _apiKeyService.GetProjectIdFromApiKey(apiKey!);
 
 		if (projectId is null)
 		{
-			Logger.LogWarning($"An API request was received with an invalid API key: {apiKey}");
+			Logger.LogWarning("An API request was received with an invalid API key {apiKey}", apiKey!);
 			return AuthenticateResult.Fail("Invalid parameters");
 		}
 
 		Logger.BeginScope("{projectId}", projectId);
 		Logger.LogInformation("Client authenticated");
 
-		var claims = new[] { new Claim(ClaimTypes.Name, projectId.ToString()) };
+		var claims = new[] { new Claim(ClaimTypes.Name, projectId!.ToString()) };
 		var identity = new ClaimsIdentity(claims, ApiKeyAuthenticationOptions.DefaultScheme);
 		var identities = new List<ClaimsIdentity> { identity };
 		var principal = new ClaimsPrincipal(identities);

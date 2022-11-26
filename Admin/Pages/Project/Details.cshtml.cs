@@ -408,16 +408,15 @@ public class DeleteTemplateVersionModel
 	public int VersionId { get; set; }
 }
 
-
-public class ProjectResponseModel 
+public class ProjectResponseModel
 {
 	public int Id { get; set; }
-	public string Slug { get; set; }
-	public string Name { get; init; }
+	public string Slug { get; set; } = default!;
+	public string Name { get; init; } = default!;
 	public string? SubHeading { get; set; }
 	public string? Description { get; set; }
 	public string? Tags { get; set; }
-	public string ApiKey { get; init; }
+	public string ApiKey { get; init; } = default!;
 	public List<TemplateResponseModel>? Templates { get; set; }
 }
 
@@ -427,7 +426,7 @@ public class TemplateResponseModel
 	public DateTime DateModified { get; set; }
 	public string HashedApiId { get; set; } = null!;
 	public string Name { get; set; } = string.Empty;
-	
+
 	public int ProjectId { get; set; }
 	public List<TemplateVersionResponseModel>? Versions { get; set; }
 }
@@ -435,7 +434,7 @@ public class TemplateResponseModel
 public class TemplateVersionResponseModel
 {
 	public int Id { get; set; }
-	public string HashedId { get; set; }
+	public string HashedId { get; set; } = default!;
 	public DateTime DateModified { get; set; }
 	public string Name { get; set; } = string.Empty;
 	public string TemplateNameSlug { get; set; } = string.Empty;

@@ -48,9 +48,9 @@ public class TemplateModel : PageModel
 	}
 
 	public TemplateVersionTbl? Version { get; set; }
-	public string ProjectSlug { get; set; }
+	public string ProjectSlug { get; set; } = default!;
 
-	public async Task<IActionResult> OnGet(string slug, string templateName, string hashedVersionId)
+	public async Task<IActionResult> OnGet(string slug, string hashedVersionId)
 	{
 		ProjectSlug = slug;
 

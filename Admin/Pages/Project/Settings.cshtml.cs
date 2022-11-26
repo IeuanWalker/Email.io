@@ -95,9 +95,10 @@ public class SettingsModel : PageModel
 		var project = await _projectTbl.GetByID(projectId);
 		if (project is null)
 		{
-			var result = new JsonResult(null);
-			result.StatusCode = StatusCodes.Status404NotFound;
-			return result;
+			return new JsonResult(null)
+			{
+				StatusCode = StatusCodes.Status404NotFound
+			};
 		}
 
 		string apiKey = await _apiKeyService.GenerateUniqueApiKey();

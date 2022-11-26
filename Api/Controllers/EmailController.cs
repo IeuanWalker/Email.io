@@ -88,7 +88,7 @@ public class EmailController : Controller
 		}
 
 		// Construct email
-		ConstructedEmail constructedEmail = new ConstructedEmail();
+		ConstructedEmail constructedEmail = new();
 		try
 		{
 			constructedEmail = _emailService.ConstructEmail(request.Data, template.Subject, template.Html, template.PlainText);
