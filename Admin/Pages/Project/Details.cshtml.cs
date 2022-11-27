@@ -200,7 +200,13 @@ public class DetailsModel : PageModel
 		CreateTemplateVersion.Name = "Untitled name";
 		CreateTemplateVersion.Subject = "Default subject";
 		CreateTemplateVersion.Html = string.Empty;
-		CreateTemplateVersion.TestData = "{}";
+		CreateTemplateVersion.TestData = new List<TemplateTestDataTbl> {
+			new TemplateTestDataTbl {
+				Name = "Default",
+				Data = "{}",
+				IsDefault = true
+			}
+		};
 		if (!template.Versions?.Any() ?? true)
 		{
 			CreateTemplateVersion.IsActive = true;

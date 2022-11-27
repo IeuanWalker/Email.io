@@ -1,4 +1,5 @@
 ﻿@page "/project/{slug}/template/{templateName}-{hashedVersionId}"
+@using Database.Models;
 @model Admin.Pages.Project.TemplateModel
 @{
     ViewData["Title"] = @Model.Version.Name;
@@ -17,7 +18,12 @@
     <a asp-page="/project/details" asp-route-slug="@Model.ProjectSlug" class="template-navbar-buttons cursor-pointer"><ion-icon name="arrow-back-outline" style="font-size:1.1rem"></ion-icon></a>
     <a class="template-navbar-buttons tablinks active cursor-pointer" data-tabId="htmlContainer"><p>HTML</p></a>
     <a class="template-navbar-buttons tablinks cursor-pointer" data-tabId="plainTextContainer"><p>PLAIN TEXT</p></a>
-    <a class="template-navbar-buttons tablinks mr-2 cursor-pointer" data-tabId="testDataContainer"><p>TEST DATA</p></a>
+    <a class="template-navbar-buttons tablinks mr-2 cursor-pointer" data-tabId="testDataContainer">
+        <p>TEST DATA</p>
+        <btn class="js-cd-panel-trigger btn btn-link cursor-pointer" style='padding: 0px 0.5rem' data-panel="testdata">
+            <ion-icon name="documents-outline" style='font-size: 1rem;vertical-align: middle;margin-left: 5px;margin-right: -20px;'></ion-icon>
+        </btn>
+    </a>
     <button class="btn btn-lg ml-2 cursor-pointer" onclick="Save()" id="SaveBtn">Save</button>
     <a class="js-cd-panel-trigger btn btn-link cursor-pointer settings" style="line-height: normal; height:auto" data-panel="settings">
         <ion-icon name="settings-outline" size="large" style="vertical-align: middle;"></ion-icon>
@@ -33,7 +39,7 @@
             <textarea id="plainTextTextarea">@Model.Version.PlainText</textarea>
         </div>
         <div id="testDataContainer" class="tabcontent">
-            <textarea id="testDataTextarea">@Model.Version.TestData</textarea>
+            <textarea id="testDataTextarea">@Model.Version.TestData.First(x => x.IsDefault).Data</textarea>
         </div>
     </div>
     <div class="preview">
@@ -63,7 +69,7 @@
 
 @section Panels
 {
-    @*Settings panel*@
+    <!-- Settings panel -->
     <div class="cd-panel cd-panel--from-right js-cd-panel-settings">
         <div class="cd-panel__container">
             <div class="cd-panel__content">
@@ -120,6 +126,56 @@
                     <button type="submit" class="btn float-right">Send</button>
                 </form>
             </div>
+        </div>
+    </div>
+
+    <!-- Test data panel-->
+    <div class="cd-panel cd-panel--from-right js-cd-panel-testdata">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Test data</h3>
+                <p>Multiple test data files can be used to test your template under different conditions.</p>
+
+                <div class="clearfix mt-2">
+                    <a type="button" class="btn float-right mb-4 js-cd-panel-trigger cursor-pointer" data-panel="main">Add</a>
+                </div>
+                <div class="accordion-body">
+                    <div class="testdata-table">
+                    <div class="row-container">
+                        @foreach (TemplateTestDataTbl version in Model.Version.TestData)
+                        {
+                            <div class="row cursor-pointer">
+                                <div class="inner table-row">
+
+                                    <span class="ml-2 user-select-none">
+                                        @version.Name
+                                        @if (version.IsDefault)
+                                        {
+                                            <small class="label label-success">Default</small>
+                                        }
+                                    </span>
+                                    <div class="dropdown dropdown-right">
+                                        <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
+                                            <ion-icon name="ellipsis-vertical-outline" style="font-size:1.1rem"></ion-icon>
+                                        </button>
+                                        <ul class="menu submenu">
+                                            @if (!version.IsDefault)
+                                            {
+                                                <li class="menu-item user-select-none"><a class="cursor-pointer">Make default</a></li>
+                                            }
+                                            <li class="menu-item user-select-none"><a class="cursor-pointer">Change name</a></li>
+                                            <li class="menu-item user-select-none"><a class="cursor-pointer">Duplicate</a></li>
+                                            <li class="menu-item user-select-none"><a class="js-cd-panel-trigger delete-template-version cursor-pointer">Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                </div>
+            </div>    
         </div>
     </div>
 

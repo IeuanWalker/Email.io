@@ -11,20 +11,19 @@ public class TemplateVersionTbl : BaseEntityModifiedDate
 
 	[Required]
 	[MaxLength(200)]
-	public string Name { get; set; } = string.Empty;
+	public string Name { get; set; } = default!;
 
 	[Required]
 	[MaxLength(200)]
-	public string Subject { get; set; } = string.Empty;
+	public string Subject { get; set; } = default!;
 
-	public string? TestData { get; set; }
 	public string? Html { get; set; }
 	public string? PlainText { get; set; }
 	public string? Categories { get; set; }
 	public bool IsActive { get; set; }
 	public string? ThumbnailImage { get; set; }
 	public string? PreviewImage { get; set; }
-
+	public ICollection<TemplateTestDataTbl> TestData { get; set; } = new List<TemplateTestDataTbl>();
 	public int TemplateId { get; set; }
 	public TemplateTbl Template { get; set; } = null!;
 }

@@ -65,7 +65,8 @@ public class TemplateModel : PageModel
 		// TODO: Pull minimal data
 		Version = (await _templateVersionTbl.Get(x =>
 				x.Id.Equals(versionId) &&
-				x.Template!.ProjectId.Equals(projectId)))
+				x.Template!.ProjectId.Equals(projectId),
+				includeProperties: nameof(TemplateVersionTbl.TestData)))
 			.FirstOrDefault();
 
 		if (Version is null)
@@ -214,7 +215,7 @@ public class TemplateModel : PageModel
 			});
 		}
 
-		version.TestData = UpdateTemplate.TestData;
+		//version.TestData = UpdateTemplate.TestData;
 		version.Html = UpdateTemplate.Html;
 		version.PlainText = UpdateTemplate.PlainText;
 
@@ -283,7 +284,8 @@ public class TemplateModel : PageModel
 		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
 				x.Id.Equals(TestSend.VersionId) &&
 				x.TemplateId.Equals(TestSend.TemplateId) &&
-				x.Template!.ProjectId.Equals(TestSend.ProjectId)))
+				x.Template!.ProjectId.Equals(TestSend.ProjectId),
+				includeProperties: nameof(TemplateVersionTbl.TestData)))
 			.FirstOrDefault();
 
 		if (version is null)
@@ -374,13 +376,13 @@ public class TemplateModel : PageModel
 		   });
 
 		HandlebarsTemplate<object, object> subjectTemplate = Handlebars.Compile(version.Subject);
-		string subjectResult = subjectTemplate(JObject.Parse(version.TestData!));
+		string subjectResult = subjectTemplate(JObject.Parse(version.TestData.First().Data));
 
 		HandlebarsTemplate<object, object> bodyTemplate = Handlebars.Compile(version.Html);
-		string bodyResult = bodyTemplate(JObject.Parse(version.TestData!));
+		string bodyResult = bodyTemplate(JObject.Parse(version.TestData.First().Data));
 
 		HandlebarsTemplate<object, object> plainTextTemplate = Handlebars.Compile(version.PlainText);
-		string plainTextResult = plainTextTemplate(JObject.Parse(version.TestData!));
+		string plainTextResult = plainTextTemplate(JObject.Parse(version.TestData.First().Data));
 
 		await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, null, null, subjectResult, bodyResult, plainTextResult);
 		return RedirectToPage("/project/template", new
@@ -406,7 +408,7 @@ public class TemplateModel : PageModel
 
 		// Compile HTML and test data
 		HandlebarsTemplate<object, object> template = Handlebars.Compile(version.Html);
-		string result = template(JObject.Parse(version.TestData!));
+		string result = template(JObject.Parse(version.TestData.First(x => x.IsDefault).Data));
 
 		HtmlConverter converter = new();
 		byte[] preview = converter.FromHtmlString(result, format: ImageFormat.Png);
