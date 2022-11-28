@@ -105,105 +105,119 @@ public class TemplateModel : PageModel
 	{
 		UpdateTemplate.Html = string.IsNullOrWhiteSpace(UpdateTemplate.Html) ? string.Empty : UpdateTemplate.Html;
 		UpdateTemplate.PlainText = string.IsNullOrWhiteSpace(UpdateTemplate.PlainText) ? string.Empty : UpdateTemplate.PlainText;
-		UpdateTemplate.TestData = string.IsNullOrWhiteSpace(UpdateTemplate.TestData) ? "{}" : UpdateTemplate.TestData;
-		try
+
+		// Validate JSON + template
+		HandlebarsTemplate<object, object> htmlTemplate = Handlebars.Compile(UpdateTemplate.Html);
+		HandlebarsTemplate<object, object> plainTextTemplate = Handlebars.Compile(UpdateTemplate.PlainText);
+		foreach (TemplateTestDataModel testData in UpdateTemplate.TestData)
 		{
-			Handlebars.RegisterHelper("ifCond", (output, options, context, arguments) =>
+			try
 			{
-				if (arguments.Length != 3)
+				if (string.IsNullOrWhiteSpace(testData.Data))
 				{
-					throw new HandlebarsException("{{#StringEqualityBlockHelper}} helper must have exactly two arguments");
+					testData.Data = "{}";
 				}
 
-				string v1 = arguments.At<string>(0);
-				string @operator = arguments.At<string>(1);
-				string v2 = arguments.At<string>(0);
-
-				switch (@operator)
+				Handlebars.RegisterHelper("ifCond", (output, options, context, arguments) =>
 				{
-					case "==":
-						if (v1 == v2)
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
+					if (arguments.Length != 3)
+					{
+						throw new HandlebarsException("{{#StringEqualityBlockHelper}} helper must have exactly two arguments");
+					}
 
-					case "!=":
-						if (v1 != v2)
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
+					string v1 = arguments.At<string>(0);
+					string @operator = arguments.At<string>(1);
+					string v2 = arguments.At<string>(0);
 
-					case "<":
-						if (Convert.ToDouble(v1) < Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
+					switch (@operator)
+					{
+						case "==":
+							if (v1 == v2)
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
 
-					case "<=":
-						if (Convert.ToDouble(v1) <= Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
+						case "!=":
+							if (v1 != v2)
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
 
-					case ">":
-						if (Convert.ToDouble(v1) > Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
+						case "<":
+							if (Convert.ToDouble(v1) < Convert.ToDouble(v2))
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
 
-					case ">=":
-						if (Convert.ToDouble(v1) >= Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
-				}
-			});
-			HandlebarsTemplate<object, object> template = Handlebars.Compile(UpdateTemplate.Html);
-			template(JObject.Parse(UpdateTemplate.TestData));
-		}
-		catch (Exception)
-		{
-			return new JsonResult(new
+						case "<=":
+							if (Convert.ToDouble(v1) <= Convert.ToDouble(v2))
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
+
+						case ">":
+							if (Convert.ToDouble(v1) > Convert.ToDouble(v2))
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
+
+						case ">=":
+							if (Convert.ToDouble(v1) >= Convert.ToDouble(v2))
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
+					}
+				});
+				HandlebarsTemplate<object, object> template = Handlebars.Compile(UpdateTemplate.Html);
+				htmlTemplate(JObject.Parse(testData.Data));
+				plainTextTemplate(JObject.Parse(testData.Data));
+			}
+			catch (Exception)
 			{
-				toastStatus = "error",
-				toastTitle = "Error parsing template failed.",
-			});
+				return new JsonResult(new
+				{
+					toastStatus = "error",
+					toastTitle = "Error parsing template failed.",
+				});
+			}
 		}
+		
 
 		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
 			  x.Id.Equals(UpdateTemplate.VersionId) &&
 			  x.TemplateId.Equals(UpdateTemplate.TemplateId) &&
-			  x.Template!.ProjectId.Equals(UpdateTemplate.ProjectId)))
+			  x.Template!.ProjectId.Equals(UpdateTemplate.ProjectId),
+			  includeProperties: nameof(TemplateVersionTbl.TestData)))
 		  .FirstOrDefault();
 
 		if (version is null)
@@ -218,6 +232,12 @@ public class TemplateModel : PageModel
 		//version.TestData = UpdateTemplate.TestData;
 		version.Html = UpdateTemplate.Html;
 		version.PlainText = UpdateTemplate.PlainText;
+		
+		foreach(TemplateTestDataModel testData in UpdateTemplate.TestData)
+		{
+			version.TestData.Where(x => x.Id.Equals(testData.Id)).ToList().ForEach(x => x.Data = testData.Data);
+		}
+
 
 		_templateVersionTbl.Update(version);
 
@@ -454,7 +474,7 @@ public class UpdateTemplateModel
 	public int VersionId { get; set; }
 
 	[Required]
-	public string TestData { get; set; } = string.Empty;
+	public List<TemplateTestDataModel> TestData { get; set; } = new();
 
 	[Required]
 	public string Html { get; set; } = string.Empty;
@@ -462,6 +482,13 @@ public class UpdateTemplateModel
 	[Required]
 	public string PlainText { get; set; } = string.Empty;
 }
+
+public class TemplateTestDataModel
+{
+	public int Id { get; set; }
+	public string Data { get; set; } = default!;
+}
+
 
 public class UpdateSettingsModel
 {

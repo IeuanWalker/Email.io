@@ -194,10 +194,6 @@
             }
         });
     </script>
-    <script>
-        var originalHtml = "@Model.Version.Html";
-        var originalTestData = "@Model.Version.TestData";
-    </script>
     <!-- Resizeable column -->
     <script>
         Split({
@@ -416,7 +412,11 @@
                     "<p style='white-space: pre-wrap; font-family: \"Roboto\", sans-serif;'>" + plainTextEditor.getValue() + "</p>" +
                     "</body>" +
                     "</html>");
+
+                    console.log(plainTextEditor.getValue());
             }
+
+            console.log(JSON.parse(testDataEditor.getValue()))
 
             var compiled = template(JSON.parse(testDataEditor.getValue()));
 
@@ -433,18 +433,35 @@
     <!-- Update template -->
     <script>
         function Save() {
+            saveCurrentTestData();
+
+            var testData = [];
+
+            const allTestData = document.querySelectorAll('[data-testdata-id]');
+            allTestData.forEach(function (data) {
+                testData.push({
+                    "id": data.getAttribute('data-testdata-id'),
+                    "data": data.getAttribute('data-testdata-data')
+                });
+            });
+
+            console.log(JSON.stringify(testData, null, 2));
+
+            var update = {
+                "projectId": document.getElementById("UpdateTemplate_ProjectId").value,
+                "templateId": document.getElementById("UpdateTemplate_TemplateId").value,
+                "versionId": document.getElementById("UpdateTemplate_VersionId").value,
+                "testData": testData,
+                "html": htmlEditor.getValue(),
+                "plainText": plainTextEditor.getValue()
+            }
+            console.log(JSON.stringify(update, null, 2));
+            
             jQuery.ajax({
                 type: "POST",
                 url: '?handler=UpdateTemplate',
                 headers: { 'RequestVerificationToken': $('@Html.AntiForgeryToken()').val() },
-                data: JSON.stringify({
-                    "projectId": document.getElementById("UpdateTemplate_ProjectId").value,
-                    "templateId": document.getElementById("UpdateTemplate_TemplateId").value,
-                    "versionId": document.getElementById("UpdateTemplate_VersionId").value,
-                    "testData": testDataEditor.getValue(),
-                    "html": htmlEditor.getValue(),
-                    "plainText": plainTextEditor.getValue()
-                }),
+                data: JSON.stringify(update),
                 contentType: "application/json",
                 dataType: "json",
                 beforeSend: function () {
@@ -491,8 +508,7 @@
         var currentId = @Model.Version.TestData.First().Id;
         function testDataSelected(element) {
             // save current test data
-            var test = document.querySelector(`[data-testdata-id="${currentId}"]`)
-            test.setAttribute('data-testdata-data', testDataEditor.getValue());
+            saveCurrentTestData();
 
             // set selected data
             currentId = element.getAttribute('data-testdata-id');
@@ -500,6 +516,11 @@
 
             // close panel
             document.getElementById('testDataPanel').classList.remove('cd-panel--is-visible');
+        }
+
+        function saveCurrentTestData(){
+            var currentTestDataElement = document.querySelector(`[data-testdata-id="${currentId}"]`)
+            currentTestDataElement.setAttribute('data-testdata-data', testDataEditor.getValue());
         }
     </script>
 }
