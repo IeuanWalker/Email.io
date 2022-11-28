@@ -6,6 +6,7 @@ using CoreHtmlToImage;
 using Database.Models;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
+using Database.Repositories.TemplateTestData;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.Email;
 using Domain.Services.HashId;
@@ -24,6 +25,7 @@ public class TemplateModel : PageModel
 	readonly IProjectRepository _projectTbl;
 	readonly ITemplateRepository _templateTbl;
 	readonly ITemplateVersionRepository _templateVersionTbl;
+	readonly ITemplateTestDataRepository _templateTestDataTbl;
 	readonly IBackgroundJobClient _jobClient;
 	readonly IEmailService _emailService;
 	readonly IHashIdService _hashIdService;
@@ -33,6 +35,7 @@ public class TemplateModel : PageModel
 		IProjectRepository projectTbl,
 		ITemplateRepository templateTbl,
 		ITemplateVersionRepository templateVersionTbl,
+		ITemplateTestDataRepository templateTestDataTbl,
 		IBackgroundJobClient jobClient,
 		IEmailService emailService,
 		IHashIdService hashIdService,
@@ -41,6 +44,7 @@ public class TemplateModel : PageModel
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
 		_templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
+		_templateTestDataTbl = templateTestDataTbl ?? throw new ArgumentNullException(nameof(templateTestDataTbl));
 		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
 		_emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
@@ -93,6 +97,18 @@ public class TemplateModel : PageModel
 			ProjectId = (int)projectId,
 			TemplateId = Version.TemplateId,
 			VersionId = Version.Id
+		};
+
+		AddTestData = new AddTestDataModel
+		{
+			ProjectSlug = slug,
+			HashedTemplateVersionId = hashedVersionId
+		};
+
+		DeleteTestData = new DeleteTestDataModel
+		{
+			ProjectSlug = slug,
+			HashedTemplateVersionId = hashedVersionId
 		};
 
 		return Page();
@@ -460,6 +476,79 @@ public class TemplateModel : PageModel
 			new Uri(client.Uri.AbsoluteUri.Replace("azurite", "localhost")) :
 			client.Uri;
 	}
+
+
+	[BindProperty]
+	public AddTestDataModel AddTestData { get; set; } = new AddTestDataModel();
+
+	public async Task<IActionResult> OnPostAddTestData()
+	{
+		var templateVersionId = _hashIdService.Decode(AddTestData.HashedTemplateVersionId);
+
+		TemplateVersionTbl? templateVersion = (await _templateVersionTbl.Get(x => x.Id.Equals(templateVersionId))).FirstOrDefault();
+
+		if (templateVersion is null)
+		{
+			return NotFound();
+		}
+		
+		await _templateTestDataTbl.Add(new()
+		{
+			TemplateVersionId = templateVersion.Id,
+			Name = "Untitled",
+			Data = "{}"
+		});
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "New test data created";
+
+		return RedirectToPage("/project/template", new { 
+			slug = AddTestData.ProjectSlug,
+			templateName = templateVersion.Name,
+			hashedVersionId = AddTestData.HashedTemplateVersionId
+		});
+	}
+
+	[BindProperty]
+	public DeleteTestDataModel DeleteTestData { get; set; }
+	public async Task<IActionResult> OnPostDeleteTestData()
+	{
+		var templateVersionId = _hashIdService.Decode(DeleteTestData.HashedTemplateVersionId);
+
+		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
+			x => x.Id.Equals(DeleteTestData.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
+			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
+
+		if (testData is null)
+		{
+			return NotFound();
+		}
+
+		_templateTestDataTbl.Delete(testData);
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "Test data deleted";
+
+		return RedirectToPage("/project/template", new
+		{
+			slug = DeleteTestData.ProjectSlug,
+			templateName = testData.TemplateVersion.Name,
+			hashedVersionId = DeleteTestData.HashedTemplateVersionId
+		});
+	}
+
+}
+
+public class AddTestDataModel
+{
+	public string ProjectSlug { get; set; }
+	public string HashedTemplateVersionId { get; set; }
+}
+public class DeleteTestDataModel
+{
+	public string ProjectSlug { get; set; }
+	public string HashedTemplateVersionId { get; set; }
+	public int TestDataId { get; set; }
 }
 
 public class UpdateTemplateModel

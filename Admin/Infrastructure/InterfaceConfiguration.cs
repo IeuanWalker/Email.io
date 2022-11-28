@@ -1,6 +1,7 @@
 ﻿using Database.Repositories.Email;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
+using Database.Repositories.TemplateTestData;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.ApiKey;
 using Domain.Services.Email;
@@ -20,6 +21,7 @@ static class InterfaceConfiguration
 		services.AddTransient<IProjectRepository, ProjectRepository>();
 		services.AddTransient<ITemplateRepository, TemplateRepository>();
 		services.AddTransient<ITemplateVersionRepository, TemplateVersionRepository>();
+		services.AddTransient<ITemplateTestDataRepository, TemplateTestDataRepository>();
 		services.AddTransient<IEmailRepository, EmailRepository>();
 		services.AddTransient<IEmailService, EmailService>();
 		services.AddTransient<IApiKeyService, ApiKeyService>();

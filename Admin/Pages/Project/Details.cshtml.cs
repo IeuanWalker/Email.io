@@ -197,7 +197,7 @@ public class DetailsModel : PageModel
 			return NotFound();
 		}
 
-		CreateTemplateVersion.Name = "Untitled name";
+		CreateTemplateVersion.Name = "Untitled";
 		CreateTemplateVersion.Subject = "Default subject";
 		CreateTemplateVersion.Html = string.Empty;
 		CreateTemplateVersion.TestData = new List<TemplateTestDataTbl> {
