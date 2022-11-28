@@ -130,7 +130,7 @@
     </div>
 
     <!-- Test data panel-->
-    <div class="cd-panel cd-panel--from-right js-cd-panel-testdata">
+    <div class="cd-panel cd-panel--from-right js-cd-panel-testdata" id="testDataPanel">
         <div class="cd-panel__container">
             <div class="cd-panel__content">
                 <a href="#0" class="cd-panel__close js-cd-close">Close</a>
@@ -145,7 +145,7 @@
                     <div class="row-container">
                         @foreach (TemplateTestDataTbl version in Model.Version.TestData)
                         {
-                            <div class="row cursor-pointer">
+                            <div class="row cursor-pointer" data-testData-id="@version.Id" data-testData-data="@version.Data" onclick="testDataSelected(this)">
                                 <div class="inner table-row">
 
                                     <span class="ml-2 user-select-none">
@@ -183,7 +183,7 @@
 
 @section Scripts
 {
-    @*Listen for ctrl+s*@
+    <!-- Listen for ctrl+s -->
     <script>
         document.addEventListener('keydown', e => {
             if (e.ctrlKey && e.key === 's') {
@@ -198,7 +198,7 @@
         var originalHtml = "@Model.Version.Html";
         var originalTestData = "@Model.Version.TestData";
     </script>
-    @*Resizeable column*@
+    <!-- Resizeable column -->
     <script>
         Split({
             columnGutters: [
@@ -210,7 +210,7 @@
         })
     </script>
 
-    @*Responsive tester*@
+    <!-- Responsive tester -->
     <script src="/js/viewpr.min.js"></script>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded",
@@ -221,7 +221,7 @@
             })
     </script>
 
-    @*Tabs*@
+    <!-- Tabs -->
     <script type="text/javascript">
         var currentPreviewTab = "htmlContainer";
 
@@ -260,10 +260,10 @@
         }
     </script>
 
-    @*CodeMirror*@
+    <!-- CodeMirror -->
     <script src="/js/codemirror.min.js"></script>
 
-    @*CodeMirror JSON editor*@
+    <!-- CodeMirror JSON editor -->
     <script>
         let testDataEditor = CodeMirror.fromTextArea(document.getElementById("testDataTextarea"),
             {
@@ -295,7 +295,7 @@
             });
     </script>
 
-    @*CodeMirror HTML editor*@
+    <!-- CodeMirror HTML editor -->
     <script>
         let htmlEditor = CodeMirror.fromTextArea(document.getElementById("htmlTextarea"),
             {
@@ -328,7 +328,7 @@
             });
     </script>
 
-    @*CodeMirror Plain text editor*@
+    <!-- CodeMirror Plain text editor -->
     <script>
         let plainTextEditor = CodeMirror.fromTextArea(document.getElementById("plainTextTextarea"),
             {
@@ -391,7 +391,7 @@
         });
     </script>
 
-    @*Preview handling*@
+    <!-- Preview handling -->
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded",
@@ -430,7 +430,7 @@
         }
     </script>
 
-    @*Update template*@
+    <!-- Update template -->
     <script>
         function Save() {
             jQuery.ajax({
@@ -463,7 +463,7 @@
         }
     </script>
 
-    @*Update settings*@
+    <!-- Update settings -->
     <script>
         var originalName = '@Model.UpdateSettings.Name';
         var originalSubject = '@Model.UpdateSettings.Subject';
@@ -484,5 +484,22 @@
             }
         }
 
+    </script>
+    
+    <!-- Test data panel -->
+    <script>
+        var currentId = @Model.Version.TestData.First().Id;
+        function testDataSelected(element) {
+            // save current test data
+            var test = document.querySelector(`[data-testdata-id="${currentId}"]`)
+            test.setAttribute('data-testdata-data', testDataEditor.getValue());
+
+            // set selected data
+            currentId = element.getAttribute('data-testdata-id');
+            testDataEditor.getDoc().setValue(element.getAttribute('data-testdata-data'));
+
+            // close panel
+            document.getElementById('testDataPanel').classList.remove('cd-panel--is-visible');
+        }
     </script>
 }
