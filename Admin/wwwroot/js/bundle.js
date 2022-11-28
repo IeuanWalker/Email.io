@@ -13850,8 +13850,6 @@ return $;
                         console.log(panelTriggers[i]);
                     }
                 }
-                
-                
             })(i);
         }
     }

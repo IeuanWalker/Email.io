@@ -41,7 +41,18 @@ function showToast(message, status) {
         progressBar: true,
 
         // the placement where prepend the toast container:
-        prependTo: document.body.childNodes[0]
+        prependTo: document.body.childNodes[0],
+        enableSounds: true,
+        sounds: {
+            // path to sound for informational message:
+            info: "/sound/info.mp3",
+            // path to sound for successfull message:
+            success: "/sound/success.mp3",
+            // path to sound for warn message:
+            warning: "/sound/warning.mp3",
+            // path to sound for error message:
+            error: "/sound/error.mp3",
+        },
     };
 
     // put this right in your main.js file:
