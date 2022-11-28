@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -78,6 +79,8 @@ public class TemplateModel : PageModel
 			return NotFound();
 		}
 
+		Version.TestData = Version.TestData.OrderByDescending(x => x.IsDefault).ToList();
+
 		UpdateTemplate = new UpdateTemplateModel
 		{
 			ProjectId = (int)projectId,
@@ -105,7 +108,7 @@ public class TemplateModel : PageModel
 			HashedTemplateVersionId = hashedVersionId
 		};
 
-		DeleteTestData = new DeleteTestDataModel
+		MarkAsDefault = DeleteTestData = new DeleteTestDataModel
 		{
 			ProjectSlug = slug,
 			HashedTemplateVersionId = hashedVersionId
@@ -534,6 +537,42 @@ public class TemplateModel : PageModel
 			slug = DeleteTestData.ProjectSlug,
 			templateName = testData.TemplateVersion.Name,
 			hashedVersionId = DeleteTestData.HashedTemplateVersionId
+		});
+	}
+
+	[BindProperty]
+	public DeleteTestDataModel MarkAsDefault { get; set; }
+	public async Task<IActionResult> OnPostMarkAsDefault()
+	{
+		var templateVersionId = _hashIdService.Decode(MarkAsDefault.HashedTemplateVersionId);
+
+		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
+			x => x.Id.Equals(MarkAsDefault.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
+			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
+
+		if (testData is null)
+		{
+			return NotFound();
+		}
+
+		testData.IsDefault = true;
+		_templateTestDataTbl.Update(testData);
+
+		await _templateTestDataTbl.UpdateFromQuery(x =>
+			x.IsDefault &&
+			!x.Id.Equals(MarkAsDefault.TestDataId) &&
+			x.TemplateVersionId.Equals(templateVersionId),
+			s => s
+				.SetProperty(b => b.IsDefault, _ => false));
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "Test data set as default";
+
+		return RedirectToPage("/project/template", new
+		{
+			slug = MarkAsDefault.ProjectSlug,
+			templateName = testData.TemplateVersion.Name,
+			hashedVersionId = MarkAsDefault.HashedTemplateVersionId
 		});
 	}
 

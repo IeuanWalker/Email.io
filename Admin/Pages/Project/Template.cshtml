@@ -72,6 +72,12 @@
     @Html.HiddenFor(model => model.AddTestData.HashedTemplateVersionId)
 </form>
 
+<form hidden method="post" asp-page-handler="MarkAsDefault" id="MarkAsDefaultForm">
+    @Html.HiddenFor(model => model.MarkAsDefault.TestDataId)
+    @Html.HiddenFor(model => model.MarkAsDefault.ProjectSlug)
+    @Html.HiddenFor(model => model.MarkAsDefault.HashedTemplateVersionId)
+</form>
+
 @section Panels
 {
     <!-- Settings panel -->
@@ -169,7 +175,7 @@
                                         <ul class="menu submenu">
                                             @if (!version.IsDefault)
                                             {
-                                                <li class="menu-item user-select-none"><a class="cursor-pointer">Make default</a></li>
+                                                <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="MarkAsDefault('@version.Id')">Make default</a></li>
                                             }
                                             <li class="menu-item user-select-none"><a class="cursor-pointer">Change name</a></li>
                                             <li class="menu-item user-select-none"><a class="cursor-pointer">Duplicate</a></li>
@@ -581,5 +587,10 @@
                     document.getElementById("deleteTestDataSubmitBtn").disabled = false;
                 }
             });
+
+        function MarkAsDefault(testDataId) {
+            document.getElementById("MarkAsDefault_TestDataId").value = testDataId;
+            document.getElementById("MarkAsDefaultForm").submit();
+        }
     </script>
 }
