@@ -108,7 +108,7 @@ public class TemplateModel : PageModel
 			HashedTemplateVersionId = hashedVersionId
 		};
 
-		MarkAsDefault = DeleteTestData = new DeleteTestDataModel
+		DuplicateTestData = MarkAsDefault = DeleteTestData = new DeleteTestDataModel
 		{
 			ProjectSlug = slug,
 			HashedTemplateVersionId = hashedVersionId
@@ -414,6 +414,8 @@ public class TemplateModel : PageModel
 			   }
 		   });
 
+		// TODO: Set test data to current view version
+
 		HandlebarsTemplate<object, object> subjectTemplate = Handlebars.Compile(version.Subject);
 		string subjectResult = subjectTemplate(JObject.Parse(version.TestData.First().Data));
 
@@ -431,6 +433,7 @@ public class TemplateModel : PageModel
 			versionId = TestSend.VersionId
 		});
 	}
+	
 
 	public async Task GenerateThumbnailAndPreview(int versionId)
 	{
@@ -573,6 +576,39 @@ public class TemplateModel : PageModel
 			slug = MarkAsDefault.ProjectSlug,
 			templateName = testData.TemplateVersion.Name,
 			hashedVersionId = MarkAsDefault.HashedTemplateVersionId
+		});
+	}
+
+	[BindProperty]
+	public DeleteTestDataModel DuplicateTestData { get; set; }
+	public async Task<IActionResult> OnPostDuplicateTestData()
+	{
+		var templateVersionId = _hashIdService.Decode(DuplicateTestData.HashedTemplateVersionId);
+
+		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
+			x => x.Id.Equals(DuplicateTestData.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
+			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
+
+		if (testData is null)
+		{
+			return NotFound();
+		}
+
+		await _templateTestDataTbl.Add(new TemplateTestDataTbl
+		{
+			Name = $"{testData.Name}_copy",
+			Data = testData.Data,
+			TemplateVersionId = testData.TemplateVersionId
+		});
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "Test data duplicated";
+
+		return RedirectToPage("/project/template", new
+		{
+			slug = DuplicateTestData.ProjectSlug,
+			templateName = testData.TemplateVersion.Name,
+			hashedVersionId = DuplicateTestData.HashedTemplateVersionId
 		});
 	}
 

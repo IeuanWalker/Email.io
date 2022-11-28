@@ -78,6 +78,12 @@
     @Html.HiddenFor(model => model.MarkAsDefault.HashedTemplateVersionId)
 </form>
 
+<form hidden method="post" asp-page-handler="DuplicateTestData" id="DuplicateTestDataForm">
+    @Html.HiddenFor(model => model.DuplicateTestData.TestDataId)
+    @Html.HiddenFor(model => model.DuplicateTestData.ProjectSlug)
+    @Html.HiddenFor(model => model.DuplicateTestData.HashedTemplateVersionId)
+</form>
+
 @section Panels
 {
     <!-- Settings panel -->
@@ -178,8 +184,8 @@
                                                 <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="MarkAsDefault('@version.Id')">Make default</a></li>
                                             }
                                             <li class="menu-item user-select-none"><a class="cursor-pointer">Change name</a></li>
-                                            <li class="menu-item user-select-none"><a class="cursor-pointer">Duplicate</a></li>
-                                                <li class="menu-item user-select-none"><a class="js-cd-panel-trigger delete-template-testData cursor-pointer" data-panel="deleteTestData" data-testDataName="@version.Name" data-testDataId="@version.Id">Delete</a></li>
+                                            <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="Duplicate('@version.Id')">Duplicate</a></li>
+                                            <li class="menu-item user-select-none"><a class="js-cd-panel-trigger delete-template-testData cursor-pointer" data-panel="deleteTestData" data-testDataName="@version.Name" data-testDataId="@version.Id">Delete</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -591,6 +597,11 @@
         function MarkAsDefault(testDataId) {
             document.getElementById("MarkAsDefault_TestDataId").value = testDataId;
             document.getElementById("MarkAsDefaultForm").submit();
+        }
+
+        function Duplicate(testDataId) {
+            document.getElementById("DuplicateTestData_TestDataId").value = testDataId;
+            document.getElementById("DuplicateTestDataForm").submit();
         }
     </script>
 }
