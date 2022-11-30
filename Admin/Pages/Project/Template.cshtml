@@ -173,6 +173,7 @@
                                         {
                                             <small class="label label-success">Default</small>
                                         }
+                                        <small class="label label-info selectedTag @(version.IsDefault ? "d-inline-block" : "d-none")" data-testData-id="@version.Id">Selected</small>
                                     </span>
                                     <div class="dropdown dropdown-right">
                                         <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
@@ -183,7 +184,7 @@
                                             {
                                                 <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="MarkAsDefault('@version.Id')">Make default</a></li>
                                             }
-                                            <li class="menu-item user-select-none"><a class="cursor-pointer">Change name</a></li>
+                                                <li class="menu-item user-select-none"><a class="js-cd-panel-trigger cursor-pointer edit-name" data-panel="updateTestDataName" data-testDataId="@version.Id">Change name</a></li>
                                             <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="Duplicate('@version.Id')">Duplicate</a></li>
                                             <li class="menu-item user-select-none"><a class="js-cd-panel-trigger delete-template-testData cursor-pointer" data-panel="deleteTestData" data-testDataName="@version.Name" data-testDataId="@version.Id">Delete</a></li>
                                         </ul>
@@ -219,6 +220,31 @@
                         </div>
                     </div>
                     <button type="submit" id="deleteTestDataSubmitBtn" class="btn float-right btn-outline-error">Delete test data</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update test data name panel -->
+    <div class="cd-panel cd-panel--from-right js-cd-panel-updateTestDataName">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Edit name</h3>
+                <form class="form-horizontal" method="post" style="max-width: 800px" asp-page-handler="UpdateTestDataName">
+                    <div class="form-group">
+                        @Html.HiddenFor(model => model.UpdateTestDataName.TestDataId)
+                        @Html.HiddenFor(model => model.UpdateTestDataName.ProjectSlug)
+                        @Html.HiddenFor(model => model.UpdateTestDataName.HashedTemplateVersionId)
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="deleteTestDataNameConfirmation">@Html.DisplayNameFor(model => model.Version.Name):</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input autocomplete="off" class="form-input" type="text" asp-for="UpdateTestDataName.Name" placeholder="@Html.DisplayNameFor(model => model.UpdateTestDataName.Name)">
+                            <span class="form-input-hint" asp-validation-for="UpdateTestDataName.Name"></span>
+                        </div>
+                    </div>
+                    <button type="submit" id="updateTestDataNameSubmitBtn" class="btn float-right" disabled>Update</button>
                 </form>
             </div>
         </div>
@@ -560,6 +586,20 @@
 
             // close panel
             document.getElementById('testDataPanel').classList.remove('cd-panel--is-visible');
+
+            // Hide all 'selectedTag'
+            document.querySelectorAll('.selectedTag').forEach(item => {
+                item.classList.remove('d-inline-block');
+                item.classList.add('d-none');
+            });
+            // Show 'selectedTag' thats inside the selected row
+            document.querySelectorAll('.selectedTag').forEach(item => {
+                var testDataId = item.getAttribute('data-testdata-id');
+                if(currentId == testDataId){
+                    item.classList.remove('d-none');
+                    item.classList.add('d-inline-block');
+                }
+            });
         }
 
         function saveCurrentTestData(){
@@ -603,5 +643,24 @@
             document.getElementById("DuplicateTestData_TestDataId").value = testDataId;
             document.getElementById("DuplicateTestDataForm").submit();
         }
+
+        @*Edit test data name*@
+        document.querySelectorAll('.edit-name').forEach(item => {
+            item.addEventListener('click',
+                event => {
+                        document.getElementById("UpdateTestDataName_TestDataId").value = item.getAttribute("data-testDataId");
+
+                    document.getElementById("updateTestDataNameSubmitBtn").disabled = true;
+                });
+        });
+
+        document.getElementById("UpdateTestDataName_Name").addEventListener('input',
+            function (e) {
+                if (e.target.value == null || e.target.value.trim() == "") {
+                    document.getElementById("updateTestDataNameSubmitBtn").disabled = true;
+                } else {
+                    document.getElementById("updateTestDataNameSubmitBtn").disabled = false;
+                }
+            });
     </script>
 }

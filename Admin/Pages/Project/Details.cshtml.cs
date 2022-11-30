@@ -13,15 +13,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Pages.Project;
 
-public class NotFoundViewResult : ViewResult
-{
-	public NotFoundViewResult()
-	{
-		ViewName = "Error404";
-		StatusCode = (int)HttpStatusCode.NotFound;
-	}
-}
-
 public class DetailsModel : PageModel
 {
 	readonly IProjectRepository _projectTbl;

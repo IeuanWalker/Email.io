@@ -114,6 +114,12 @@ public class TemplateModel : PageModel
 			HashedTemplateVersionId = hashedVersionId
 		};
 
+		UpdateTestDataName = new UpdateTestDataNameModel
+		{
+			ProjectSlug = slug,
+			HashedTemplateVersionId = hashedVersionId
+		};
+
 		return Page();
 	}
 
@@ -612,6 +618,36 @@ public class TemplateModel : PageModel
 		});
 	}
 
+	[BindProperty]
+	public UpdateTestDataNameModel UpdateTestDataName { get; set; } = new UpdateTestDataNameModel();
+
+	public async Task<IActionResult> OnPostUpdateTestDataName()
+	{
+		var templateVersionId = _hashIdService.Decode(UpdateTestDataName.HashedTemplateVersionId);
+
+		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
+			x => x.Id.Equals(UpdateTestDataName.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
+			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
+
+		if (testData is null)
+		{
+			return NotFound();
+		}
+
+		testData.Name = UpdateTestDataName.Name;
+		_templateTestDataTbl.Update(testData);
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "Test data name updated";
+
+		return RedirectToPage("/project/template", new
+		{
+			slug = UpdateTestDataName.ProjectSlug,
+			templateName = testData.TemplateVersion.Name,
+			hashedVersionId = UpdateTestDataName.HashedTemplateVersionId
+		});
+	}
+
 }
 
 public class AddTestDataModel
@@ -624,6 +660,14 @@ public class DeleteTestDataModel
 	public string ProjectSlug { get; set; }
 	public string HashedTemplateVersionId { get; set; }
 	public int TestDataId { get; set; }
+}
+
+public class UpdateTestDataNameModel
+{
+	public string ProjectSlug { get; set; }
+	public string HashedTemplateVersionId { get; set; }
+	public int TestDataId { get; set; }
+	public string Name { get; set; }
 }
 
 public class UpdateTemplateModel
