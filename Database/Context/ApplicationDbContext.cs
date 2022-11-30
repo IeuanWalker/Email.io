@@ -70,6 +70,7 @@ public class ApplicationDbContext : DbContext
 	public DbSet<EmailAttachmentTbl> EmailAttachmentTbl => Set<EmailAttachmentTbl>();
 	public DbSet<TemplateTbl> TemplateTbl => Set<TemplateTbl>();
 	public DbSet<TemplateVersionTbl> TemplateVersionTbl => Set<TemplateVersionTbl>();
+	public DbSet<TemplateTestDataTbl> TemplateTestDataTbl => Set<TemplateTestDataTbl>();
 
 	#endregion DbSet's
 }

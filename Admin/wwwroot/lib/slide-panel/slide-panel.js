@@ -8,20 +8,32 @@
             (function (i) {
                 var panelClass = 'js-cd-panel-' + panelTriggers[i].getAttribute('data-panel'),
                     panel = document.getElementsByClassName(panelClass)[0];
-                // open panel when clicking on trigger btn
-                panelTriggers[i].addEventListener('click', function (event) {
-                    event.preventDefault();
-                    addClass(panel, 'cd-panel--is-visible');
-                    document.body.style.overflow = 'hidden';
-                });
-                //close panel when clicking on 'x' or outside the panel
-                panel.addEventListener('click', function (event) {
-                    if (hasClass(event.target, 'js-cd-close') || hasClass(event.target, panelClass)) {
+
+                if (panel == null) {
+                    console.log(`Slide pannel not found, panel with class '${panelClass}' doesn't exist`);
+                }
+                else {
+                    // open panel when clicking on trigger btn
+                    panelTriggers[i].addEventListener('click', function (event) {
                         event.preventDefault();
-                        removeClass(panel, 'cd-panel--is-visible');
-                        document.body.style.overflow = null;
+                        addClass(panel, 'cd-panel--is-visible');
+                        document.body.style.overflow = 'hidden';
+                    });
+                    //close panel when clicking on 'x' or outside the panel
+                    try {
+                        panel.addEventListener('click', function (event) {
+                            if (hasClass(event.target, 'js-cd-close') || hasClass(event.target, panelClass)) {
+                                event.preventDefault();
+                                removeClass(panel, 'cd-panel--is-visible');
+                                document.body.style.overflow = null;
+                            }
+                        });
+                    } catch (e) {
+                        console.log("Slide panel not found");
+                        console.log(`Possible due to '${panelTriggers[i].getAttribute('data-panel')}' missing from element`);
+                        console.log(panelTriggers[i]);
                     }
-                });
+                }
             })(i);
         }
     }

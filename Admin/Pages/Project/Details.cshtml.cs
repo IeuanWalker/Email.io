@@ -13,15 +13,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Pages.Project;
 
-public class NotFoundViewResult : ViewResult
-{
-	public NotFoundViewResult()
-	{
-		ViewName = "Error404";
-		StatusCode = (int)HttpStatusCode.NotFound;
-	}
-}
-
 public class DetailsModel : PageModel
 {
 	readonly IProjectRepository _projectTbl;
@@ -197,10 +188,16 @@ public class DetailsModel : PageModel
 			return NotFound();
 		}
 
-		CreateTemplateVersion.Name = "Untitled name";
+		CreateTemplateVersion.Name = "Untitled";
 		CreateTemplateVersion.Subject = "Default subject";
 		CreateTemplateVersion.Html = string.Empty;
-		CreateTemplateVersion.TestData = "{}";
+		CreateTemplateVersion.TestData = new List<TemplateTestDataTbl> {
+			new TemplateTestDataTbl {
+				Name = "Default",
+				Data = "{}",
+				IsDefault = true
+			}
+		};
 		if (!template.Versions?.Any() ?? true)
 		{
 			CreateTemplateVersion.IsActive = true;

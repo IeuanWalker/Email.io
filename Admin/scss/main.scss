@@ -155,3 +155,48 @@ a {
 .popover-container {
     z-index: 1000 !important;
 }
+
+.testdata-table {
+    margin-top: 7px;
+
+    .row-container {
+        border: 1px solid #e9ecef;
+
+        .overlay {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+        }
+
+        .row {
+            position: relative;
+            border-bottom: 1px solid #e9ecef;
+            background-color: #fff;
+            transition: all 0.25s ease;
+
+            &.new-row {
+                background-color: #32b643;
+            }
+
+            &:last-child {
+                border: none;
+            }
+
+            &:hover {
+                background-color: #e9ecef;
+            }
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: auto 38px;
+            grid-column-gap: 6px;
+            -ms-flex-align: center;
+            align-items: center;
+            padding: 12px 12px 12px 12px;
+            color: inherit;
+        }
+    }
+}

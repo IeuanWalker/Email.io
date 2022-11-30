@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -6,6 +7,7 @@ using CoreHtmlToImage;
 using Database.Models;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
+using Database.Repositories.TemplateTestData;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.Email;
 using Domain.Services.HashId;
@@ -24,6 +26,7 @@ public class TemplateModel : PageModel
 	readonly IProjectRepository _projectTbl;
 	readonly ITemplateRepository _templateTbl;
 	readonly ITemplateVersionRepository _templateVersionTbl;
+	readonly ITemplateTestDataRepository _templateTestDataTbl;
 	readonly IBackgroundJobClient _jobClient;
 	readonly IEmailService _emailService;
 	readonly IHashIdService _hashIdService;
@@ -33,6 +36,7 @@ public class TemplateModel : PageModel
 		IProjectRepository projectTbl,
 		ITemplateRepository templateTbl,
 		ITemplateVersionRepository templateVersionTbl,
+		ITemplateTestDataRepository templateTestDataTbl,
 		IBackgroundJobClient jobClient,
 		IEmailService emailService,
 		IHashIdService hashIdService,
@@ -41,6 +45,7 @@ public class TemplateModel : PageModel
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
 		_templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
+		_templateTestDataTbl = templateTestDataTbl ?? throw new ArgumentNullException(nameof(templateTestDataTbl));
 		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
 		_emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
@@ -65,13 +70,16 @@ public class TemplateModel : PageModel
 		// TODO: Pull minimal data
 		Version = (await _templateVersionTbl.Get(x =>
 				x.Id.Equals(versionId) &&
-				x.Template!.ProjectId.Equals(projectId)))
+				x.Template!.ProjectId.Equals(projectId),
+				includeProperties: nameof(TemplateVersionTbl.TestData)))
 			.FirstOrDefault();
 
 		if (Version is null)
 		{
 			return NotFound();
 		}
+
+		Version.TestData = Version.TestData.OrderByDescending(x => x.IsDefault).ToList();
 
 		UpdateTemplate = new UpdateTemplateModel
 		{
@@ -94,6 +102,24 @@ public class TemplateModel : PageModel
 			VersionId = Version.Id
 		};
 
+		AddTestData = new AddTestDataModel
+		{
+			ProjectSlug = slug,
+			HashedTemplateVersionId = hashedVersionId
+		};
+
+		DuplicateTestData = MarkAsDefault = DeleteTestData = new DeleteTestDataModel
+		{
+			ProjectSlug = slug,
+			HashedTemplateVersionId = hashedVersionId
+		};
+
+		UpdateTestDataName = new UpdateTestDataNameModel
+		{
+			ProjectSlug = slug,
+			HashedTemplateVersionId = hashedVersionId
+		};
+
 		return Page();
 	}
 
@@ -104,105 +130,119 @@ public class TemplateModel : PageModel
 	{
 		UpdateTemplate.Html = string.IsNullOrWhiteSpace(UpdateTemplate.Html) ? string.Empty : UpdateTemplate.Html;
 		UpdateTemplate.PlainText = string.IsNullOrWhiteSpace(UpdateTemplate.PlainText) ? string.Empty : UpdateTemplate.PlainText;
-		UpdateTemplate.TestData = string.IsNullOrWhiteSpace(UpdateTemplate.TestData) ? "{}" : UpdateTemplate.TestData;
-		try
+
+		// Validate JSON + template
+		HandlebarsTemplate<object, object> htmlTemplate = Handlebars.Compile(UpdateTemplate.Html);
+		HandlebarsTemplate<object, object> plainTextTemplate = Handlebars.Compile(UpdateTemplate.PlainText);
+		foreach (TemplateTestDataModel testData in UpdateTemplate.TestData)
 		{
-			Handlebars.RegisterHelper("ifCond", (output, options, context, arguments) =>
+			try
 			{
-				if (arguments.Length != 3)
+				if (string.IsNullOrWhiteSpace(testData.Data))
 				{
-					throw new HandlebarsException("{{#StringEqualityBlockHelper}} helper must have exactly two arguments");
+					testData.Data = "{}";
 				}
 
-				string v1 = arguments.At<string>(0);
-				string @operator = arguments.At<string>(1);
-				string v2 = arguments.At<string>(0);
-
-				switch (@operator)
+				Handlebars.RegisterHelper("ifCond", (output, options, context, arguments) =>
 				{
-					case "==":
-						if (v1 == v2)
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
+					if (arguments.Length != 3)
+					{
+						throw new HandlebarsException("{{#StringEqualityBlockHelper}} helper must have exactly two arguments");
+					}
 
-					case "!=":
-						if (v1 != v2)
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
+					string v1 = arguments.At<string>(0);
+					string @operator = arguments.At<string>(1);
+					string v2 = arguments.At<string>(0);
 
-					case "<":
-						if (Convert.ToDouble(v1) < Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
+					switch (@operator)
+					{
+						case "==":
+							if (v1 == v2)
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
 
-					case "<=":
-						if (Convert.ToDouble(v1) <= Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
+						case "!=":
+							if (v1 != v2)
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
 
-					case ">":
-						if (Convert.ToDouble(v1) > Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
+						case "<":
+							if (Convert.ToDouble(v1) < Convert.ToDouble(v2))
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
 
-					case ">=":
-						if (Convert.ToDouble(v1) >= Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
-				}
-			});
-			HandlebarsTemplate<object, object> template = Handlebars.Compile(UpdateTemplate.Html);
-			template(JObject.Parse(UpdateTemplate.TestData));
-		}
-		catch (Exception)
-		{
-			return new JsonResult(new
+						case "<=":
+							if (Convert.ToDouble(v1) <= Convert.ToDouble(v2))
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
+
+						case ">":
+							if (Convert.ToDouble(v1) > Convert.ToDouble(v2))
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
+
+						case ">=":
+							if (Convert.ToDouble(v1) >= Convert.ToDouble(v2))
+							{
+								options.Template(output, context);
+							}
+							else
+							{
+								options.Inverse(output, context);
+							}
+							break;
+					}
+				});
+				HandlebarsTemplate<object, object> template = Handlebars.Compile(UpdateTemplate.Html);
+				htmlTemplate(JObject.Parse(testData.Data));
+				plainTextTemplate(JObject.Parse(testData.Data));
+			}
+			catch (Exception)
 			{
-				toastStatus = "error",
-				toastTitle = "Error parsing template failed.",
-			});
+				return new JsonResult(new
+				{
+					toastStatus = "error",
+					toastTitle = "Error parsing template failed.",
+				});
+			}
 		}
+		
 
 		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
 			  x.Id.Equals(UpdateTemplate.VersionId) &&
 			  x.TemplateId.Equals(UpdateTemplate.TemplateId) &&
-			  x.Template!.ProjectId.Equals(UpdateTemplate.ProjectId)))
+			  x.Template!.ProjectId.Equals(UpdateTemplate.ProjectId),
+			  includeProperties: nameof(TemplateVersionTbl.TestData)))
 		  .FirstOrDefault();
 
 		if (version is null)
@@ -214,9 +254,15 @@ public class TemplateModel : PageModel
 			});
 		}
 
-		version.TestData = UpdateTemplate.TestData;
+		//version.TestData = UpdateTemplate.TestData;
 		version.Html = UpdateTemplate.Html;
 		version.PlainText = UpdateTemplate.PlainText;
+		
+		foreach(TemplateTestDataModel testData in UpdateTemplate.TestData)
+		{
+			version.TestData.Where(x => x.Id.Equals(testData.Id)).ToList().ForEach(x => x.Data = testData.Data);
+		}
+
 
 		_templateVersionTbl.Update(version);
 
@@ -283,7 +329,8 @@ public class TemplateModel : PageModel
 		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
 				x.Id.Equals(TestSend.VersionId) &&
 				x.TemplateId.Equals(TestSend.TemplateId) &&
-				x.Template!.ProjectId.Equals(TestSend.ProjectId)))
+				x.Template!.ProjectId.Equals(TestSend.ProjectId),
+				includeProperties: nameof(TemplateVersionTbl.TestData)))
 			.FirstOrDefault();
 
 		if (version is null)
@@ -373,14 +420,16 @@ public class TemplateModel : PageModel
 			   }
 		   });
 
+		// TODO: Set test data to current view version
+
 		HandlebarsTemplate<object, object> subjectTemplate = Handlebars.Compile(version.Subject);
-		string subjectResult = subjectTemplate(JObject.Parse(version.TestData!));
+		string subjectResult = subjectTemplate(JObject.Parse(version.TestData.First().Data));
 
 		HandlebarsTemplate<object, object> bodyTemplate = Handlebars.Compile(version.Html);
-		string bodyResult = bodyTemplate(JObject.Parse(version.TestData!));
+		string bodyResult = bodyTemplate(JObject.Parse(version.TestData.First().Data));
 
 		HandlebarsTemplate<object, object> plainTextTemplate = Handlebars.Compile(version.PlainText);
-		string plainTextResult = plainTextTemplate(JObject.Parse(version.TestData!));
+		string plainTextResult = plainTextTemplate(JObject.Parse(version.TestData.First().Data));
 
 		await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, null, null, subjectResult, bodyResult, plainTextResult);
 		return RedirectToPage("/project/template", new
@@ -390,6 +439,7 @@ public class TemplateModel : PageModel
 			versionId = TestSend.VersionId
 		});
 	}
+	
 
 	public async Task GenerateThumbnailAndPreview(int versionId)
 	{
@@ -406,7 +456,7 @@ public class TemplateModel : PageModel
 
 		// Compile HTML and test data
 		HandlebarsTemplate<object, object> template = Handlebars.Compile(version.Html);
-		string result = template(JObject.Parse(version.TestData!));
+		string result = template(JObject.Parse(version.TestData.First(x => x.IsDefault).Data));
 
 		HtmlConverter converter = new();
 		byte[] preview = converter.FromHtmlString(result, format: ImageFormat.Png);
@@ -438,6 +488,186 @@ public class TemplateModel : PageModel
 			new Uri(client.Uri.AbsoluteUri.Replace("azurite", "localhost")) :
 			client.Uri;
 	}
+
+
+	[BindProperty]
+	public AddTestDataModel AddTestData { get; set; } = new AddTestDataModel();
+
+	public async Task<IActionResult> OnPostAddTestData()
+	{
+		var templateVersionId = _hashIdService.Decode(AddTestData.HashedTemplateVersionId);
+
+		TemplateVersionTbl? templateVersion = (await _templateVersionTbl.Get(x => x.Id.Equals(templateVersionId))).FirstOrDefault();
+
+		if (templateVersion is null)
+		{
+			return NotFound();
+		}
+		
+		await _templateTestDataTbl.Add(new()
+		{
+			TemplateVersionId = templateVersion.Id,
+			Name = "Untitled",
+			Data = "{}"
+		});
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "New test data created";
+
+		return RedirectToPage("/project/template", new { 
+			slug = AddTestData.ProjectSlug,
+			templateName = templateVersion.Name,
+			hashedVersionId = AddTestData.HashedTemplateVersionId
+		});
+	}
+
+	[BindProperty]
+	public DeleteTestDataModel DeleteTestData { get; set; }
+	public async Task<IActionResult> OnPostDeleteTestData()
+	{
+		var templateVersionId = _hashIdService.Decode(DeleteTestData.HashedTemplateVersionId);
+
+		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
+			x => x.Id.Equals(DeleteTestData.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
+			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
+
+		if (testData is null)
+		{
+			return NotFound();
+		}
+
+		_templateTestDataTbl.Delete(testData);
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "Test data deleted";
+
+		return RedirectToPage("/project/template", new
+		{
+			slug = DeleteTestData.ProjectSlug,
+			templateName = testData.TemplateVersion.Name,
+			hashedVersionId = DeleteTestData.HashedTemplateVersionId
+		});
+	}
+
+	[BindProperty]
+	public DeleteTestDataModel MarkAsDefault { get; set; }
+	public async Task<IActionResult> OnPostMarkAsDefault()
+	{
+		var templateVersionId = _hashIdService.Decode(MarkAsDefault.HashedTemplateVersionId);
+
+		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
+			x => x.Id.Equals(MarkAsDefault.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
+			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
+
+		if (testData is null)
+		{
+			return NotFound();
+		}
+
+		testData.IsDefault = true;
+		_templateTestDataTbl.Update(testData);
+
+		await _templateTestDataTbl.UpdateFromQuery(x =>
+			x.IsDefault &&
+			!x.Id.Equals(MarkAsDefault.TestDataId) &&
+			x.TemplateVersionId.Equals(templateVersionId),
+			s => s
+				.SetProperty(b => b.IsDefault, _ => false));
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "Test data set as default";
+
+		return RedirectToPage("/project/template", new
+		{
+			slug = MarkAsDefault.ProjectSlug,
+			templateName = testData.TemplateVersion.Name,
+			hashedVersionId = MarkAsDefault.HashedTemplateVersionId
+		});
+	}
+
+	[BindProperty]
+	public DeleteTestDataModel DuplicateTestData { get; set; }
+	public async Task<IActionResult> OnPostDuplicateTestData()
+	{
+		var templateVersionId = _hashIdService.Decode(DuplicateTestData.HashedTemplateVersionId);
+
+		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
+			x => x.Id.Equals(DuplicateTestData.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
+			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
+
+		if (testData is null)
+		{
+			return NotFound();
+		}
+
+		await _templateTestDataTbl.Add(new TemplateTestDataTbl
+		{
+			Name = $"{testData.Name}_copy",
+			Data = testData.Data,
+			TemplateVersionId = testData.TemplateVersionId
+		});
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "Test data duplicated";
+
+		return RedirectToPage("/project/template", new
+		{
+			slug = DuplicateTestData.ProjectSlug,
+			templateName = testData.TemplateVersion.Name,
+			hashedVersionId = DuplicateTestData.HashedTemplateVersionId
+		});
+	}
+
+	[BindProperty]
+	public UpdateTestDataNameModel UpdateTestDataName { get; set; } = new UpdateTestDataNameModel();
+
+	public async Task<IActionResult> OnPostUpdateTestDataName()
+	{
+		var templateVersionId = _hashIdService.Decode(UpdateTestDataName.HashedTemplateVersionId);
+
+		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
+			x => x.Id.Equals(UpdateTestDataName.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
+			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
+
+		if (testData is null)
+		{
+			return NotFound();
+		}
+
+		testData.Name = UpdateTestDataName.Name;
+		_templateTestDataTbl.Update(testData);
+
+		TempData["toastStatus"] = "success";
+		TempData["toastMessage"] = "Test data name updated";
+
+		return RedirectToPage("/project/template", new
+		{
+			slug = UpdateTestDataName.ProjectSlug,
+			templateName = testData.TemplateVersion.Name,
+			hashedVersionId = UpdateTestDataName.HashedTemplateVersionId
+		});
+	}
+
+}
+
+public class AddTestDataModel
+{
+	public string ProjectSlug { get; set; }
+	public string HashedTemplateVersionId { get; set; }
+}
+public class DeleteTestDataModel
+{
+	public string ProjectSlug { get; set; }
+	public string HashedTemplateVersionId { get; set; }
+	public int TestDataId { get; set; }
+}
+
+public class UpdateTestDataNameModel
+{
+	public string ProjectSlug { get; set; }
+	public string HashedTemplateVersionId { get; set; }
+	public int TestDataId { get; set; }
+	public string Name { get; set; }
 }
 
 public class UpdateTemplateModel
@@ -452,7 +682,7 @@ public class UpdateTemplateModel
 	public int VersionId { get; set; }
 
 	[Required]
-	public string TestData { get; set; } = string.Empty;
+	public List<TemplateTestDataModel> TestData { get; set; } = new();
 
 	[Required]
 	public string Html { get; set; } = string.Empty;
@@ -460,6 +690,13 @@ public class UpdateTemplateModel
 	[Required]
 	public string PlainText { get; set; } = string.Empty;
 }
+
+public class TemplateTestDataModel
+{
+	public int Id { get; set; }
+	public string Data { get; set; } = default!;
+}
+
 
 public class UpdateSettingsModel
 {

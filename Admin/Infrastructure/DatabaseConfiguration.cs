@@ -29,21 +29,21 @@ static class DatabaseConfiguration
 	// TODO: Fix
 	public static void Configure(IApplicationBuilder app)
 	{
-		//try
-		//{
-		//	using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope())
-		//	{
-		//		Console.WriteLine("Applying migrations");
+		try
+		{
+			using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope())
+			{
+				Console.WriteLine("Applying migrations");
 
-		//		scope?.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+				scope?.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
 
-		//		Console.WriteLine("Migrations applied");
-		//	}
-		//}
-		//catch (Exception)
-		//{
-		//	throw new ApplicationException("Database migration need to be applied manually");
-		//}
+				Console.WriteLine("Migrations applied");
+			}
+		}
+		catch (Exception)
+		{
+			throw new ApplicationException("Database migration need to be applied manually");
+		}
 
 	}
 }

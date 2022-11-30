@@ -23,7 +23,7 @@ const importFiles = {
         "node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js",
         "node_modules/@yaireo/tagify/dist/tagify.min.js",
         "wwwroot/lib/slide-panel/slide-panel.js",
-        "node_modules/egalink-toasty.js/dist/toasty.min.js",
+        "node_modules/egalink-toasty.js/dist/toasty.js",
         "node_modules/simplemde/dist/simplemde.min.js"
     ],
     jsDragsort: [

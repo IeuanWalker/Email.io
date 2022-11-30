@@ -7596,3 +7596,40 @@ a {
 .popover-container {
   z-index: 1000 !important;
 }
+
+.testdata-table {
+  margin-top: 7px;
+}
+.testdata-table .row-container {
+  border: 1px solid #e9ecef;
+}
+.testdata-table .row-container .overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+}
+.testdata-table .row-container .row {
+  position: relative;
+  border-bottom: 1px solid #e9ecef;
+  background-color: #fff;
+  transition: all 0.25s ease;
+}
+.testdata-table .row-container .row.new-row {
+  background-color: #32b643;
+}
+.testdata-table .row-container .row:last-child {
+  border: none;
+}
+.testdata-table .row-container .row:hover {
+  background-color: #e9ecef;
+}
+.testdata-table .row-container .table-row {
+  display: grid;
+  grid-template-columns: auto 38px;
+  grid-column-gap: 6px;
+  align-items: center;
+  padding: 12px 12px 12px 12px;
+  color: inherit;
+}

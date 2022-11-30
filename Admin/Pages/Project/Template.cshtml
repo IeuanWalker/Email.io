@@ -1,4 +1,5 @@
 ﻿@page "/project/{slug}/template/{templateName}-{hashedVersionId}"
+@using Database.Models;
 @model Admin.Pages.Project.TemplateModel
 @{
     ViewData["Title"] = @Model.Version.Name;
@@ -17,7 +18,12 @@
     <a asp-page="/project/details" asp-route-slug="@Model.ProjectSlug" class="template-navbar-buttons cursor-pointer"><ion-icon name="arrow-back-outline" style="font-size:1.1rem"></ion-icon></a>
     <a class="template-navbar-buttons tablinks active cursor-pointer" data-tabId="htmlContainer"><p>HTML</p></a>
     <a class="template-navbar-buttons tablinks cursor-pointer" data-tabId="plainTextContainer"><p>PLAIN TEXT</p></a>
-    <a class="template-navbar-buttons tablinks mr-2 cursor-pointer" data-tabId="testDataContainer"><p>TEST DATA</p></a>
+    <a class="template-navbar-buttons tablinks mr-2 cursor-pointer" data-tabId="testDataContainer">
+        <p>TEST DATA</p>
+        <btn class="js-cd-panel-trigger btn btn-link cursor-pointer" style='padding: 0px 0.5rem' data-panel="testdata">
+            <ion-icon name="documents-outline" style='font-size: 1rem;vertical-align: middle;margin-left: 5px;margin-right: -20px;'></ion-icon>
+        </btn>
+    </a>
     <button class="btn btn-lg ml-2 cursor-pointer" onclick="Save()" id="SaveBtn">Save</button>
     <a class="js-cd-panel-trigger btn btn-link cursor-pointer settings" style="line-height: normal; height:auto" data-panel="settings">
         <ion-icon name="settings-outline" size="large" style="vertical-align: middle;"></ion-icon>
@@ -33,7 +39,7 @@
             <textarea id="plainTextTextarea">@Model.Version.PlainText</textarea>
         </div>
         <div id="testDataContainer" class="tabcontent">
-            <textarea id="testDataTextarea">@Model.Version.TestData</textarea>
+            <textarea id="testDataTextarea">@Model.Version.TestData.First(x => x.IsDefault).Data</textarea>
         </div>
     </div>
     <div class="preview">
@@ -61,9 +67,26 @@
     @Html.HiddenFor(model => model.UpdateTemplate.PlainText)
 </form>
 
+<form hidden method="post" asp-page-handler="AddTestData" id="AddTestDataForm">
+    @Html.HiddenFor(model => model.AddTestData.ProjectSlug)
+    @Html.HiddenFor(model => model.AddTestData.HashedTemplateVersionId)
+</form>
+
+<form hidden method="post" asp-page-handler="MarkAsDefault" id="MarkAsDefaultForm">
+    @Html.HiddenFor(model => model.MarkAsDefault.TestDataId)
+    @Html.HiddenFor(model => model.MarkAsDefault.ProjectSlug)
+    @Html.HiddenFor(model => model.MarkAsDefault.HashedTemplateVersionId)
+</form>
+
+<form hidden method="post" asp-page-handler="DuplicateTestData" id="DuplicateTestDataForm">
+    @Html.HiddenFor(model => model.DuplicateTestData.TestDataId)
+    @Html.HiddenFor(model => model.DuplicateTestData.ProjectSlug)
+    @Html.HiddenFor(model => model.DuplicateTestData.HashedTemplateVersionId)
+</form>
+
 @section Panels
 {
-    @*Settings panel*@
+    <!-- Settings panel -->
     <div class="cd-panel cd-panel--from-right js-cd-panel-settings">
         <div class="cd-panel__container">
             <div class="cd-panel__content">
@@ -123,11 +146,114 @@
         </div>
     </div>
 
+    <!-- Test data panel-->
+    <div class="cd-panel cd-panel--from-right js-cd-panel-testdata" id="testDataPanel">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Test data</h3>
+                <p>Multiple test data files can be used to test your template under different conditions.</p>
+
+                <div class="clearfix mt-2">
+                    <a type="button" class="btn float-right mb-4 js-cd-panel-trigger cursor-pointer" onclick="addNewTestData()">Add</a>
+                </div>
+                <div class="accordion-body">
+                    <div class="testdata-table">
+                    <div class="row-container">
+                        @foreach (TemplateTestDataTbl version in Model.Version.TestData)
+                        {
+                            <div class="row cursor-pointer">
+                                    <div class="overlay" data-testData-id="@version.Id" data-testData-data="@version.Data" onclick="testDataSelected(this)"></div>
+
+                                    <div class="inner table-row">
+
+                                    <span class="ml-2 user-select-none">
+                                        @version.Name
+                                        @if (version.IsDefault)
+                                        {
+                                            <small class="label label-success">Default</small>
+                                        }
+                                        <small class="label label-info selectedTag @(version.IsDefault ? "d-inline-block" : "d-none")" data-testData-id="@version.Id">Selected</small>
+                                    </span>
+                                    <div class="dropdown dropdown-right">
+                                        <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
+                                            <ion-icon name="ellipsis-vertical-outline" style="font-size:1.1rem"></ion-icon>
+                                        </button>
+                                        <ul class="menu submenu">
+                                            @if (!version.IsDefault)
+                                            {
+                                                <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="MarkAsDefault('@version.Id')">Make default</a></li>
+                                            }
+                                                <li class="menu-item user-select-none"><a class="js-cd-panel-trigger cursor-pointer edit-name" data-panel="updateTestDataName" data-testDataId="@version.Id">Change name</a></li>
+                                            <li class="menu-item user-select-none"><a class="cursor-pointer" onclick="Duplicate('@version.Id')">Duplicate</a></li>
+                                            <li class="menu-item user-select-none"><a class="js-cd-panel-trigger delete-template-testData cursor-pointer" data-panel="deleteTestData" data-testDataName="@version.Name" data-testDataId="@version.Id">Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                </div>
+            </div>    
+        </div>
+    </div>
+
+    <!-- Delete test data panel -->
+    <div class="cd-panel cd-panel--from-right js-cd-panel-deleteTestData">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Delete test data</h3>
+                <p>Are you sure you want to delete this test data?</p>
+                <p>To confirm the deletion of this test data please re-enter the test data name <strong>'<span id="deleteTestData-name"></span>'</strong></p>
+                <form class="form-horizontal" method="post" style="max-width: 800px" asp-page-handler="DeleteTestData">
+                    <div class="form-group">
+                        @Html.HiddenFor(model => model.DeleteTestData.TestDataId)
+                        @Html.HiddenFor(model => model.DeleteTestData.ProjectSlug)
+                        @Html.HiddenFor(model => model.DeleteTestData.HashedTemplateVersionId)
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="deleteTestDataNameConfirmation">@Html.DisplayNameFor(model => model.Version.Name):</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input autocomplete="off" class="form-input" type="text" id="deleteTestDataNameConfirmation" placeholder="@Html.DisplayNameFor(model => model.Version.Name)">
+                        </div>
+                    </div>
+                    <button type="submit" id="deleteTestDataSubmitBtn" class="btn float-right btn-outline-error">Delete test data</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update test data name panel -->
+    <div class="cd-panel cd-panel--from-right js-cd-panel-updateTestDataName">
+        <div class="cd-panel__container">
+            <div class="cd-panel__content">
+                <a href="#0" class="cd-panel__close js-cd-close">Close</a>
+                <h3 class="s-title pb-0">Edit name</h3>
+                <form class="form-horizontal" method="post" style="max-width: 800px" asp-page-handler="UpdateTestDataName">
+                    <div class="form-group">
+                        @Html.HiddenFor(model => model.UpdateTestDataName.TestDataId)
+                        @Html.HiddenFor(model => model.UpdateTestDataName.ProjectSlug)
+                        @Html.HiddenFor(model => model.UpdateTestDataName.HashedTemplateVersionId)
+                        <div class="col-3 col-sm-12">
+                            <label class="form-label" for="deleteTestDataNameConfirmation">@Html.DisplayNameFor(model => model.Version.Name):</label>
+                        </div>
+                        <div class="col-9 col-sm-12">
+                            <input autocomplete="off" class="form-input" type="text" asp-for="UpdateTestDataName.Name" placeholder="@Html.DisplayNameFor(model => model.UpdateTestDataName.Name)">
+                            <span class="form-input-hint" asp-validation-for="UpdateTestDataName.Name"></span>
+                        </div>
+                    </div>
+                    <button type="submit" id="updateTestDataNameSubmitBtn" class="btn float-right" disabled>Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
 }
 
 @section Scripts
 {
-    @*Listen for ctrl+s*@
+    <!-- Listen for ctrl+s -->
     <script>
         document.addEventListener('keydown', e => {
             if (e.ctrlKey && e.key === 's') {
@@ -138,11 +264,7 @@
             }
         });
     </script>
-    <script>
-        var originalHtml = "@Model.Version.Html";
-        var originalTestData = "@Model.Version.TestData";
-    </script>
-    @*Resizeable column*@
+    <!-- Resizeable column -->
     <script>
         Split({
             columnGutters: [
@@ -154,7 +276,7 @@
         })
     </script>
 
-    @*Responsive tester*@
+    <!-- Responsive tester -->
     <script src="/js/viewpr.min.js"></script>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded",
@@ -165,7 +287,7 @@
             })
     </script>
 
-    @*Tabs*@
+    <!-- Tabs -->
     <script type="text/javascript">
         var currentPreviewTab = "htmlContainer";
 
@@ -204,10 +326,10 @@
         }
     </script>
 
-    @*CodeMirror*@
+    <!-- CodeMirror -->
     <script src="/js/codemirror.min.js"></script>
 
-    @*CodeMirror JSON editor*@
+    <!-- CodeMirror JSON editor -->
     <script>
         let testDataEditor = CodeMirror.fromTextArea(document.getElementById("testDataTextarea"),
             {
@@ -239,7 +361,7 @@
             });
     </script>
 
-    @*CodeMirror HTML editor*@
+    <!-- CodeMirror HTML editor -->
     <script>
         let htmlEditor = CodeMirror.fromTextArea(document.getElementById("htmlTextarea"),
             {
@@ -272,7 +394,7 @@
             });
     </script>
 
-    @*CodeMirror Plain text editor*@
+    <!-- CodeMirror Plain text editor -->
     <script>
         let plainTextEditor = CodeMirror.fromTextArea(document.getElementById("plainTextTextarea"),
             {
@@ -335,7 +457,7 @@
         });
     </script>
 
-    @*Preview handling*@
+    <!-- Preview handling -->
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded",
@@ -360,7 +482,11 @@
                     "<p style='white-space: pre-wrap; font-family: \"Roboto\", sans-serif;'>" + plainTextEditor.getValue() + "</p>" +
                     "</body>" +
                     "</html>");
+
+                    console.log(plainTextEditor.getValue());
             }
+
+            console.log(JSON.parse(testDataEditor.getValue()))
 
             var compiled = template(JSON.parse(testDataEditor.getValue()));
 
@@ -374,21 +500,38 @@
         }
     </script>
 
-    @*Update template*@
+    <!-- Update template -->
     <script>
         function Save() {
+            saveCurrentTestData();
+
+            var testData = [];
+
+            const allTestData = document.querySelectorAll('[data-testdata-id]');
+            allTestData.forEach(function (data) {
+                testData.push({
+                    "id": data.getAttribute('data-testdata-id'),
+                    "data": data.getAttribute('data-testdata-data')
+                });
+            });
+
+            console.log(JSON.stringify(testData, null, 2));
+
+            var update = {
+                "projectId": document.getElementById("UpdateTemplate_ProjectId").value,
+                "templateId": document.getElementById("UpdateTemplate_TemplateId").value,
+                "versionId": document.getElementById("UpdateTemplate_VersionId").value,
+                "testData": testData,
+                "html": htmlEditor.getValue(),
+                "plainText": plainTextEditor.getValue()
+            }
+            console.log(JSON.stringify(update, null, 2));
+            
             jQuery.ajax({
                 type: "POST",
                 url: '?handler=UpdateTemplate',
                 headers: { 'RequestVerificationToken': $('@Html.AntiForgeryToken()').val() },
-                data: JSON.stringify({
-                    "projectId": document.getElementById("UpdateTemplate_ProjectId").value,
-                    "templateId": document.getElementById("UpdateTemplate_TemplateId").value,
-                    "versionId": document.getElementById("UpdateTemplate_VersionId").value,
-                    "testData": testDataEditor.getValue(),
-                    "html": htmlEditor.getValue(),
-                    "plainText": plainTextEditor.getValue()
-                }),
+                data: JSON.stringify(update),
                 contentType: "application/json",
                 dataType: "json",
                 beforeSend: function () {
@@ -407,7 +550,7 @@
         }
     </script>
 
-    @*Update settings*@
+    <!-- Update settings -->
     <script>
         var originalName = '@Model.UpdateSettings.Name';
         var originalSubject = '@Model.UpdateSettings.Subject';
@@ -428,5 +571,96 @@
             }
         }
 
+    </script>
+    
+    <!-- Test data panel -->
+    <script>
+        var currentId = @Model.Version.TestData.First().Id;
+        function testDataSelected(element) {
+            // save current test data
+            saveCurrentTestData();
+
+            // set selected data
+            currentId = element.getAttribute('data-testdata-id');
+            testDataEditor.getDoc().setValue(element.getAttribute('data-testdata-data'));
+
+            // close panel
+            document.getElementById('testDataPanel').classList.remove('cd-panel--is-visible');
+
+            // Hide all 'selectedTag'
+            document.querySelectorAll('.selectedTag').forEach(item => {
+                item.classList.remove('d-inline-block');
+                item.classList.add('d-none');
+            });
+            // Show 'selectedTag' thats inside the selected row
+            document.querySelectorAll('.selectedTag').forEach(item => {
+                var testDataId = item.getAttribute('data-testdata-id');
+                if(currentId == testDataId){
+                    item.classList.remove('d-none');
+                    item.classList.add('d-inline-block');
+                }
+            });
+        }
+
+        function saveCurrentTestData(){
+            var currentTestDataElement = document.querySelector(`[data-testdata-id="${currentId}"]`)
+            currentTestDataElement.setAttribute('data-testdata-data', testDataEditor.getValue());
+        }
+
+        function addNewTestData(){
+            document.getElementById("AddTestDataForm").submit();
+        }
+
+        var deleteTestDataName;
+
+        document.querySelectorAll('.delete-template-testData').forEach(item => {
+            item.addEventListener('click',
+                event => {
+                    deleteTestDataName = item.getAttribute("data-testDataName");
+
+                    document.getElementById("DeleteTestData_TestDataId").value = item.getAttribute("data-testDataId");
+                    document.getElementById("deleteTestData-name").textContent = deleteTestDataName;
+
+                    document.getElementById("deleteTestDataSubmitBtn").disabled = true;
+                });
+        });
+
+        document.getElementById("deleteTestDataNameConfirmation").addEventListener('input',
+            function (e) {
+                if (e.target.value == null || e.target.value.trim() == "" || e.target.value.trim().toLowerCase() != deleteTestDataName.toLowerCase()) {
+                    document.getElementById("deleteTestDataSubmitBtn").disabled = true;
+                } else {
+                    document.getElementById("deleteTestDataSubmitBtn").disabled = false;
+                }
+            });
+
+        function MarkAsDefault(testDataId) {
+            document.getElementById("MarkAsDefault_TestDataId").value = testDataId;
+            document.getElementById("MarkAsDefaultForm").submit();
+        }
+
+        function Duplicate(testDataId) {
+            document.getElementById("DuplicateTestData_TestDataId").value = testDataId;
+            document.getElementById("DuplicateTestDataForm").submit();
+        }
+
+        @*Edit test data name*@
+        document.querySelectorAll('.edit-name').forEach(item => {
+            item.addEventListener('click',
+                event => {
+                        document.getElementById("UpdateTestDataName_TestDataId").value = item.getAttribute("data-testDataId");
+
+                    document.getElementById("updateTestDataNameSubmitBtn").disabled = true;
+                });
+        });
+
+        document.getElementById("UpdateTestDataName_Name").addEventListener('input',
+            function (e) {
+                if (e.target.value == null || e.target.value.trim() == "") {
+                    document.getElementById("updateTestDataNameSubmitBtn").disabled = true;
+                } else {
+                    document.getElementById("updateTestDataNameSubmitBtn").disabled = false;
+                }
+            });
     </script>
 }
