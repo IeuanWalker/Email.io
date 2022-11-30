@@ -1,3 +1,14 @@
+What you can do -
+- Use it for personal use
+- Use it for internal corporate applications
+- Use it for applications related to your business (commercially)
+
+What you can't do - 
+- Remove the copyright in the footer of the site
+- Re-skin this project and offer the features for others to use at a cost
+    - If you would like to do this, feel free to contact me and we can discuss a profit split deal, to allow you to use this project to generate money
+                   
+                   
                    GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
