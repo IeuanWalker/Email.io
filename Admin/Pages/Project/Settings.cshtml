@@ -6,10 +6,24 @@
 
 @section Styles
 {
+    <Link href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <Link href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.dataTables.min.css" rel="stylesheet" />
     <style>
-        .CodeMirror-scroll {
-            height: unset
+        .dataTables_scrollBody {
+            height: 100% !important;
+            max-height: 100% !important;
         }
+
+        table.dataTable thead .sorting,
+        table.dataTable thead .sorting_asc,
+        table.dataTable thead .sorting_desc {
+            background: none;
+        }
+
+        .custom-select {
+            -webkit-appearance: listbox !important;
+        }
+
     </style>
 }
 
@@ -158,45 +172,18 @@
             </div>
             <div id="SentEmails" class="tabcontent">
                 <h2>Sent emails</h2>
-                <table class="table table-scroll table-hover">
+                <table id="sentEmailTable" class="table responsive" width="100%">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Sent</th>
-                            <th>To</th>
+                            <th>Template</th>
+                            <th>Status</th>
+                            <th>To address(s)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="cursor-pointer">
-                            <td>18c16564-8848-4f66-b592-08dacbfb89bd</td>
-                            <td>2022-11-21 20:40:30.5749703</td>
-                            <td>walker.ieuan@gmail.com</td>
-                        </tr>
                     </tbody>
                 </table>
-                <ul class="pagination">
-                    <li class="page-item disabled">
-                        <a href="#" tabindex="-1">Previous</a>
-                    </li>
-                    <li class="page-item active">
-                        <a href="#">1</a>
-                    </li>
-                    <li class="page-item">
-                        <a href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                        <a href="#">3</a>
-                    </li>
-                    <li class="page-item">
-                        <span>...</span>
-                    </li>
-                    <li class="page-item">
-                        <a href="#">12</a>
-                    </li>
-                    <li class="page-item">
-                        <a href="#">Next</a>
-                    </li>
-                </ul>
             </div>
             <div id="ActivityLog" class="tabcontent">
                 <h2>Activity log</h2>
@@ -512,6 +499,35 @@
     </script>
 
 
-        <script src="https://unpkg.com/@@popperjs/core@@2"></script>
+    <script src="https://unpkg.com/@@popperjs/core@@2"></script>
     <script src="https://unpkg.com/tippy.js@@6"></script>
+
+    <!-- Sent emails -->
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#sentEmailTable').DataTable({
+                proccessing: true,
+                serverSide: true,
+                responsive: true,
+                fixedHeader: true,
+                ajax: {
+                    url: '?handler=SentEmails',
+                    type: 'POST',
+                    headers: { 'RequestVerificationToken': $('@Html.AntiForgeryToken()').val() },
+                    data: function (d){
+                        d.ProjectId = @Model.Project.Id
+                    }
+                },
+                columnDefs: [
+                    { "name": "Id", "data": "id", "targets": 0 },
+                    { "name": "Template", "data": "templateId", "targets": 1, "orderable": false },
+                    { "name": "Status", "data": "sent", "targets": 2, "orderable": false },
+                    { "name": "ToAddresses", "data": "toAddresses", "targets": 3, "orderable": false, "searchable": true }
+                ],
+                order: [[0, "desc"]],
+            });
+        });
+    </script>
 }

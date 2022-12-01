@@ -14,6 +14,6 @@ public class TemplateTbl : BaseEntityModifiedDate
 	public string Name { get; set; } = string.Empty;
 
 	public int ProjectId { get; set; }
-	public ProjectTbl? Project { get; set; }
+	public ProjectTbl Project { get; set; } = null!;
 	public ICollection<TemplateVersionTbl>? Versions { get; set; }
 }

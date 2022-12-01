@@ -1,5 +1,6 @@
 using System.Reflection;
 using Admin.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace Admin;
 
@@ -31,6 +32,8 @@ public class Startup
 
 		services.AddRazorPages()
 			.AddRazorRuntimeCompilation();
+
+	
 	}
 
 	// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

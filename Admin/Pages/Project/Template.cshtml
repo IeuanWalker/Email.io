@@ -173,7 +173,7 @@
                                         {
                                             <small class="label label-success">Default</small>
                                         }
-                                        <small class="label label-info selectedTag @(version.IsDefault ? "d-inline-block" : "d-none")" data-testData-id="@version.Id">Selected</small>
+                                        <small class="label label-info selectedTag @(version.IsDefault ? "d-inline-block" : "d-none")" data-testData-selected-id="@version.Id">Selected</small>
                                     </span>
                                     <div class="dropdown dropdown-right">
                                         <button class="btn btn-action btn-link dropdown-toggle cursor-pointer" tabindex="0">
@@ -594,7 +594,7 @@
             });
             // Show 'selectedTag' thats inside the selected row
             document.querySelectorAll('.selectedTag').forEach(item => {
-                var testDataId = item.getAttribute('data-testdata-id');
+                var testDataId = item.getAttribute('data-testData-selected-id');
                 if(currentId == testDataId){
                     item.classList.remove('d-none');
                     item.classList.add('d-inline-block');

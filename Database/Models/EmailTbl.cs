@@ -13,6 +13,8 @@ public class EmailTbl
 	public int TemplateId { get; set; }
 	public string Data { get; set; } = string.Empty;
 
+
+
 	[ForeignKey("ToAddressesEmailId")]
 	public ICollection<EmailAddressTbl> ToAddresses { get; set; } = new List<EmailAddressTbl>();
 

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Admin.Infrastructure;
 using Api.Infrastructure;
 using Domain.Services.ApiKey;
@@ -50,6 +51,9 @@ builder.Services.AddAuthentication()
 
 // Database
 DatabaseConfiguration.ConfigureServices(builder.Services, builder.Configuration);
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(Program).GetTypeInfo().Assembly);
 
 // Hangfire
 HangfireConfiguration.ConfigureServices(builder.Services, builder.Configuration);
