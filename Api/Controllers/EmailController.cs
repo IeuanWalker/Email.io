@@ -10,6 +10,7 @@ using Database.Repositories.TemplateVersion;
 using Domain.Models;
 using Domain.Services.Email;
 using Domain.Services.HashId;
+using Domain.Utilities;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -68,7 +69,7 @@ public class EmailController : Controller
 		// Validate attachments
 		foreach (var attachment in request.Attachments ?? Enumerable.Empty<AttachementsModels>())
 		{
-			if (!IsBase64String(attachment.Content))
+			if (!FileUtil.IsBase64String(attachment.Content))
 			{
 				return BadRequest($"{attachment.FileName} doesn't have a valid base64 string");
 			}
@@ -147,9 +148,5 @@ public class EmailController : Controller
 	}
 
 
-	public static bool IsBase64String(string base64)
-	{
-		Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
-		return Convert.TryFromBase64String(base64, buffer, out int bytesParsed);
-	}
+	
 }

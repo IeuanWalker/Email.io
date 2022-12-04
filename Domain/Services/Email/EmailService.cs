@@ -57,7 +57,7 @@ public class EmailService : IEmailService
 		{
 			foreach (var attachment in attachments)
 			{
-				bodyBuilder.Attachments.Add(attachment.FileName, Convert.FromBase64String(attachment.SavedFile), ContentType.Parse(attachment.ContentType));
+				bodyBuilder.Attachments.Add(attachment.FileName, Convert.FromBase64String(attachment.Content), ContentType.Parse(attachment.ContentType));
 			}
 		}
 

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
-using Microsoft.AspNetCore.Http;
+using Domain.Validation;
 
 namespace Domain.Models;
 
@@ -15,9 +15,10 @@ public class EmailModel
 	public JsonNode Data { get; set; } = null!;
 
 	[MaxLength(5)]
-	public string Language { get; set; } = "en-GB";
+	public string? Language { get; set; }
 
 	[Required]
+	[MinLength(30)]
 	public string TemplateId { get; set; } = null!;
 
 	public IEnumerable<AttachementsModels>? Attachments { get; set; }
@@ -40,13 +41,15 @@ public class EmailAddresses
 public class AttachementsModels
 {
 	[Required]
-	[MinLength(1)]
-	public string Content { get; set; } = string.Empty;
-	[Required]
 	[MinLength(3)]
-	// [^-_.A-Za-z0-9]
+	[IsFileName]
 	public string FileName { get; set; } = string.Empty;
 	[Required]
 	[MinLength(1)]
-	public string Type { get; set; } = string.Empty;
+	[IsBase64]
+	public string Content { get; set; } = string.Empty;
+	[Required]
+	[MinLength(1)]
+	[IsContentType]
+	public string ContentType { get; set; } = string.Empty;
 }
