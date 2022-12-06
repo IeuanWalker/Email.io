@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
 using Domain.Utilities;
 
 namespace Domain.Validation;
@@ -8,13 +6,15 @@ namespace Domain.Validation;
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public sealed class IsBase64Attribute : ValidationAttribute
 {
-	public override bool IsValid(object value)
-	{
-		return value is string base64 && FileUtil.IsBase64String(base64);
-	}
+	const string contentNotValidErrorMessage = "Content is not a valid base 64 string.";
+	const string contentRequiredErrorMessage = "Content is required.";
 
-	public override string FormatErrorMessage(string name)
+	protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
 	{
-		return $"{name} is not a valid base64 string.";
+		return value is not string base64 || string.IsNullOrWhiteSpace(base64)
+			? new ValidationResult(contentRequiredErrorMessage)
+			: FileUtil.IsBase64String(base64) ?
+				ValidationResult.Success :
+				new ValidationResult(contentNotValidErrorMessage);
 	}
 }

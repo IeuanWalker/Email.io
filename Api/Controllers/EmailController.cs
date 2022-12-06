@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Nodes;
-using Api.Infrastructure;
+﻿using Api.Infrastructure;
 using AutoMapper;
 using Database.Models;
 using Database.Repositories.Email;
@@ -63,28 +61,22 @@ public class EmailController : Controller
 			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, is not valid");
 		}
 
-
-
-		// TODO: Move to data attribute validate
-		// Validate attachments
-		foreach (var attachment in request.Attachments ?? Enumerable.Empty<AttachementsModels>())
-		{
-			if (!FileUtil.IsBase64String(attachment.Content))
-			{
-				return BadRequest($"{attachment.FileName} doesn't have a valid base64 string");
-			}
-		}
-
 		// Get API key from header
 		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out var apiKey);
 
 		// Get template
-		TemplateVersionTbl? template = await _templateVersionTbl
+		var template = await _templateVersionTbl
 			.Where(x => 
 				x.TemplateId.Equals(result.Value.templateId) &&
 				x.IsActive &&
 				x.Template.ProjectId.Equals(result.Value.projectId) &&
 				x.Template.Project.ApiKey.Equals(apiKey))
+			.Select(x => new
+			{
+				x.Html,
+				x.PlainText,
+				x.Subject,
+			})
 			.FirstOrDefaultAsync();
 
 		// If template is null, find out why and return 400 Bad Request, with a message why
@@ -144,9 +136,6 @@ public class EmailController : Controller
 			// ignore
 		}
 
-		return Ok(_hashedService.Encode(email.Id, 30));
+		return Ok(_hashedService.EncodeEmailId(email.Id));
 	}
-
-
-	
 }

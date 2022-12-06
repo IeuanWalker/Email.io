@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -59,8 +58,8 @@ public class TemplateModel : PageModel
 	{
 		ProjectSlug = slug;
 
-		int? projectId = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
-		int? versionId = _hashIdService.Decode(hashedVersionId);
+		int? projectId = _hashIdService.DecodeProjectId(_slugService.GetIdFromSlug(slug));
+		int? versionId = _hashIdService.DecodeTemplateVersionId(hashedVersionId);
 
 		if (projectId is null || versionId is null)
 		{
@@ -495,7 +494,7 @@ public class TemplateModel : PageModel
 
 	public async Task<IActionResult> OnPostAddTestData()
 	{
-		var templateVersionId = _hashIdService.Decode(AddTestData.HashedTemplateVersionId);
+		var templateVersionId = _hashIdService.DecodeTemplateVersionId(AddTestData.HashedTemplateVersionId);
 
 		TemplateVersionTbl? templateVersion = (await _templateVersionTbl.Get(x => x.Id.Equals(templateVersionId))).FirstOrDefault();
 
@@ -525,7 +524,7 @@ public class TemplateModel : PageModel
 	public DeleteTestDataModel DeleteTestData { get; set; }
 	public async Task<IActionResult> OnPostDeleteTestData()
 	{
-		var templateVersionId = _hashIdService.Decode(DeleteTestData.HashedTemplateVersionId);
+		var templateVersionId = _hashIdService.DecodeTemplateVersionId(DeleteTestData.HashedTemplateVersionId);
 
 		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
 			x => x.Id.Equals(DeleteTestData.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
@@ -553,7 +552,7 @@ public class TemplateModel : PageModel
 	public DeleteTestDataModel MarkAsDefault { get; set; }
 	public async Task<IActionResult> OnPostMarkAsDefault()
 	{
-		var templateVersionId = _hashIdService.Decode(MarkAsDefault.HashedTemplateVersionId);
+		var templateVersionId = _hashIdService.DecodeTemplateVersionId(MarkAsDefault.HashedTemplateVersionId);
 
 		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
 			x => x.Id.Equals(MarkAsDefault.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
@@ -589,7 +588,7 @@ public class TemplateModel : PageModel
 	public DeleteTestDataModel DuplicateTestData { get; set; }
 	public async Task<IActionResult> OnPostDuplicateTestData()
 	{
-		var templateVersionId = _hashIdService.Decode(DuplicateTestData.HashedTemplateVersionId);
+		var templateVersionId = _hashIdService.DecodeTemplateVersionId(DuplicateTestData.HashedTemplateVersionId);
 
 		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
 			x => x.Id.Equals(DuplicateTestData.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
@@ -623,7 +622,7 @@ public class TemplateModel : PageModel
 
 	public async Task<IActionResult> OnPostUpdateTestDataName()
 	{
-		var templateVersionId = _hashIdService.Decode(UpdateTestDataName.HashedTemplateVersionId);
+		var templateVersionId = _hashIdService.DecodeTemplateVersionId(UpdateTestDataName.HashedTemplateVersionId);
 
 		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
 			x => x.Id.Equals(UpdateTestDataName.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),

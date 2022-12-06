@@ -1,30 +1,30 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net.Mail;
 using System.Text.RegularExpressions;
-using Domain.Utilities;
 
 namespace Domain.Validation;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public sealed partial class IsValidNameAttribute : ValidationAttribute
 {
-	[GeneratedRegex("([^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,])", RegexOptions.Compiled)]
-	private static partial Regex ValidName();
-	public override bool IsValid(object value)
+	[GeneratedRegex("[±!@£$%^&*+§€#¢§¶•ªº«\\\\/<>?:;|=.]", RegexOptions.Compiled)]
+	private static partial Regex InvalidCharactersRegex();
+	protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
 	{
-		if (value is not string fileName)
+		if (value is null)
 		{
-			return false;
+			return ValidationResult.Success;
 		}
 
-		var test = ValidName().IsMatch(fileName);
-		var test2 = ValidName().Matches(fileName);
+		if (value is not string inputString)
+		{
+			return ValidationResult.Success;
+		}
 
-		return !test;
-	}
+		if (InvalidCharactersRegex().Match(inputString).Success)
+		{
+			return new ValidationResult("The input string contains characters that are not allowed in this field. Blacklisted characters are ± ! @ £ $ % ^ & * + § € # ¢ § ¶ • ª º « \\\\ / < > ? : ; | = . ");
+		}
 
-	public override string FormatErrorMessage(string name)
-	{
-		return $"{name} contains invalid characters. These characters are not allowed: ^ ± ! @ £ $ % ^ & * _ + § ¡ € # ¢ § ¶ • ª º « \\ / < > ? : ; | = . ,";
+		return ValidationResult.Success;
 	}
 }

@@ -8,7 +8,6 @@ using Domain.Services.Slug;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Linq.Dynamic.Core;
 
 namespace Admin.Pages.Project;
@@ -40,7 +39,7 @@ public class SettingsModel : PageModel
 
 	public async Task<IActionResult> OnGet(string slug)
 	{
-		int? id = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
+		int? id = _hashIdService.DecodeProjectId(_slugService.GetIdFromSlug(slug));
 
 		if (id is null)
 		{
@@ -141,7 +140,7 @@ public class SettingsModel : PageModel
 					continue;
 				}
 
-				int? emailId = _hashIdService.Decode(word, 30);
+				int? emailId = _hashIdService.DecodeEmailId(word);
 
 				if (emailId is not null)
 				{

@@ -6,13 +6,27 @@ namespace Domain.Validation;
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public sealed class IsContentTypeAttribute : ValidationAttribute
 {
-	public override bool IsValid(object value)
+	const string contentTypeRequiredErrorMessage = "ContentType is required.";
+	const string invalidContentTypeErrorMessage = "ContentType is invalid.";
+	protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
 	{
-		return value is string contentType && ContentType.TryParse(contentType, out _);
-	}
+		if (value is not string contentType || string.IsNullOrWhiteSpace(contentType))
+		{
+			return new ValidationResult(contentTypeRequiredErrorMessage);
+		}
 
-	public override string FormatErrorMessage(string name)
-	{
-		return $"{name} is not a valid content type. Use MimeKit to validate - https://github.com/jstedfast/MimeKit";
+		try
+		{
+			if (ContentType.TryParse(contentType, out _))
+			{
+				return ValidationResult.Success;
+			}
+		}
+		catch (Exception)
+		{
+			return new ValidationResult(invalidContentTypeErrorMessage);
+		}
+
+		return new ValidationResult(invalidContentTypeErrorMessage);
 	}
 }

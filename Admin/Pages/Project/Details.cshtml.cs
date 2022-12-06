@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
 using AutoMapper;
 using Database.Models;
 using Database.Repositories.Project;
@@ -42,7 +41,7 @@ public class DetailsModel : PageModel
 
 	public async Task<IActionResult> OnGet(string slug)
 	{
-		int? id = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
+		int? id = _hashIdService.DecodeProjectId(_slugService.GetIdFromSlug(slug));
 
 		if (id is null)
 		{
@@ -63,7 +62,7 @@ public class DetailsModel : PageModel
 			x.HashedApiId = _hashIdService.EncodeProjectAndTemplateId(x.ProjectId, x.Id);
 			x.Versions?.ForEach(y =>
 			{
-				y.HashedId = _hashIdService.Encode(y.Id);
+				y.HashedId = _hashIdService.EncodeTemplateVersionId(y.Id);
 				y.TemplateNameSlug = _slugService.GenerateSlug(x.Name);
 			});
 			x.Versions = x.Versions?.OrderByDescending(x => x.IsActive).ThenByDescending(x => x.DateModified).ToList();

@@ -44,6 +44,6 @@ public class CreateModel : PageModel
 
 		Project = await _projectTbl.Add(Project).ConfigureAwait(false);
 
-		return RedirectToPage("/project/details", new { slug = _slugService.GenerateSlug(Project.Name, _hashIdService.Encode(Project.Id)) });
+		return RedirectToPage("/project/details", new { slug = _slugService.GenerateSlug(Project.Name, _hashIdService.EncodeProjectId(Project.Id)) });
 	}
 }

@@ -1,11 +1,9 @@
-﻿using System.IO;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 using Database.Models;
 using Database.Repositories.Email;
 using HandlebarsDotNet;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 
