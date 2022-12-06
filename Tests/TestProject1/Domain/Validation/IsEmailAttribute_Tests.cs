@@ -1,6 +1,6 @@
 ﻿using Domain.Validation;
 
-namespace TestProject1.Domain.Validation;
+namespace UnitTests.Domain.Validation;
 
 public class IsEmailAttribute_Tests
 {
@@ -58,7 +58,7 @@ public class IsEmailAttribute_Tests
 	[InlineData(".")]
 	[InlineData(".com")]
 	public void IsValid_InvalidEmails_ReturnFalse(string email)
-	{			
+	{
 		// Arrange
 		var attribute = new IsEmailAttribute();
 

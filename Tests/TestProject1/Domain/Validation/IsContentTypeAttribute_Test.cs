@@ -1,6 +1,6 @@
 ﻿using Domain.Validation;
 
-namespace TestProject1.Domain.Validation;
+namespace UnitTests.Domain.Validation;
 
 public class IsContentTypeAttribute_Test
 {
@@ -93,7 +93,7 @@ public class IsContentTypeAttribute_Test
 		// Assert
 		Assert.True(result);
 	}
-	
+
 	[Theory]
 	[InlineData(null)]
 	[InlineData("")]

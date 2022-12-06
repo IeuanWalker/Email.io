@@ -1,6 +1,6 @@
 ﻿using Domain.Validation;
 
-namespace TestProject1.Domain.Validation;
+namespace UnitTests.Domain.Validation;
 
 public class IsBase64Attribute_Tests
 {
@@ -25,7 +25,7 @@ public class IsBase64Attribute_Tests
 	[InlineData(" ")]
 	[InlineData("\t")]
 	public void IsValid_InvalidBase64_ReturnFalse(string email)
-	{			
+	{
 		// Arrange
 		var attribute = new IsBase64Attribute();
 

@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace EmailApi.Controllers;
+namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -52,7 +52,7 @@ public class EmailController : Controller
 	// TODO: Handle no email addresses
 	[HttpPost]
 	[Authorize]
-	public async Task<IActionResult> SendEmail([FromBody]EmailModel request)
+	public async Task<IActionResult> SendEmail([FromBody] EmailModel request)
 	{
 		// Get Ids from hash
 		(int projectId, int templateId)? result = _hashedService.DecodeProjectAndTemplateId(request.TemplateId);
@@ -66,7 +66,7 @@ public class EmailController : Controller
 
 		// Get template
 		var template = await _templateVersionTbl
-			.Where(x => 
+			.Where(x =>
 				x.TemplateId.Equals(result.Value.templateId) &&
 				x.IsActive &&
 				x.Template.ProjectId.Equals(result.Value.projectId) &&

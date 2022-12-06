@@ -2,7 +2,7 @@
 using Database.Context;
 using Microsoft.EntityFrameworkCore;
 
-namespace Admin.Infrastructure;
+namespace Api.Infrastructure;
 
 static class DatabaseConfiguration
 {

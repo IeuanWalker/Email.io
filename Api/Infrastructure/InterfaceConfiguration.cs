@@ -5,7 +5,7 @@ using Database.Repositories.TemplateVersion;
 using Domain.Services.Email;
 using Domain.Services.HashId;
 
-namespace Admin.Infrastructure;
+namespace Api.Infrastructure;
 
 static class InterfaceConfiguration
 {

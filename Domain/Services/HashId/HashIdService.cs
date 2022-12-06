@@ -36,6 +36,10 @@ public class HashIdService : IHashIdService
 
 			return (result[0], result[1]);
 		}
+		catch (ArgumentOutOfRangeException)
+		{
+			return null;
+		}
 		catch (OverflowException)
 		{
 			return null;

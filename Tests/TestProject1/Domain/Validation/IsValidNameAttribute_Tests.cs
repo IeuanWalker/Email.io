@@ -1,6 +1,6 @@
 ﻿using Domain.Validation;
 
-namespace TestProject1.Domain.Validation;
+namespace UnitTests.Domain.Validation;
 
 public class IsValidNameAttribute_Tests
 {
@@ -21,12 +21,12 @@ public class IsValidNameAttribute_Tests
 	public void IsValid_ValidCharacters_ReturnsTrue(string testName)
 	{
 		var attribute = new IsValidNameAttribute();
-		
+
 		var result = attribute.IsValid(testName);
-		
+
 		Assert.True(result);
 	}
-	
+
 	[Theory]
 	[InlineData('^')]
 	[InlineData('±')]

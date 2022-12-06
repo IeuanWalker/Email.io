@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace AdminSite.Pages;
+namespace Admin.Pages;
 
 public class Error404Model : PageModel
 {

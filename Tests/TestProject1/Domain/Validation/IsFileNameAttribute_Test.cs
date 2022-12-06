@@ -1,6 +1,6 @@
 ﻿using Domain.Validation;
 
-namespace TestProject1.Domain.Validation;
+namespace UnitTests.Domain.Validation;
 
 public class IsFileNameAttribute_Test
 {
@@ -22,7 +22,7 @@ public class IsFileNameAttribute_Test
 		// Assert
 		Assert.True(result);
 	}
-	
+
 	[Theory]
 	[InlineData(null)]
 	[InlineData("")]

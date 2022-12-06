@@ -1,5 +1,4 @@
 using System.Reflection;
-using Admin.Infrastructure;
 using Api.Infrastructure;
 using Domain.Services.ApiKey;
 using Microsoft.OpenApi.Models;
