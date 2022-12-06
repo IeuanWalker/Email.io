@@ -8,7 +8,6 @@ using Database.Repositories.TemplateVersion;
 using Domain.Models;
 using Domain.Services.Email;
 using Domain.Services.HashId;
-using Domain.Utilities;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

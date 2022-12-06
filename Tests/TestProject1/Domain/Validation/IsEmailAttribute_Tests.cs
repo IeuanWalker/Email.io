@@ -10,6 +10,7 @@ public class IsEmailAttribute_Tests
 	[InlineData("user+extension@domain.com")]
 	[InlineData("user.name@domain.com")]
 	[InlineData("user_name@domain.com")]
+	[InlineData("test+user_name@domain.com")]
 	[InlineData("user@domain.co.uk")]
 	[InlineData("user@domain.info")]
 	[InlineData("user@domain.museum")]
@@ -20,9 +21,13 @@ public class IsEmailAttribute_Tests
 	[InlineData("user@xn--domain-cua.com")]
 	[InlineData("user@xn--domain-r6a.com")]
 	[InlineData("user@123.45.67.89")]
+	[InlineData("12345@192.0.2.235")]
 	[InlineData("user@[192.0.2.1]")]
 	[InlineData("user@[IPv6:2001:db8:1ff::a0b:dbd0]")]
 	[InlineData("user@[IPv6:2001:db8:1ff::a0b:dbd0]:80")]
+	[InlineData("!#$%&'*+-/=?^_`{|}~@example.com")]
+	[InlineData("\"username\"@example.com")]
+	[InlineData("\"john doe\"@example.com")]
 	public void IsValid_ValidEmails_ReturnTrue(string email)
 	{
 		// Arrange
