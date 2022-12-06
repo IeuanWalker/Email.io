@@ -11,10 +11,16 @@ public sealed class IsBase64Attribute : ValidationAttribute
 
 	protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
 	{
-		return value is not string base64 || string.IsNullOrWhiteSpace(base64)
-			? new ValidationResult(contentRequiredErrorMessage)
-			: FileUtil.IsBase64String(base64) ?
-				ValidationResult.Success :
-				new ValidationResult(contentNotValidErrorMessage);
+		if (value is not string base64 || string.IsNullOrWhiteSpace(base64))
+		{
+			return new ValidationResult(contentRequiredErrorMessage);
+		}
+
+		if (FileUtil.IsBase64String(base64))
+		{
+			return ValidationResult.Success;
+		}
+
+		return new ValidationResult(contentNotValidErrorMessage);
 	}
 }

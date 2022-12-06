@@ -20,6 +20,7 @@ public sealed partial class IsValidNameAttribute : ValidationAttribute
 			return ValidationResult.Success;
 		}
 
+#pragma warning disable IDE0046 // Convert to conditional expression
 		if (InvalidCharactersRegex().Match(inputString).Success)
 		{
 			return new ValidationResult("The input string contains characters that are not allowed in this field. Blacklisted characters are ± ! @ £ $ % ^ & * + § € # ¢ § ¶ • ª º « \\\\ / < > ? : ; | = . ");

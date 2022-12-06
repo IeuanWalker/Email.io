@@ -40,8 +40,8 @@ public partial class IsEmailAttribute : ValidationAttribute
 		}
 
 		// Has multiple @ symbols
-		return email.Split('@').Length > 2 ? 
-			new ValidationResult(emailFormatErrorMessage) : 
+		return email.Split('@').Length > 2 ?
+			new ValidationResult(emailFormatErrorMessage) :
 			ValidationResult.Success;
 	}
 }

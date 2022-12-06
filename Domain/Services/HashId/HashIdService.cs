@@ -29,12 +29,9 @@ public class HashIdService : IHashIdService
 		try
 		{
 			int[]? result = _hashidsProjectIdAndTemplateId.Decode(hash);
-			if (result is null || result.Length is not 2)
-			{
-				return null;
-			}
-
-			return (result[0], result[1]);
+			return result is null || result.Length is not 2 ?
+				null :
+				(result[0], result[1]);
 		}
 		catch (ArgumentOutOfRangeException)
 		{
@@ -72,7 +69,6 @@ public class HashIdService : IHashIdService
 	{
 		return Decode(_hashidsEmailId, hash);
 	}
-
 
 	static int? Decode(Hashids hashids, string hash)
 	{

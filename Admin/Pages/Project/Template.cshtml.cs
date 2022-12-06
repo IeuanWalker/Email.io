@@ -222,7 +222,7 @@ public class TemplateModel : PageModel
 							break;
 					}
 				});
-				HandlebarsTemplate<object, object> template = Handlebars.Compile(UpdateTemplate.Html);
+
 				htmlTemplate(JObject.Parse(testData.Data));
 				plainTextTemplate(JObject.Parse(testData.Data));
 			}
@@ -235,7 +235,6 @@ public class TemplateModel : PageModel
 				});
 			}
 		}
-		
 
 		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
 			  x.Id.Equals(UpdateTemplate.VersionId) &&
@@ -253,15 +252,12 @@ public class TemplateModel : PageModel
 			});
 		}
 
-		//version.TestData = UpdateTemplate.TestData;
 		version.Html = UpdateTemplate.Html;
 		version.PlainText = UpdateTemplate.PlainText;
-		
-		foreach(TemplateTestDataModel testData in UpdateTemplate.TestData)
+		foreach (TemplateTestDataModel testData in UpdateTemplate.TestData)
 		{
 			version.TestData.Where(x => x.Id.Equals(testData.Id)).ToList().ForEach(x => x.Data = testData.Data);
 		}
-
 
 		_templateVersionTbl.Update(version);
 
@@ -438,7 +434,6 @@ public class TemplateModel : PageModel
 			versionId = TestSend.VersionId
 		});
 	}
-	
 
 	public async Task GenerateThumbnailAndPreview(int versionId)
 	{
@@ -488,7 +483,6 @@ public class TemplateModel : PageModel
 			client.Uri;
 	}
 
-
 	[BindProperty]
 	public AddTestDataModel AddTestData { get; set; } = new AddTestDataModel();
 
@@ -502,7 +496,7 @@ public class TemplateModel : PageModel
 		{
 			return NotFound();
 		}
-		
+
 		await _templateTestDataTbl.Add(new()
 		{
 			TemplateVersionId = templateVersion.Id,
@@ -513,7 +507,8 @@ public class TemplateModel : PageModel
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "New test data created";
 
-		return RedirectToPage("/project/template", new { 
+		return RedirectToPage("/project/template", new
+		{
 			slug = AddTestData.ProjectSlug,
 			templateName = templateVersion.Name,
 			hashedVersionId = AddTestData.HashedTemplateVersionId
@@ -521,7 +516,7 @@ public class TemplateModel : PageModel
 	}
 
 	[BindProperty]
-	public DeleteTestDataModel DeleteTestData { get; set; }
+	public DeleteTestDataModel DeleteTestData { get; set; } = new DeleteTestDataModel();
 	public async Task<IActionResult> OnPostDeleteTestData()
 	{
 		var templateVersionId = _hashIdService.DecodeTemplateVersionId(DeleteTestData.HashedTemplateVersionId);
@@ -530,7 +525,7 @@ public class TemplateModel : PageModel
 			x => x.Id.Equals(DeleteTestData.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
 			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
 
-		if (testData is null)
+		if (testData is null || testData.TemplateVersion is null)
 		{
 			return NotFound();
 		}
@@ -549,7 +544,7 @@ public class TemplateModel : PageModel
 	}
 
 	[BindProperty]
-	public DeleteTestDataModel MarkAsDefault { get; set; }
+	public DeleteTestDataModel MarkAsDefault { get; set; } = new DeleteTestDataModel();
 	public async Task<IActionResult> OnPostMarkAsDefault()
 	{
 		var templateVersionId = _hashIdService.DecodeTemplateVersionId(MarkAsDefault.HashedTemplateVersionId);
@@ -558,7 +553,7 @@ public class TemplateModel : PageModel
 			x => x.Id.Equals(MarkAsDefault.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
 			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
 
-		if (testData is null)
+		if (testData is null || testData.TemplateVersion is null)
 		{
 			return NotFound();
 		}
@@ -585,7 +580,7 @@ public class TemplateModel : PageModel
 	}
 
 	[BindProperty]
-	public DeleteTestDataModel DuplicateTestData { get; set; }
+	public DeleteTestDataModel DuplicateTestData { get; set; } = new DeleteTestDataModel();
 	public async Task<IActionResult> OnPostDuplicateTestData()
 	{
 		var templateVersionId = _hashIdService.DecodeTemplateVersionId(DuplicateTestData.HashedTemplateVersionId);
@@ -594,7 +589,7 @@ public class TemplateModel : PageModel
 			x => x.Id.Equals(DuplicateTestData.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
 			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
 
-		if (testData is null)
+		if (testData is null || testData.TemplateVersion is null)
 		{
 			return NotFound();
 		}
@@ -628,7 +623,7 @@ public class TemplateModel : PageModel
 			x => x.Id.Equals(UpdateTestDataName.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
 			includeProperties: nameof(TemplateTestDataTbl.TemplateVersion))).FirstOrDefault();
 
-		if (testData is null)
+		if (testData is null || testData.TemplateVersion is null)
 		{
 			return NotFound();
 		}
@@ -646,27 +641,26 @@ public class TemplateModel : PageModel
 			hashedVersionId = UpdateTestDataName.HashedTemplateVersionId
 		});
 	}
-
 }
 
 public class AddTestDataModel
 {
-	public string ProjectSlug { get; set; }
-	public string HashedTemplateVersionId { get; set; }
+	public string ProjectSlug { get; set; } = default!;
+	public string HashedTemplateVersionId { get; set; } = default!;
 }
 public class DeleteTestDataModel
 {
-	public string ProjectSlug { get; set; }
-	public string HashedTemplateVersionId { get; set; }
+	public string ProjectSlug { get; set; } = default!;
+	public string HashedTemplateVersionId { get; set; } = default!;
 	public int TestDataId { get; set; }
 }
 
 public class UpdateTestDataNameModel
 {
-	public string ProjectSlug { get; set; }
-	public string HashedTemplateVersionId { get; set; }
+	public string ProjectSlug { get; set; } = default!;
+	public string HashedTemplateVersionId { get; set; } = default!;
 	public int TestDataId { get; set; }
-	public string Name { get; set; }
+	public string Name { get; set; } = default!;
 }
 
 public class UpdateTemplateModel
@@ -684,10 +678,10 @@ public class UpdateTemplateModel
 	public List<TemplateTestDataModel> TestData { get; set; } = new();
 
 	[Required]
-	public string Html { get; set; } = string.Empty;
+	public string Html { get; set; } = default!;
 
 	[Required]
-	public string PlainText { get; set; } = string.Empty;
+	public string PlainText { get; set; } = default!;
 }
 
 public class TemplateTestDataModel
@@ -695,7 +689,6 @@ public class TemplateTestDataModel
 	public int Id { get; set; }
 	public string Data { get; set; } = default!;
 }
-
 
 public class UpdateSettingsModel
 {
@@ -710,11 +703,11 @@ public class UpdateSettingsModel
 
 	[Required]
 	[MaxLength(200)]
-	public string Subject { get; set; } = string.Empty;
+	public string Subject { get; set; } = default!;
 
 	[Required]
 	[MaxLength(200)]
-	public string Name { get; set; } = string.Empty;
+	public string Name { get; set; } = default!;
 }
 
 public class TestSendModel
@@ -732,5 +725,5 @@ public class TestSendModel
 
 	[Required]
 	[EmailAddress]
-	public string Email { get; set; } = string.Empty;
+	public string Email { get; set; } = default!;
 }

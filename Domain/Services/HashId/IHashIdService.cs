@@ -10,5 +10,4 @@ public interface IHashIdService
 	int? DecodeTemplateVersionId(string hash);
 	string EncodeEmailId(int emailId);
 	int? DecodeEmailId(string hash);
-
 }

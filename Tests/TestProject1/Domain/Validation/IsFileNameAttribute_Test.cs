@@ -4,7 +4,6 @@ namespace UnitTests.Domain.Validation;
 
 public class IsFileNameAttribute_Test
 {
-
 	[Theory]
 	[InlineData("myfile.txt")]
 	[InlineData("my-file.txt")]
