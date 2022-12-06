@@ -192,6 +192,7 @@ textarea {
   font-family: "Source Code Pro", monospace;
   font-size: 13px;
   line-height: 20px;
+  padding: 0px;
 }
 
 .CodeMirror-fullscreen {

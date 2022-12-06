@@ -117,22 +117,20 @@ public class SettingsModel : PageModel
 			project.ApiKey
 		});
 	}
-
-	[BindProperty]
-	public SentEmailsDataTablesRequest DataTablesRequest { get; set; }
-
-	public async Task<JsonResult> OnPostSentEmails()
+	
+	//public SentEmailsDataTablesRequest DataTablesRequest { get; set; }
+	public async Task<JsonResult> OnPostSentEmails(SentEmailsDataTablesRequest dataTablesRequest)
 	{
-		var recordsTotal = await _emailTbl.Where(x => x.ProjectId.Equals(DataTablesRequest.ProjectId)).CountAsync();
+		var recordsTotal = await _emailTbl.Where(x => x.ProjectId.Equals(dataTablesRequest.ProjectId)).CountAsync();
 
 		var sentEmailsQuery = _emailTbl.Where();
 
 		// TODO: Add email search
 		// TODO: Add template filtering
 
-		if (!string.IsNullOrWhiteSpace(DataTablesRequest.Search.Value))
+		if (!string.IsNullOrWhiteSpace(dataTablesRequest.Search.Value))
 		{
-			foreach (string word in DataTablesRequest.Search.Value.Split(' '))
+			foreach (string word in dataTablesRequest.Search.Value.Split(' '))
 			{
 				if (word.Contains('@'))
 				{
@@ -155,13 +153,13 @@ public class SettingsModel : PageModel
 
 		var recordsFiltered = sentEmailsQuery.Count();
 
-		var sortColumnName = DataTablesRequest.Columns.ElementAt(DataTablesRequest.Order.ElementAt(0).Column).Name;
-		var sortDirection = DataTablesRequest.Order.ElementAt(0).Dir.ToLower();
+		var sortColumnName = dataTablesRequest.Columns.ElementAt(dataTablesRequest.Order.ElementAt(0).Column).Name;
+		var sortDirection = dataTablesRequest.Order.ElementAt(0).Dir.ToLower();
 
 		sentEmailsQuery = sentEmailsQuery.OrderBy($"{sortColumnName} {sortDirection}");
 
-		var skip = DataTablesRequest.Start;
-		var take = DataTablesRequest.Length;
+		var skip = dataTablesRequest.Start;
+		var take = dataTablesRequest.Length;
 		var data = (await sentEmailsQuery
 			.Select(x => new
 			{
@@ -183,7 +181,7 @@ public class SettingsModel : PageModel
 
 		return new JsonResult(new
 		{
-			DataTablesRequest.Draw,
+			dataTablesRequest.Draw,
 			RecordsTotal = recordsTotal,
 			RecordsFiltered = recordsFiltered,
 			Data = data

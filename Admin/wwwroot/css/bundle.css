@@ -7569,10 +7569,6 @@ a {
   overflow: inherit;
 }
 
-.CodeMirror {
-  padding: 0px;
-}
-
 .api-key-container {
   border: 1px solid #e9ecef;
   position: relative;
