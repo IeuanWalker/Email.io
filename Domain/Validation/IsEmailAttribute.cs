@@ -33,7 +33,7 @@ public partial class IsEmailAttribute : ValidationAttribute
 			return new ValidationResult(emailFormatErrorMessage);
 		}
 
-		// Ends in a fullstop
+		// Starts or ends in a fullstop
 		if (email.StartsWith(".") || email.EndsWith("."))
 		{
 			return new ValidationResult(emailFormatErrorMessage);
