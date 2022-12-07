@@ -45,6 +45,8 @@ public class IsEmailAttribute_Tests
 	[InlineData("")]
 	[InlineData(" ")]
 	[InlineData("\t")]
+	[InlineData("abc")]
+	[InlineData("123")]
 	[InlineData("user@examplecom")]
 	[InlineData("user@.com")]
 	[InlineData("@example.com")]
