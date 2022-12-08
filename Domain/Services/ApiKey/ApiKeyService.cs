@@ -37,6 +37,21 @@ public class ApiKeyService : IApiKeyService
 			[..36];
 	}
 
+	// TODO: Benchmark
+	//static string GenerateApiKey()
+	//{
+	//	using var rng = new RNGCryptoServiceProvider();
+	//	var apiKeyBytes = new byte[32];
+	//	rng.GetBytes(apiKeyBytes);
+	//	var apiKey = Convert.ToBase64String(apiKeyBytes);
+
+	//	// Clean up the API key by removing certain characters
+	//	apiKey = apiKey.Replace("/", "").Replace("+", "").Replace("=", "");
+
+	//	// Return the first 36 characters of the API key
+	//	return apiKey.Substring(0, 36);
+	//}
+
 	public async ValueTask<int?> GetProjectIdFromApiKey(string apiKey)
 	{
 		if (!_memoryCache.TryGetValue<Dictionary<string, int>>("Authentication_Project_ApiKeys", out var internalKeys))
