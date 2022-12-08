@@ -21,7 +21,7 @@ public partial class IsEmailAttribute : ValidationAttribute
 	/// Matches if there are multiple @ symbols
 	/// </summary>
 	/// <returns></returns>
-	[GeneratedRegex(@"^[^@]+@[^@]+@[^@]+$|^\.|\.$", RegexOptions.Compiled)]
+	[GeneratedRegex(@"^\.|\.$|@.*@", RegexOptions.Compiled)]
 	private static partial Regex AdditionalValidationRegex();
 
 	const string emailFormatErrorMessage = "Email address is not in a valid format.";
@@ -39,12 +39,18 @@ public partial class IsEmailAttribute : ValidationAttribute
 		{
 			return false;
 		}
-		
+
 		// Starts or ends in a fullstop
 		if (AdditionalValidationRegex().IsMatch(email))
 		{
 			return false;
 		}
+
+		// TODO: Benchmark if this is faster than the regex
+		//if (email.StartsWith('.') || email.EndsWith('.') || email.Split('@').Length > 2)
+		//{
+		//	return false;
+		//}
 
 		return true;
 	}

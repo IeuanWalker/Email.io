@@ -49,7 +49,7 @@ public class EmailAddresses
 	public string? Name { get; set; }
 
 	[Required]
-	[MaxLength(200)]
+	[MaxLength(320)] // Max characters before the @ is 64 characters, and the maximum length of the domain part is 255 characters
 	[IsEmail]
 	public string Email { get; set; } = null!;
 }
