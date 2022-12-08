@@ -47,10 +47,10 @@ public partial class IsEmailAttribute : ValidationAttribute
 		}
 
 		// TODO: Benchmark if this is faster than the regex
-		//if (email.StartsWith('.') || email.EndsWith('.') || email.Split('@').Length > 2)
-		//{
-		//	return false;
-		//}
+		if (email.StartsWith('.') || email.EndsWith('.') || email.Split('@').Length > 2)
+		{
+			return false;
+		}
 
 		return true;
 	}

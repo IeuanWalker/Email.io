@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace Domain.Validation;
 
+/// <summary>
+/// Validates that the given string is a valid name.
+/// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public sealed partial class IsValidNameAttribute : ValidationAttribute
 {

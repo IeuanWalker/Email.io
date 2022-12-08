@@ -3,6 +3,9 @@ using Domain.Utilities;
 
 namespace Domain.Validation;
 
+/// <summary>
+/// Validates that the given string is a valid Base64 string.
+/// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public sealed class IsBase64Attribute : ValidationAttribute
 {

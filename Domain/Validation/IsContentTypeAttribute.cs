@@ -3,6 +3,9 @@ using MimeKit;
 
 namespace Domain.Validation;
 
+/// <summary>
+/// Validates that the given string is a valid content type.
+/// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public sealed class IsContentTypeAttribute : ValidationAttribute
 {
