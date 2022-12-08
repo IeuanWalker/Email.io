@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using Database.Models;
 using Database.Repositories.Email;
 using Database.Repositories.Project;
@@ -7,7 +8,6 @@ using Domain.Services.Slug;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
 
 namespace Admin.Pages.Project;
 
@@ -179,7 +179,6 @@ public class SentEmailsDataTablesRequest : DataTablesRequest
 {
 	public int ProjectId { get; set; }
 }
-
 
 public class DataTablesRequest
 {

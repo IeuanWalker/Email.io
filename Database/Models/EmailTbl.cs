@@ -30,6 +30,7 @@ public class EmailTbl
 
 	[ForeignKey("AttachementsId")]
 	public ICollection<EmailAttachmentTbl>? Attachements { get; set; }
+
 	public int AttachementCount { get; set; }
 
 	public string? HangfireId { get; set; }

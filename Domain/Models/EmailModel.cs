@@ -8,6 +8,7 @@ public class EmailModel
 {
 	// TODO: Validate no duplicate addresses
 	public IEnumerable<EmailAddresses>? ToAddresses { get; set; }
+
 	public IEnumerable<EmailAddresses>? CCAddresses { get; set; }
 	public IEnumerable<EmailAddresses>? BCCAddresses { get; set; }
 
@@ -63,6 +64,7 @@ public class AttachementsModels
 	[MinLength(3)]
 	[IsFileName]
 	public string FileName { get; set; } = string.Empty;
+
 	/// <summary>
 	/// Base64 string of the file
 	/// </summary>
@@ -70,6 +72,7 @@ public class AttachementsModels
 	[MinLength(1)]
 	[IsBase64]
 	public string Content { get; set; } = string.Empty;
+
 	/// <summary>
 	/// The ContentType/ mime type of the file
 	/// </summary>

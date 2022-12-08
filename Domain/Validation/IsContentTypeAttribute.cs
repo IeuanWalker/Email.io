@@ -11,6 +11,7 @@ public sealed class IsContentTypeAttribute : ValidationAttribute
 {
 	const string contentTypeRequiredErrorMessage = "ContentType is required.";
 	const string invalidContentTypeErrorMessage = "ContentType is invalid.";
+
 	protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
 	{
 		if (value is not string contentType || string.IsNullOrWhiteSpace(contentType))

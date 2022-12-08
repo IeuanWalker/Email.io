@@ -33,8 +33,10 @@ public partial class SlugService : ISlugService
 
 	[GeneratedRegex(@"[^a-z0-9\s-]", RegexOptions.Compiled)]
 	private static partial Regex MatchInValidCharactersRegex();
+
 	[GeneratedRegex(@"[\s._-]+", RegexOptions.Compiled)]
 	private static partial Regex ReplaceWithHyphenRegex();
+
 	static string TextToUrlSlug(string text)
 	{
 		text = text.Normalize(NormalizationForm.FormD).ToLowerInvariant();

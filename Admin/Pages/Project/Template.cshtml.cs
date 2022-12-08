@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Nodes;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
@@ -9,14 +10,13 @@ using Database.Repositories.Template;
 using Database.Repositories.TemplateTestData;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.Email;
+using Domain.Services.Handlebars;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
-using HandlebarsDotNet;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MimeKit;
-using Newtonsoft.Json.Linq;
 
 namespace Admin.Pages.Project;
 
@@ -30,6 +30,7 @@ public class TemplateModel : PageModel
 	readonly IEmailService _emailService;
 	readonly IHashIdService _hashIdService;
 	readonly ISlugService _slugService;
+	readonly IHandleBarsService _handlebarsService;
 
 	public TemplateModel(
 		IProjectRepository projectTbl,
@@ -39,7 +40,8 @@ public class TemplateModel : PageModel
 		IBackgroundJobClient jobClient,
 		IEmailService emailService,
 		IHashIdService hashIdService,
-		ISlugService slugService)
+		ISlugService slugService,
+		IHandleBarsService handlebarsService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
@@ -49,6 +51,7 @@ public class TemplateModel : PageModel
 		_emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
 		_slugService = slugService ?? throw new ArgumentNullException(nameof(slugService));
+		_handlebarsService = handlebarsService ?? throw new ArgumentNullException(nameof(handlebarsService));
 	}
 
 	public TemplateVersionTbl? Version { get; set; }
@@ -131,8 +134,6 @@ public class TemplateModel : PageModel
 		UpdateTemplate.PlainText = string.IsNullOrWhiteSpace(UpdateTemplate.PlainText) ? string.Empty : UpdateTemplate.PlainText;
 
 		// Validate JSON + template
-		HandlebarsTemplate<object, object> htmlTemplate = Handlebars.Compile(UpdateTemplate.Html);
-		HandlebarsTemplate<object, object> plainTextTemplate = Handlebars.Compile(UpdateTemplate.PlainText);
 		foreach (TemplateTestDataModel testData in UpdateTemplate.TestData)
 		{
 			try
@@ -142,89 +143,8 @@ public class TemplateModel : PageModel
 					testData.Data = "{}";
 				}
 
-				Handlebars.RegisterHelper("ifCond", (output, options, context, arguments) =>
-				{
-					if (arguments.Length != 3)
-					{
-						throw new HandlebarsException("{{#StringEqualityBlockHelper}} helper must have exactly two arguments");
-					}
-
-					string v1 = arguments.At<string>(0);
-					string @operator = arguments.At<string>(1);
-					string v2 = arguments.At<string>(0);
-
-					switch (@operator)
-					{
-						case "==":
-							if (v1 == v2)
-							{
-								options.Template(output, context);
-							}
-							else
-							{
-								options.Inverse(output, context);
-							}
-							break;
-
-						case "!=":
-							if (v1 != v2)
-							{
-								options.Template(output, context);
-							}
-							else
-							{
-								options.Inverse(output, context);
-							}
-							break;
-
-						case "<":
-							if (Convert.ToDouble(v1) < Convert.ToDouble(v2))
-							{
-								options.Template(output, context);
-							}
-							else
-							{
-								options.Inverse(output, context);
-							}
-							break;
-
-						case "<=":
-							if (Convert.ToDouble(v1) <= Convert.ToDouble(v2))
-							{
-								options.Template(output, context);
-							}
-							else
-							{
-								options.Inverse(output, context);
-							}
-							break;
-
-						case ">":
-							if (Convert.ToDouble(v1) > Convert.ToDouble(v2))
-							{
-								options.Template(output, context);
-							}
-							else
-							{
-								options.Inverse(output, context);
-							}
-							break;
-
-						case ">=":
-							if (Convert.ToDouble(v1) >= Convert.ToDouble(v2))
-							{
-								options.Template(output, context);
-							}
-							else
-							{
-								options.Inverse(output, context);
-							}
-							break;
-					}
-				});
-
-				htmlTemplate(JObject.Parse(testData.Data));
-				plainTextTemplate(JObject.Parse(testData.Data));
+				_handlebarsService.Render(UpdateTemplate.Html, testData.Data);
+				_handlebarsService.Render(UpdateTemplate.PlainText, testData.Data);
 			}
 			catch (Exception)
 			{
@@ -334,97 +254,12 @@ public class TemplateModel : PageModel
 		}
 
 		// Generate body
-		Handlebars.RegisterHelper("ifCond", (output, options, context, arguments) =>
-		   {
-			   if (arguments.Length != 3)
-			   {
-				   throw new HandlebarsException("{{#StringEqualityBlockHelper}} helper must have exactly 3 arguments");
-			   }
-
-			   string v1 = arguments.At<string>(0);
-			   string @operator = arguments.At<string>(1);
-			   string v2 = arguments.At<string>(0);
-
-			   switch (@operator)
-			   {
-				   case "==":
-					   if (v1 == v2)
-					   {
-						   options.Template(output, context);
-					   }
-					   else
-					   {
-						   options.Inverse(output, context);
-					   }
-					   break;
-
-				   case "!=":
-					   if (v1 != v2)
-					   {
-						   options.Template(output, context);
-					   }
-					   else
-					   {
-						   options.Inverse(output, context);
-					   }
-					   break;
-
-				   case "<":
-					   if (Convert.ToDouble(v1) < Convert.ToDouble(v2))
-					   {
-						   options.Template(output, context);
-					   }
-					   else
-					   {
-						   options.Inverse(output, context);
-					   }
-					   break;
-
-				   case "<=":
-					   if (Convert.ToDouble(v1) <= Convert.ToDouble(v2))
-					   {
-						   options.Template(output, context);
-					   }
-					   else
-					   {
-						   options.Inverse(output, context);
-					   }
-					   break;
-
-				   case ">":
-					   if (Convert.ToDouble(v1) > Convert.ToDouble(v2))
-					   {
-						   options.Template(output, context);
-					   }
-					   else
-					   {
-						   options.Inverse(output, context);
-					   }
-					   break;
-
-				   case ">=":
-					   if (Convert.ToDouble(v1) >= Convert.ToDouble(v2))
-					   {
-						   options.Template(output, context);
-					   }
-					   else
-					   {
-						   options.Inverse(output, context);
-					   }
-					   break;
-			   }
-		   });
 
 		// TODO: Set test data to current view version
 
-		HandlebarsTemplate<object, object> subjectTemplate = Handlebars.Compile(version.Subject);
-		string subjectResult = subjectTemplate(JObject.Parse(version.TestData.First().Data));
-
-		HandlebarsTemplate<object, object> bodyTemplate = Handlebars.Compile(version.Html);
-		string bodyResult = bodyTemplate(JObject.Parse(version.TestData.First().Data));
-
-		HandlebarsTemplate<object, object> plainTextTemplate = Handlebars.Compile(version.PlainText);
-		string plainTextResult = plainTextTemplate(JObject.Parse(version.TestData.First().Data));
+		string subjectResult = _handlebarsService.Render(version.Subject, JsonNode.Parse(version.TestData.First()?.Data!));
+		string bodyResult = _handlebarsService.Render(version.Html, JsonNode.Parse(version.TestData.First().Data));
+		string plainTextResult = _handlebarsService.Render(version.PlainText, JsonNode.Parse(version.TestData.First().Data));
 
 		await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, null, null, subjectResult, bodyResult, plainTextResult);
 		return RedirectToPage("/project/template", new
@@ -443,14 +278,13 @@ public class TemplateModel : PageModel
 			nameof(TemplateVersionTbl.Template)))
 			.FirstOrDefault();
 
-		if (version is null)
+		if (version is null || version.Html is null)
 		{
 			return;
 		}
 
 		// Compile HTML and test data
-		HandlebarsTemplate<object, object> template = Handlebars.Compile(version.Html);
-		string result = template(JObject.Parse(version.TestData.First(x => x.IsDefault).Data));
+		string result = _handlebarsService.Render(version.Html, JsonNode.Parse(version.TestData.First(x => x.IsDefault).Data));
 
 		HtmlConverter converter = new();
 		byte[] preview = converter.FromHtmlString(result, format: ImageFormat.Png);
@@ -517,6 +351,7 @@ public class TemplateModel : PageModel
 
 	[BindProperty]
 	public DeleteTestDataModel DeleteTestData { get; set; } = new DeleteTestDataModel();
+
 	public async Task<IActionResult> OnPostDeleteTestData()
 	{
 		var templateVersionId = _hashIdService.DecodeTemplateVersionId(DeleteTestData.HashedTemplateVersionId);
@@ -545,6 +380,7 @@ public class TemplateModel : PageModel
 
 	[BindProperty]
 	public DeleteTestDataModel MarkAsDefault { get; set; } = new DeleteTestDataModel();
+
 	public async Task<IActionResult> OnPostMarkAsDefault()
 	{
 		var templateVersionId = _hashIdService.DecodeTemplateVersionId(MarkAsDefault.HashedTemplateVersionId);
@@ -581,6 +417,7 @@ public class TemplateModel : PageModel
 
 	[BindProperty]
 	public DeleteTestDataModel DuplicateTestData { get; set; } = new DeleteTestDataModel();
+
 	public async Task<IActionResult> OnPostDuplicateTestData()
 	{
 		var templateVersionId = _hashIdService.DecodeTemplateVersionId(DuplicateTestData.HashedTemplateVersionId);
@@ -648,6 +485,7 @@ public class AddTestDataModel
 	public string ProjectSlug { get; set; } = default!;
 	public string HashedTemplateVersionId { get; set; } = default!;
 }
+
 public class DeleteTestDataModel
 {
 	public string ProjectSlug { get; set; } = default!;

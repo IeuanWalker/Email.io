@@ -11,6 +11,7 @@ public sealed partial class IsFileNameAttribute : ValidationAttribute
 {
 	[GeneratedRegex(@"^[\w,\s-]+\.[\w]+$", RegexOptions.Compiled)]
 	private static partial Regex ValidFileNameRegex();
+
 	public override bool IsValid(object? value)
 	{
 		return value is string fileName && ValidFileNameRegex().IsMatch(fileName);

@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Handlebars\" />
     <Folder Include="Services\Thumbnail\" />
   </ItemGroup>
 

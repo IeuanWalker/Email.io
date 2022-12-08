@@ -11,6 +11,7 @@ public sealed partial class IsValidNameAttribute : ValidationAttribute
 {
 	[GeneratedRegex("[±!@£$%^&*+§€#¢§¶•ªº«\\\\/<>?:;|=.]", RegexOptions.Compiled)]
 	private static partial Regex InvalidCharactersRegex();
+
 	protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
 	{
 		if (value is null)

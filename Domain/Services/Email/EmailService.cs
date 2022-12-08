@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Nodes;
 using Database.Models;
 using Database.Repositories.Email;
-using HandlebarsDotNet;
+using Domain.Services.Handlebars;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +12,12 @@ namespace Domain.Services.Email;
 public class EmailService : IEmailService
 {
 	readonly IEmailRepository _emailRepository;
+	readonly IHandleBarsService _handleBarsService;
 
-	public EmailService(IEmailRepository emailRepository)
+	public EmailService(IEmailRepository emailRepository, IHandleBarsService handleBarsService)
 	{
 		_emailRepository = emailRepository ?? throw new ArgumentNullException(nameof(emailRepository));
+		_handleBarsService = handleBarsService ?? throw new ArgumentNullException(nameof(handleBarsService));
 	}
 
 	public async Task SendEmail(IEnumerable<MailboxAddress> toAddresses, IEnumerable<MailboxAddress>? ccAddresses, IEnumerable<MailboxAddress>? bccAddresses, string subject, string htmlContent, string plainTextContent, List<EmailAttachmentTbl>? attachments = null)
@@ -100,120 +102,10 @@ public class EmailService : IEmailService
 	{
 		return new ConstructedEmail
 		{
-			Subject = RunHandleBars(data, subjectTemplate, nameof(ConstructedEmail.Subject)),
-			HtmlContent = RunHandleBars(data, htmlTemplate, nameof(ConstructedEmail.HtmlContent)),
-			PlainTextContent = RunHandleBars(data, plainTextTemplate, nameof(ConstructedEmail.PlainTextContent)),
+			Subject = _handleBarsService.Render(subjectTemplate, data),
+			HtmlContent = _handleBarsService.Render(htmlTemplate, data),
+			PlainTextContent = _handleBarsService.Render(plainTextTemplate, data),
 		};
-	}
-
-	/// <summary>
-	/// Combines handlebars templates with data
-	/// </summary>
-	/// <param name="data"></param>
-	/// <param name="template"></param>
-	/// <param name="nameOfConstruction"></param>
-	/// <returns>Combined handlebars templates with data</returns>
-	/// <exception cref="ArgumentException">Thrown on any error</exception>
-	static string RunHandleBars(JsonNode data, string? template, string nameOfConstruction)
-	{
-		if (string.IsNullOrEmpty(template))
-		{
-			return data.ToJsonString();
-		}
-
-		try
-		{
-			Handlebars.RegisterHelper("ifCond", (output, options, context, arguments) =>
-			{
-				if (arguments.Length != 3)
-				{
-					throw new HandlebarsException("{{#StringEqualityBlockHelper}} helper must have exactly 3 arguments");
-				}
-
-				string v1 = arguments.At<string>(0);
-				string @operator = arguments.At<string>(1);
-				string v2 = arguments.At<string>(0);
-
-				switch (@operator)
-				{
-					case "==":
-						if (v1 == v2)
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
-
-					case "!=":
-						if (v1 != v2)
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
-
-					case "<":
-						if (Convert.ToDouble(v1) < Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
-
-					case "<=":
-						if (Convert.ToDouble(v1) <= Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
-
-					case ">":
-						if (Convert.ToDouble(v1) > Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
-
-					case ">=":
-						if (Convert.ToDouble(v1) >= Convert.ToDouble(v2))
-						{
-							options.Template(output, context);
-						}
-						else
-						{
-							options.Inverse(output, context);
-						}
-						break;
-				}
-			});
-
-			// Compile template
-			HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(template);
-
-			// Add data to template
-			return compiledTemplate(data);
-		}
-		catch (Exception)
-		{
-			throw new ArgumentException($"Error constructing {nameOfConstruction}", nameof(template));
-		}
 	}
 }
 

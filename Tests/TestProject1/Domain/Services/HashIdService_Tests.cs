@@ -3,10 +3,12 @@ using Domain.Services.HashId;
 using Microsoft.Extensions.Options;
 
 namespace UnitTests.Domain.Services;
+
 public class HashIdService_Tests
 {
 	readonly HashIdService _hashIdService;
 	readonly IOptions<HashSettings> _hashSettings;
+
 	public HashIdService_Tests()
 	{
 		_hashSettings = Options.Create(new HashSettings
@@ -99,7 +101,6 @@ public class HashIdService_Tests
 		Assert.Null(decordedResult);
 	}
 
-
 	public static IEnumerable<object[]> ProjectIdHashes
 	{
 		get
@@ -156,7 +157,6 @@ public class HashIdService_Tests
 		Assert.Null(projectId);
 	}
 
-
 	public static IEnumerable<object[]> TemplateIdHashes
 	{
 		get
@@ -212,7 +212,6 @@ public class HashIdService_Tests
 		// Assert
 		Assert.Null(projectId);
 	}
-
 
 	public static IEnumerable<object[]> EmailIdHashes
 	{

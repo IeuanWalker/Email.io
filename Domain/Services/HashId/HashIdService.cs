@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Domain.Models;
+﻿using Domain.Models;
 using HashidsNet;
 using Microsoft.Extensions.Options;
 
@@ -24,6 +23,7 @@ public class HashIdService : IHashIdService
 	{
 		return _hashidsProjectIdAndTemplateId.Encode(projectId, templateId);
 	}
+
 	public (int projectId, int templateId)? DecodeProjectAndTemplateId(string hash)
 	{
 		try
@@ -42,14 +42,17 @@ public class HashIdService : IHashIdService
 			return null;
 		}
 	}
+
 	public string EncodeProjectId(int projectId)
 	{
 		return _hashidsProjectId.Encode(projectId);
 	}
+
 	public int? DecodeProjectId(string hash)
 	{
 		return Decode(_hashidsProjectId, hash);
 	}
+
 	public string EncodeTemplateVersionId(int templateVersionId)
 	{
 		return _hashidsTemplateVersionId.Encode(templateVersionId);

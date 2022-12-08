@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Services.Slug;
+﻿using Domain.Services.Slug;
 
 namespace UnitTests.Domain.Services;
+
 public class SlugService_Tests
 {
 	readonly ISlugService _slugService = new SlugService();
 
-	
 	[Theory]
 	[InlineData("This is a test input string", "this-is-a-test-input-string")]
 	[InlineData("This is a test input string with !@#$%^&*()_+<>,.?/", "this-is-a-test-input-string-with")]

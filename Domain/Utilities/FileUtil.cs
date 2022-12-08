@@ -1,4 +1,5 @@
 ﻿namespace Domain.Utilities;
+
 public static class FileUtil
 {
 	/// <summary>
