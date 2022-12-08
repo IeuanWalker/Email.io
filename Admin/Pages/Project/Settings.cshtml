@@ -25,6 +25,59 @@
         }
 
     </style>
+
+    <style>
+        .pagination-container{
+            float: right;
+            margin: 5px;
+            padding: 5px;
+        }
+
+        .pagination-item {
+            cursor:pointer;
+            margin: 5px;
+            padding: 6px;
+        }
+
+        .pagination-item.disabled {
+            cursor: default;
+            opacity: .5;
+            pointer-events: none;
+        }
+        .pagination-item.current {
+            background: #5755d9;
+            color: #fff;
+        }
+
+        .pagination-item.previous,
+        .pagination-item.next
+        {
+                flex: 1 0 50%;
+        }
+
+        .dataTables_info{
+            opacity: 0.5;
+            font-size: 80%;
+        }
+    </style>
+
+    <style>
+        .loading-overlay{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #f7f8f9;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: grid;
+            z-index: 10;
+            padding: -10px;
+              transition: opacity 0.5s ease 0.5s;
+              opacity: 0;
+        }
+    </style>
 }
 
 <div class="sticky-header">
@@ -34,26 +87,7 @@
 <div class="container p-0">
     <div class="columns">
         <div class="column col-auto col-sm-12">
-            <ul class="menu submenu">
-                <li class="menu-item">
-                    <a class="tablinks cursor-pointer" data-tabId="General">General</a>
-                </li>
-                <li class="menu-item">
-                    <a class="tablinks cursor-pointer" data-tabId="UsersAccess">Users access</a>
-                </li>
-                <li class="menu-item">
-                    <a class="tablinks cursor-pointer" data-tabId="ApiKey">API key</a>
-                </li>
-                <li class="menu-item">
-                    <a class="tablinks cursor-pointer" data-tabId="SentEmails">Sent Emails</a>
-                </li>
-                <li class="menu-item">
-                    <a class="tablinks cursor-pointer" data-tabId="ActivityLog">Activity log</a>
-                </li>
-                <li class="menu-item">
-                    <a class="tablinks cursor-pointer" data-tabId="DeleteProject">Delete project</a>
-                </li>
-            </ul>
+            <ul class="menu submenu" id="submenuTabs"></ul>
         </div>
         <div class="column col" style="max-width: 800px">
             <div id="General" class="tabcontent active">
@@ -172,7 +206,7 @@
             </div>
             <div id="SentEmails" class="tabcontent">
                 <h2>Sent emails</h2>
-                <table id="sentEmailTable" class="table responsive" width="100%">
+                <table id="sentEmailTable" class="table responsive table-hover p-relative" width="100%">
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -280,15 +314,28 @@
 	        }], //  // Another optional usage, with a custom status bar item that counts keystrokes
         });
     </script>
-    @*Tabs*@
-    <script type="text/javascript">
-        var tabLinks = document.querySelectorAll(".tablinks");
-        var tabContent = document.querySelectorAll(".tabcontent");
+    <!-- Tabs -->
+    <script>
 
-        tabLinks.forEach(function (el) {
-            el.addEventListener("click", openTabs);
+    </script>
+    <script type="text/javascript">
+        var tabContent = document.querySelectorAll(".tabcontent");
+        var ul = document.getElementById("submenuTabs");
+        tabContent.forEach(function (el) {
+            var link = document.createElement("a");
+            link.className = 'tablinks cursor-pointer';
+            link.setAttribute('data-tabid', el.id);
+            link.innerHTML = el.querySelector("h2").textContent;
+            link.addEventListener("click", openTabs);
+
+            var li = document.createElement("li");
+            li.className = 'menu-item';
+            li.appendChild(link);
+            
+            ul.appendChild(li);
         });
 
+        var tabLinks = document.querySelectorAll(".tablinks");
         function openTabs(el) {
             hideApiKey();
 
@@ -307,6 +354,7 @@
             btnTarget.classList.add("active");
         }
     </script>
+    
 
 
     <!-- API key -->
@@ -506,18 +554,54 @@
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
     <script>
+        var loadingOverlay = null;
         $(document).ready(function () {
             $('#sentEmailTable').DataTable({
                 proccessing: true,
                 serverSide: true,
                 responsive: true,
                 fixedHeader: true,
+                language: {
+                    search: ""
+                },
                 ajax: {
                     url: '?handler=SentEmails',
                     type: 'POST',
                     headers: { 'RequestVerificationToken': $('@Html.AntiForgeryToken()').val() },
                     data: function (d){
                         d.ProjectId = @Model.Project.Id
+                    },
+                    beforeSend: function () {
+                        if (loadingOverlay !== null) {
+                            loadingOverlay.style.display = 'grid';
+                            loadingOverlay.style.opacity = 0.8;
+                        }
+                    },
+                    complete: function(){
+                        loadingOverlay.style.opacity = 0;
+
+                        var elements = document.getElementsByClassName("dataTables_paginate");
+
+                        if(elements.length == 0){
+                            elements = document.getElementsByClassName("pagination-container");
+                        }
+
+                        // Loop through the elements and do something with each element
+                        for (var i = 0; i < elements.length; i++) {
+                            var element = elements[i];
+
+                            element.classList.remove('dataTables_paginate');
+                            element.classList.add('pagination-container');
+
+                            // Get all a elements within each element
+                            var links = element.querySelectorAll("a");
+                            for (var i = 0; i < links.length; i++) {
+                                var link = links[i];
+
+                                link.classList.remove('paginate_button');
+                                link.classList.add('pagination-item');
+                            }
+                        }
                     }
                 },
                 columnDefs: [
@@ -527,6 +611,30 @@
                     { "name": "ToAddresses", "data": "toAddresses", "targets": 3, "orderable": false }
                 ],
                 order: [[0, "desc"]],
+                initComplete: function (settings, json) {
+                    $('#sentEmailTable').prepend('<div id="sentEmailsLoader" class="loading-overlay"><div class="loading loading-lg"></div></div>');
+                    loadingOverlay = document.getElementById('sentEmailsLoader');
+                    loadingOverlay.addEventListener('transitionend', () => {
+                        if(loadingOverlay.style.opacity == 0){
+                            loadingOverlay.style.display = 'none';
+                        }
+                    });
+
+
+                    const elements = document.querySelectorAll(".dataTables_length");
+                    elements.forEach(element => element.remove());
+
+                    const parentElement = document.getElementById("sentEmailTable_filter");
+                    const searchFields = parentElement.querySelectorAll('input[type="search"]');
+
+
+                    for (var i = 0; i < searchFields.length; i++) {
+                        var searchField = searchFields[i];
+
+                        searchField.classList.add('form-input');
+                        searchField.placeholder = "search";
+                    }
+                }
             });
         });
     </script>
