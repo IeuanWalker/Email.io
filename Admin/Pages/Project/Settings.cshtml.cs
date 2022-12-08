@@ -1,4 +1,3 @@
-using Admin.Pages.Components.SentEmails;
 using Database.Models;
 using Database.Repositories.Email;
 using Database.Repositories.Project;
@@ -174,4 +173,52 @@ public class SettingsModel : PageModel
 			Data = data
 		});
 	}
+}
+
+public class SentEmailsDataTablesRequest : DataTablesRequest
+{
+	public int ProjectId { get; set; }
+}
+
+
+public class DataTablesRequest
+{
+	public int Draw { get; set; }
+
+	public List<Column> Columns { get; set; }
+
+	public List<Order> Order { get; set; }
+
+	public int Start { get; set; }
+
+	public int Length { get; set; }
+
+	public Search Search { get; set; }
+}
+
+public class Column
+{
+	public string Data { get; set; }
+
+	public string Name { get; set; }
+
+	public bool Searchable { get; set; }
+
+	public bool Orderable { get; set; }
+
+	public Search Search { get; set; }
+}
+
+public class Order
+{
+	public int Column { get; set; }
+
+	public string Dir { get; set; }
+}
+
+public class Search
+{
+	public string Value { get; set; }
+
+	public bool IsRegex { get; set; }
 }

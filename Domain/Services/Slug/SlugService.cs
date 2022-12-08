@@ -13,33 +13,35 @@ public partial class SlugService : ISlugService
 	public string GenerateSlug(string text, string id)
 	{
 		return $"{TextToUrlSlug(text)}-{id}";
+
+		// TODO: Benchmark
+		//StringBuilder slugBuilder = new();
+		//slugBuilder.Append(TextToUrlSlug(text));
+		//slugBuilder.Append('-');
+		//slugBuilder.Append(id);
+		//return slugBuilder.ToString();
 	}
 
 	public string GetIdFromSlug(string slug)
 	{
 		return slug.Split('-')[^1];
+
+		// TODO: Benchmark
+		//int lastHyphenIndex = slug.LastIndexOf('-');
+		//return slug.Substring(lastHyphenIndex + 1);
 	}
 
 	[GeneratedRegex(@"[^a-z0-9\s-]", RegexOptions.Compiled)]
-	private static partial Regex MatchInValidCharacters();
-	[GeneratedRegex(@"\s+", RegexOptions.Compiled)]
-	private static partial Regex MatchMultipleSpaces();
+	private static partial Regex MatchInValidCharactersRegex();
+	[GeneratedRegex(@"[\s._-]+", RegexOptions.Compiled)]
+	private static partial Regex ReplaceWithHyphenRegex();
 	static string TextToUrlSlug(string text)
 	{
-		text = RemoveAccent(text).ToLower();
-
-		text = text.Replace(".", " "); // Replaces full stop with a space
-		text = text.Replace("-", " "); // Replaces full stop with a space
-		text = MatchInValidCharacters().Replace(text, string.Empty); // Removes invalid characters
-		text = MatchMultipleSpaces().Replace(text, " "); // Replaces multiple spaces with a single space
-		text = text.Trim().Replace(" ", "-"); // Replaces spaces with a hyphen
+		text = text.Normalize(NormalizationForm.FormD).ToLowerInvariant();
+		text = ReplaceWithHyphenRegex().Replace(text, "-");
+		text = MatchInValidCharactersRegex().Replace(text, string.Empty);
+		text = text.Trim('-');
 
 		return text;
-	}
-
-	static string RemoveAccent(string txt)
-	{
-		byte[] bytes = Encoding.GetEncoding("Cyrillic").GetBytes(txt);
-		return Encoding.ASCII.GetString(bytes);
 	}
 }
