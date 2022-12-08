@@ -1,6 +1,5 @@
 using System.Reflection;
 using Admin.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace Admin;
 
@@ -16,6 +15,9 @@ public class Startup
 	// This method gets called by the runtime. Use this method to add services to the container.
 	public void ConfigureServices(IServiceCollection services)
 	{
+		// App settings
+		AppSettingsConfiguration.ConfigureServices(services, Configuration);
+
 		services.AddMemoryCache();
 
 		// Interface mapping
@@ -32,8 +34,6 @@ public class Startup
 
 		services.AddRazorPages()
 			.AddRazorRuntimeCompilation();
-
-	
 	}
 
 	// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,7 +65,5 @@ public class Startup
 		app.UseAuthorization();
 
 		app.UseEndpoints(endpoints => endpoints.MapRazorPages());
-
-
 	}
 }

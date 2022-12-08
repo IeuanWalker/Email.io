@@ -5,6 +5,7 @@ using Database.Repositories.TemplateTestData;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.ApiKey;
 using Domain.Services.Email;
+using Domain.Services.Handlebars;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
 
@@ -27,5 +28,6 @@ static class InterfaceConfiguration
 		services.AddTransient<IApiKeyService, ApiKeyService>();
 		services.AddSingleton<IHashIdService, HashIdService>();
 		services.AddSingleton<ISlugService, SlugService>();
+		services.AddSingleton<IHandleBarsService, HandleBarsService>();
 	}
 }

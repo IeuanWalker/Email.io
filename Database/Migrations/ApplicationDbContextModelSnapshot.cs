@@ -68,15 +68,15 @@ namespace Database.Migrations
                     b.Property<int?>("AttachementsId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SavedFile")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

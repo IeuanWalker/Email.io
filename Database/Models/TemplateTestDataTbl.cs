@@ -8,8 +8,10 @@ public class TemplateTestDataTbl
 {
 	[Key]
 	public int Id { get; set; }
+
 	[MaxLength(200)]
 	public string Name { get; set; } = default!;
+
 	public string Data { get; set; } = default!;
 	public bool IsDefault { get; set; }
 

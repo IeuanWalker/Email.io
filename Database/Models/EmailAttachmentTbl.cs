@@ -8,7 +8,8 @@ public class EmailAttachmentTbl
 {
 	[Key]
 	public int Id { get; set; }
+
 	public string FileName { get; set; } = default!;
 	public string ContentType { get; set; } = default!;
-	public string SavedFile { get; set; } = default!;
+	public string Content { get; set; } = default!;
 }

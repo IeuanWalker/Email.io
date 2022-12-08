@@ -1,4 +1,4 @@
-using Admin.Pages.Components.SentEmails;
+using System.Linq.Dynamic.Core;
 using Database.Models;
 using Database.Repositories.Email;
 using Database.Repositories.Project;
@@ -8,8 +8,6 @@ using Domain.Services.Slug;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Linq.Dynamic.Core;
 
 namespace Admin.Pages.Project;
 
@@ -36,11 +34,11 @@ public class SettingsModel : PageModel
 	}
 
 	[BindProperty]
-	public ProjectTbl? Project { get; set; }
+	public ProjectTbl Project { get; set; } = default!;
 
 	public async Task<IActionResult> OnGet(string slug)
 	{
-		int? id = _hashIdService.Decode(_slugService.GetIdFromSlug(slug));
+		int? id = _hashIdService.DecodeProjectId(_slugService.GetIdFromSlug(slug));
 
 		if (id is null)
 		{
@@ -83,13 +81,13 @@ public class SettingsModel : PageModel
 
 	public async Task<IActionResult> OnPostDeleteProject()
 	{
-		Project = await _projectTbl.GetByID(DeleteProjectId);
-		if (Project is null)
+		var project = await _projectTbl.GetByID(DeleteProjectId);
+		if (project is null)
 		{
 			return NotFound();
 		}
 
-		await _projectTbl.Delete(Project.Id);
+		await _projectTbl.Delete(project.Id);
 
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "Project deleted";
@@ -119,75 +117,107 @@ public class SettingsModel : PageModel
 		});
 	}
 
-	[BindProperty]
-	public SentEmailsDataTablesRequest DataTablesRequest { get; set; }
-
-	public async Task<JsonResult> OnPostSentEmails()
+	public async Task<JsonResult> OnPostSentEmails(SentEmailsDataTablesRequest dataTablesRequest)
 	{
-		var recordsTotal = await _emailTbl.Where(x => x.ProjectId.Equals(DataTablesRequest.ProjectId)).CountAsync();
+		int recordsTotal = await _emailTbl.Where(x => x.ProjectId.Equals(dataTablesRequest.ProjectId)).CountAsync();
 
-		var sentEmailsQuery = _emailTbl.Where();
+		IQueryable<EmailTbl> sentEmailsQuery = _emailTbl.Where();
 
-		// TODO: Add email search
 		// TODO: Add template filtering
 
-		if (!string.IsNullOrWhiteSpace(DataTablesRequest.Search.Value))
+		if (!string.IsNullOrWhiteSpace(dataTablesRequest.Search.Value))
 		{
-			foreach (string word in DataTablesRequest.Search.Value.Split(' '))
+			foreach (string word in dataTablesRequest.Search.Value.Split(' '))
 			{
-				if (word.Contains('@'))
-				{
-					sentEmailsQuery = sentEmailsQuery.Where(x => x.ToAddresses.Any(e => e.Email.StartsWith(word)));
-					continue;
-				}
-
-				int? emailId = _hashIdService.Decode(word, 30);
-
+				int? emailId = _hashIdService.DecodeEmailId(word);
 				if (emailId is not null)
 				{
 					sentEmailsQuery = sentEmailsQuery.Where(x => x.Id.Equals(emailId));
+					break;
 				}
-				else
+
+				if (word.Contains('@'))
 				{
-					sentEmailsQuery = sentEmailsQuery.Where(x => x.ToAddresses.Any(e => e.Name.Contains(word)));
+					sentEmailsQuery = sentEmailsQuery.Where(x => x.ToAddresses.Any(e => e.Email.StartsWith(word)));
+					break;
 				}
+
+				sentEmailsQuery = sentEmailsQuery.Where(x => x.ToAddresses.Any(e => e.Name!.Contains(word)) || x.ToAddresses.Any(e => e.Email.StartsWith(word)));
 			}
 		}
 
-		var recordsFiltered = sentEmailsQuery.Count();
+		int recordsFiltered = await sentEmailsQuery.CountAsync();
 
-		var sortColumnName = DataTablesRequest.Columns.ElementAt(DataTablesRequest.Order.ElementAt(0).Column).Name;
-		var sortDirection = DataTablesRequest.Order.ElementAt(0).Dir.ToLower();
+		foreach (var order in dataTablesRequest.Order)
+		{
+			sentEmailsQuery = sentEmailsQuery.OrderBy($"{dataTablesRequest.Columns[order.Column].Name} {order.Dir.ToLower()}");
+		}
 
-		sentEmailsQuery = sentEmailsQuery.OrderBy($"{sortColumnName} {sortDirection}");
-
-		var skip = DataTablesRequest.Start;
-		var take = DataTablesRequest.Length;
 		var data = (await sentEmailsQuery
 			.Select(x => new
 			{
 				x.Id,
 				x.TemplateId,
-				x.Sent,
-				x.ToAddresses
+				Sent = ((DateTime)x.Sent!).ToString("dd/MM/yyyy hh:mm tt"),
+				ToAddresses = string.Join(", ", x.ToAddresses.Select(e => $"{e.Name} ({e.Email})")),
 			})
-			.Skip(skip)
-			.Take(take)
-			.ToListAsync())
-			.Select(x => new
-			{
-				x.Id,
-				x.TemplateId,
-				Sent = x.Sent?.ToString("dd/MM/yyyy hh:mm tt") ?? string.Empty,
-				ToAddresses = string.Join(", ", x.ToAddresses.Select(y => $"{y.Name} ({y.Email})"))
-			});
+			.Skip(dataTablesRequest.Start)
+			.Take(dataTablesRequest.Length)
+			.ToListAsync());
 
 		return new JsonResult(new
 		{
-			DataTablesRequest.Draw,
+			dataTablesRequest.Draw,
 			RecordsTotal = recordsTotal,
 			RecordsFiltered = recordsFiltered,
 			Data = data
 		});
 	}
+}
+
+public class SentEmailsDataTablesRequest : DataTablesRequest
+{
+	public int ProjectId { get; set; }
+}
+
+public class DataTablesRequest
+{
+	public int Draw { get; set; }
+
+	public List<Column> Columns { get; set; }
+
+	public List<Order> Order { get; set; }
+
+	public int Start { get; set; }
+
+	public int Length { get; set; }
+
+	public Search Search { get; set; }
+}
+
+public class Column
+{
+	public string Data { get; set; }
+
+	public string Name { get; set; }
+
+	public bool Searchable { get; set; }
+
+	public bool Orderable { get; set; }
+
+	public Search Search { get; set; }
+}
+
+public class Order
+{
+	public int Column { get; set; }
+
+	public string Dir { get; set; }
+}
+
+public class Search
+{
+	public string Value { get; set; }
+
+	public bool IsRegex { get; set; }
 }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Nodes;
-using Api.Infrastructure;
+﻿using Api.Infrastructure;
 using AutoMapper;
 using Database.Models;
 using Database.Repositories.Email;
@@ -15,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace EmailApi.Controllers;
+namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -53,7 +51,7 @@ public class EmailController : Controller
 	// TODO: Handle no email addresses
 	[HttpPost]
 	[Authorize]
-	public async Task<IActionResult> SendEmail([FromBody]EmailModel request)
+	public async Task<IActionResult> SendEmail([FromBody] EmailModel request)
 	{
 		// Get Ids from hash
 		(int projectId, int templateId)? result = _hashedService.DecodeProjectAndTemplateId(request.TemplateId);
@@ -62,28 +60,22 @@ public class EmailController : Controller
 			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, is not valid");
 		}
 
-
-
-		// TODO: Move to data attribute validate
-		// Validate attachments
-		foreach (var attachment in request.Attachments ?? Enumerable.Empty<AttachementsModels>())
-		{
-			if (!IsBase64String(attachment.Content))
-			{
-				return BadRequest($"{attachment.FileName} doesn't have a valid base64 string");
-			}
-		}
-
 		// Get API key from header
 		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out var apiKey);
 
 		// Get template
-		TemplateVersionTbl? template = await _templateVersionTbl
-			.Where(x => 
+		var template = await _templateVersionTbl
+			.Where(x =>
 				x.TemplateId.Equals(result.Value.templateId) &&
 				x.IsActive &&
 				x.Template.ProjectId.Equals(result.Value.projectId) &&
 				x.Template.Project.ApiKey.Equals(apiKey))
+			.Select(x => new
+			{
+				x.Html,
+				x.PlainText,
+				x.Subject,
+			})
 			.FirstOrDefaultAsync();
 
 		// If template is null, find out why and return 400 Bad Request, with a message why
@@ -143,13 +135,6 @@ public class EmailController : Controller
 			// ignore
 		}
 
-		return Ok(_hashedService.Encode(email.Id, 30));
-	}
-
-
-	public static bool IsBase64String(string base64)
-	{
-		Span<byte> buffer = new Span<byte>(new byte[base64.Length]);
-		return Convert.TryFromBase64String(base64, buffer, out int bytesParsed);
+		return Ok(_hashedService.EncodeEmailId(email.Id));
 	}
 }

@@ -35,7 +35,7 @@ public class IndexModel : PageModel
 		if (result?.Any() ?? false)
 		{
 			Projects = _mapper.Map<List<ProjectResponseModel1>>(result);
-			Projects.ForEach(x => x.Slug = _slugService.GenerateSlug(x.Name, _hashIdService.Encode(x.Id)));
+			Projects.ForEach(x => x.Slug = _slugService.GenerateSlug(x.Name, _hashIdService.EncodeProjectId(x.Id)));
 		}
 	}
 }

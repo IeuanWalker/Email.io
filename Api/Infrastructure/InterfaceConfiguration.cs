@@ -3,9 +3,10 @@ using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.Email;
+using Domain.Services.Handlebars;
 using Domain.Services.HashId;
 
-namespace Admin.Infrastructure;
+namespace Api.Infrastructure;
 
 static class InterfaceConfiguration
 {
@@ -21,5 +22,6 @@ static class InterfaceConfiguration
 		services.AddTransient<IEmailRepository, EmailRepository>();
 		services.AddTransient<IEmailService, EmailService>();
 		services.AddSingleton<IHashIdService, HashIdService>();
+		services.AddSingleton<IHandleBarsService, HandleBarsService>();
 	}
 }

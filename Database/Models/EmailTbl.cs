@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net.Mail;
 
 namespace Database.Models;
 
@@ -12,8 +11,6 @@ public class EmailTbl
 
 	public int TemplateId { get; set; }
 	public string Data { get; set; } = string.Empty;
-
-
 
 	[ForeignKey("ToAddressesEmailId")]
 	public ICollection<EmailAddressTbl> ToAddresses { get; set; } = new List<EmailAddressTbl>();
@@ -33,6 +30,7 @@ public class EmailTbl
 
 	[ForeignKey("AttachementsId")]
 	public ICollection<EmailAttachmentTbl>? Attachements { get; set; }
+
 	public int AttachementCount { get; set; }
 
 	public string? HangfireId { get; set; }
