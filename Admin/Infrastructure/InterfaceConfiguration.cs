@@ -8,6 +8,7 @@ using Domain.Services.Email;
 using Domain.Services.Handlebars;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
+using Domain.Services.Thumbnail;
 
 namespace Admin.Infrastructure;
 
@@ -29,5 +30,6 @@ static class InterfaceConfiguration
 		services.AddSingleton<IHashIdService, HashIdService>();
 		services.AddSingleton<ISlugService, SlugService>();
 		services.AddSingleton<IHandleBarsService, HandleBarsService>();
+		services.AddTransient<IThumbnailService, ThumbnailService>();
 	}
 }

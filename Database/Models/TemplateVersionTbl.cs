@@ -22,7 +22,6 @@ public class TemplateVersionTbl : BaseEntityModifiedDate
 	public string? Categories { get; set; }
 	public bool IsActive { get; set; }
 	public string? ThumbnailImage { get; set; }
-	public string? PreviewImage { get; set; }
 	public ICollection<TemplateTestDataTbl> TestData { get; set; } = new List<TemplateTestDataTbl>();
 	public int TemplateId { get; set; }
 	public TemplateTbl Template { get; set; } = null!;
