@@ -219,7 +219,7 @@ public static class LambdaCompare
 				   .All(o => Equals(o.X, o.Y));
 	}
 
-	struct ConstantValue
+	private struct ConstantValue
 	{
 		public ConstantValue(bool isDefined, object value)
 			: this()

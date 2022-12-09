@@ -8,6 +8,7 @@ using Domain.Services.Thumbnail;
 using Moq;
 
 namespace UnitTests.Domain.Services;
+
 public class ThumbnailService_Tests
 {
 	readonly IThumbnailService _thumbnailService;
@@ -23,7 +24,6 @@ public class ThumbnailService_Tests
 			_blobStorageService.Object);
 	}
 
-
 	[Fact]
 	public async Task GenerateThumbnail_ShouldReturnNull_WhenTemplateVersionIsNotFound()
 	{
@@ -34,11 +34,11 @@ public class ThumbnailService_Tests
 		_templateVersionTbl
 			.Setup(x => x.Get(
 				It.IsAny<Expression<Func<TemplateVersionTbl, bool>>?>(),
-				It.IsAny<Func<IQueryable<TemplateVersionTbl>, IOrderedQueryable<TemplateVersionTbl>>?>(), 
-				It.IsAny<string>(), 
+				It.IsAny<Func<IQueryable<TemplateVersionTbl>, IOrderedQueryable<TemplateVersionTbl>>?>(),
+				It.IsAny<string>(),
 				It.IsAny<bool>()))
 			.ReturnsAsync(Enumerable.Empty<TemplateVersionTbl>().AsQueryable());
-		
+
 		// Act
 		await _thumbnailService.GenerateThumbnail(templateVersionId);
 
@@ -76,7 +76,6 @@ public class ThumbnailService_Tests
 		_templateVersionTbl.Verify(x => x.Update(It.IsAny<TemplateVersionTbl>()), Times.Never());
 	}
 
-
 	[Fact]
 	public async Task GenerateThumbnail_ShouldReturnNull_WhenTestDataIsNotFound()
 	{
@@ -103,8 +102,6 @@ public class ThumbnailService_Tests
 		_templateVersionTbl.Verify(x => x.Update(It.IsAny<TemplateVersionTbl>()), Times.Never());
 	}
 
-
-
 	[Fact]
 	public async Task GenerateThumbnail_ShouldSaveBlobUrl()
 	{
@@ -113,7 +110,7 @@ public class ThumbnailService_Tests
 		const string testData = "{\"name\": \"John Doe\"}";
 		const string html = "<html><body><h1>{{name}}</h1></body></html>";
 		const string thumbnailImage = "https://mystorageaccount.blob.core.windows.net/thumbnails/Template-1-Version-1-thumbnail.png";
-		
+
 		_templateVersionTbl
 			.Setup(x => x.Get(It.IsAny<Expression<Func<TemplateVersionTbl, bool>>?>(), It.IsAny<Func<IQueryable<TemplateVersionTbl>, IOrderedQueryable<TemplateVersionTbl>>?>(), It.IsAny<string>(), It.IsAny<bool>()))
 			.ReturnsAsync(new List<TemplateVersionTbl>()
@@ -140,7 +137,7 @@ public class ThumbnailService_Tests
 		_handlebarsService
 			.Setup(service => service.Render(html, It.IsAny<JsonNode>()))
 			.Returns("<html><body><h1>John Doe</h1></body></html>");
-		
+
 		_blobStorageService
 			.Setup(service => service.SaveImage(
 				It.IsAny<int>(),
@@ -154,5 +151,4 @@ public class ThumbnailService_Tests
 		// Assert
 		_templateVersionTbl.Verify(repo => repo.Update(It.Is<TemplateVersionTbl>(version => version.ThumbnailImage == thumbnailImage)), Times.Once());
 	}
-
 }

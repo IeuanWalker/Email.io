@@ -1,4 +1,5 @@
 ﻿namespace Domain.Services.BlobStorage;
+
 public interface IBlobStorageService
 {
 	/// <summary>

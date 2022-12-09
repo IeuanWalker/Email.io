@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Utilities;
+﻿using Domain.Utilities;
 
 namespace UnitTests.Domain.Utilities;
+
 public class FileUitl_Test
 {
 	[Fact]

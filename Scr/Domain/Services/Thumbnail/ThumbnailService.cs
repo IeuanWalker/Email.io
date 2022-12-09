@@ -1,16 +1,18 @@
 ﻿using System.Text.Json.Nodes;
+using CoreHtmlToImage;
 using Database.Models;
 using Database.Repositories.TemplateVersion;
-using Domain.Services.Handlebars;
-using CoreHtmlToImage;
 using Domain.Services.BlobStorage;
+using Domain.Services.Handlebars;
 
 namespace Domain.Services.Thumbnail;
+
 public class ThumbnailService : IThumbnailService
 {
 	readonly ITemplateVersionRepository _templateVersionTbl;
 	readonly IHandlebarsService _handlebarsService;
 	readonly IBlobStorageService _blobStorageService;
+
 	public ThumbnailService(
 		ITemplateVersionRepository templateVersionTbl,
 		IHandlebarsService handlebarsService,

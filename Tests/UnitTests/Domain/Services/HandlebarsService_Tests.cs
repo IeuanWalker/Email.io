@@ -10,6 +10,7 @@ namespace UnitTests.Domain.Services;
 public class HandlebarsService_Tests
 {
 	readonly IHandlebarsService _handlebarsService;
+
 	public HandlebarsService_Tests()
 	{
 		_handlebarsService = new HandlebarsService();
@@ -200,6 +201,7 @@ public class HandlebarsService_Tests
 		// Assert
 		Assert.Equal("Hello adult", result);
 	}
+
 	[Fact]
 	public void TestRender_WithIfCondHelperAndGreaterThanValues_ShouldRenderInverse()
 	{
@@ -233,6 +235,7 @@ public class HandlebarsService_Tests
 		// Assert
 		Assert.Equal("Hello adult", result);
 	}
+
 	[Fact]
 	public void TestRender_WithIfCondHelperAndGreaterThanOrEqualValues_ShouldRenderInverse()
 	{
@@ -268,6 +271,7 @@ public class HandlebarsService_Tests
 		// Assert
 		Assert.Equal("Hello Ieuan", result);
 	}
+
 	[Fact]
 	public void TestRender_WithIfHelperAndFalsyValue_ShouldRenderInverse()
 	{
@@ -284,6 +288,7 @@ public class HandlebarsService_Tests
 		// Assert
 		Assert.Equal("Hello world", result);
 	}
+
 	[Fact]
 	public void TestRender_WithUnlessHelperAndFalsyValue_ShouldRenderTemplate()
 	{
@@ -300,6 +305,7 @@ public class HandlebarsService_Tests
 		// Assert
 		Assert.Equal("Hello world", result);
 	}
+
 	[Fact]
 	public void TestRender_WithUnlessHelperAndTruthyValue_ShouldRenderInverse()
 	{
@@ -412,7 +418,7 @@ public class HandlebarsService_Tests
 		Assert.Equal("Nils lives in DarmstadtYehuda lives in San Francisco", result);
 	}
 
-	//! Large complex test 
+	//! Large complex test
 	[Fact]
 	public void TestRender_WithHugeTemplateAndData_ShouldRenderTemplate()
 	{

@@ -1,4 +1,5 @@
 ﻿namespace Domain.Services.Thumbnail;
+
 public interface IThumbnailService
 {
 	/// <summary>
