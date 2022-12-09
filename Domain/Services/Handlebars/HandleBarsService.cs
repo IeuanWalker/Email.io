@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Nodes;
 using HandlebarsDotNet;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Domain.Services.Handlebars;
 
@@ -30,7 +31,7 @@ public class HandleBarsService : IHandleBarsService
 
 			string v1 = arguments.At<string>(0);
 			string @operator = arguments.At<string>(1);
-			string v2 = arguments.At<string>(0);
+			string v2 = arguments.At<string>(2);
 
 			switch (@operator)
 			{
