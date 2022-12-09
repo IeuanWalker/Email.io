@@ -4,6 +4,7 @@ using Database.Repositories.Template;
 using Database.Repositories.TemplateTestData;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.ApiKey;
+using Domain.Services.BlobStorage;
 using Domain.Services.Email;
 using Domain.Services.Handlebars;
 using Domain.Services.HashId;
@@ -31,5 +32,6 @@ static class InterfaceConfiguration
 		services.AddSingleton<ISlugService, SlugService>();
 		services.AddSingleton<IHandleBarsService, HandleBarsService>();
 		services.AddTransient<IThumbnailService, ThumbnailService>();
+		services.AddSingleton<IBlobStorageService, BlobStorageService>();
 	}
 }
