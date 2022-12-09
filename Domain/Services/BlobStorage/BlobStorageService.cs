@@ -5,6 +5,10 @@ using Azure.Storage.Blobs;
 namespace Domain.Services.BlobStorage;
 public class BlobStorageService : IBlobStorageService
 {
+	public BlobStorageService()
+	{
+
+	}
 	public async Task<Uri> SaveImage(int projectId, byte[] file, string name)
 	{
 		// TODO: Upgrade to Stowage for a generic blob storage implementation, once it supports Azurite - https://github.com/aloneguid/stowage/issues/5
