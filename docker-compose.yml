@@ -42,7 +42,7 @@ services:
         - azurite
     build:
       context: .
-      dockerfile: Admin/Dockerfile
+      dockerfile: Scr/Admin/Dockerfile
     ports:
         - "8080:80"
     environment:
@@ -59,7 +59,7 @@ services:
         - azurite
     build:
       context: .
-      dockerfile: Api/Dockerfile
+      dockerfile: Scr/Api/Dockerfile
     ports:
         - "8010:80"
     environment:
