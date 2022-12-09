@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Azure.Storage.Blobs.Models;
+﻿using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
 using Azure.Storage.Blobs;
 
@@ -12,6 +7,7 @@ public class BlobStorageService : IBlobStorageService
 {
 	public async Task<Uri> SaveImage(int projectId, byte[] file, string name)
 	{
+		// TODO: Upgrade to Stowage for a generic blob storage implementation, once it supports Azurite - https://github.com/aloneguid/stowage/issues/5
 		BlobContainerClient blobContainerClient = new(
 			"UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite",
 			$"project-{projectId.ToString().ToLower()}");
