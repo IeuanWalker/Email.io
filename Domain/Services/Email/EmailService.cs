@@ -12,9 +12,9 @@ namespace Domain.Services.Email;
 public class EmailService : IEmailService
 {
 	readonly IEmailRepository _emailRepository;
-	readonly IHandleBarsService _handleBarsService;
+	readonly IHandlebarsService _handleBarsService;
 
-	public EmailService(IEmailRepository emailRepository, IHandleBarsService handleBarsService)
+	public EmailService(IEmailRepository emailRepository, IHandlebarsService handleBarsService)
 	{
 		_emailRepository = emailRepository ?? throw new ArgumentNullException(nameof(emailRepository));
 		_handleBarsService = handleBarsService ?? throw new ArgumentNullException(nameof(handleBarsService));

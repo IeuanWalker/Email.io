@@ -1,12 +1,11 @@
 ﻿using System.Text.Json.Nodes;
 using HandlebarsDotNet;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Domain.Services.Handlebars;
 
-public class HandleBarsService : IHandleBarsService
+public class HandlebarsService : IHandlebarsService
 {
-	public HandleBarsService()
+	public HandlebarsService()
 	{
 		RegisterHelpers();
 	}
