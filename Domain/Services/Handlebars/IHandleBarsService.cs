@@ -2,7 +2,7 @@
 
 namespace Domain.Services.Handlebars;
 
-public interface IHandleBarsService
+public interface IHandlebarsService
 {
 	/// <summary>
 	/// Render a Handlebars template with data.

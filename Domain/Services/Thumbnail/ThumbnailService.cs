@@ -9,11 +9,11 @@ namespace Domain.Services.Thumbnail;
 public class ThumbnailService : IThumbnailService
 {
 	readonly ITemplateVersionRepository _templateVersionTbl;
-	readonly IHandleBarsService _handlebarsService;
+	readonly IHandlebarsService _handlebarsService;
 	readonly IBlobStorageService _blobStorageService;
 	public ThumbnailService(
 		ITemplateVersionRepository templateVersionTbl,
-		IHandleBarsService handlebarsService,
+		IHandlebarsService handlebarsService,
 		IBlobStorageService blobStorageService)
 	{
 		_templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));

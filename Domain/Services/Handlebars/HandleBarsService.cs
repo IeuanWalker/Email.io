@@ -3,9 +3,9 @@ using HandlebarsDotNet;
 
 namespace Domain.Services.Handlebars;
 
-public class HandleBarsService : IHandleBarsService
+public class HandlebarsService : IHandlebarsService
 {
-	public HandleBarsService()
+	public HandlebarsService()
 	{
 		RegisterHelpers();
 	}

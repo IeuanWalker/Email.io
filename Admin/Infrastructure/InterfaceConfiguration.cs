@@ -30,7 +30,7 @@ static class InterfaceConfiguration
 		services.AddTransient<IApiKeyService, ApiKeyService>();
 		services.AddSingleton<IHashIdService, HashIdService>();
 		services.AddSingleton<ISlugService, SlugService>();
-		services.AddSingleton<IHandleBarsService, HandleBarsService>();
+		services.AddSingleton<IHandlebarsService, HandlebarsService>();
 		services.AddTransient<IThumbnailService, ThumbnailService>();
 		services.AddSingleton<IBlobStorageService, BlobStorageService>();
 	}

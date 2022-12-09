@@ -12,7 +12,7 @@ public class ThumbnailService_Tests
 {
 	readonly IThumbnailService _thumbnailService;
 	readonly Mock<ITemplateVersionRepository> _templateVersionTbl = new Mock<ITemplateVersionRepository>();
-	readonly Mock<IHandleBarsService> _handlebarsService = new Mock<IHandleBarsService>();
+	readonly Mock<IHandlebarsService> _handlebarsService = new Mock<IHandlebarsService>();
 	readonly Mock<IBlobStorageService> _blobStorageService = new Mock<IBlobStorageService>();
 
 	public ThumbnailService_Tests()

@@ -9,10 +9,10 @@ namespace UnitTests.Domain.Services;
 /// </summary>
 public class HandlebarsService_Tests
 {
-	readonly IHandleBarsService _handlebarsService;
+	readonly IHandlebarsService _handlebarsService;
 	public HandlebarsService_Tests()
 	{
-		_handlebarsService = new HandleBarsService();
+		_handlebarsService = new HandlebarsService();
 	}
 
 	[Fact]
