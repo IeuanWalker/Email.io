@@ -31,7 +31,7 @@ static class DatabaseConfiguration
 	{
 		try
 		{
-			using var scope = app.ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope();
+			using IServiceScope? scope = app.ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope();
 			Console.WriteLine("Applying migrations");
 
 			scope?.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
@@ -40,6 +40,7 @@ static class DatabaseConfiguration
 		}
 		catch (Exception)
 		{
+			#pragma warning disable S112 // General exceptions should never be thrown
 			throw new ApplicationException("Database migration need to be applied manually");
 		}
 	}

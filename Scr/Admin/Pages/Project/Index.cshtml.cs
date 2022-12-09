@@ -30,7 +30,7 @@ public class IndexModel : PageModel
 
 	public async Task OnGet()
 	{
-		var result = await _projectTbl.Get(orderBy: x => x.OrderByDescending(a => a.DateModified)).ConfigureAwait(false);
+		IEnumerable<ProjectTbl> result = await _projectTbl.Get(orderBy: x => x.OrderByDescending(a => a.DateModified)).ConfigureAwait(false);
 
 		if (result?.Any() ?? false)
 		{

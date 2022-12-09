@@ -85,10 +85,10 @@ public class IsContentTypeAttribute_Test
 	public void IsValid_ValidContentTypes_ReturnsTrue(string fileName)
 	{
 		// Arrange
-		var attribute = new IsContentTypeAttribute();
+		IsContentTypeAttribute attribute = new();
 
 		// Act
-		var result = attribute.IsValid(fileName);
+		bool result = attribute.IsValid(fileName);
 
 		// Assert
 		Assert.True(result);
@@ -112,10 +112,10 @@ public class IsContentTypeAttribute_Test
 	public void IsValid_InvalidContentTypes_ReturnsFalse(string fileName)
 	{
 		// Arrange
-		var attribute = new IsContentTypeAttribute();
+		IsContentTypeAttribute attribute = new();
 
 		// Act
-		var result = attribute.IsValid(fileName);
+		bool result = attribute.IsValid(fileName);
 
 		// Assert
 		Assert.False(result);

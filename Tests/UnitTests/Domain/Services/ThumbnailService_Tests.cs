@@ -12,9 +12,9 @@ namespace UnitTests.Domain.Services;
 public class ThumbnailService_Tests
 {
 	readonly IThumbnailService _thumbnailService;
-	readonly Mock<ITemplateVersionRepository> _templateVersionTbl = new Mock<ITemplateVersionRepository>();
-	readonly Mock<IHandlebarsService> _handlebarsService = new Mock<IHandlebarsService>();
-	readonly Mock<IBlobStorageService> _blobStorageService = new Mock<IBlobStorageService>();
+	readonly Mock<ITemplateVersionRepository> _templateVersionTbl = new();
+	readonly Mock<IHandlebarsService> _handlebarsService = new();
+	readonly Mock<IBlobStorageService> _blobStorageService = new();
 
 	public ThumbnailService_Tests()
 	{

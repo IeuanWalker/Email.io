@@ -8,10 +8,10 @@ public class FileUitl_Test
 	public void IsBase64String_ShouldReturnTrueForValidBase64String()
 	{
 		// Arrange
-		var base64 = "Zm9vYmFy";
+		const string base64 = "Zm9vYmFy";
 
 		// Act
-		var result = FileUtil.IsBase64String(base64);
+		bool result = FileUtil.IsBase64String(base64);
 
 		// Assert
 		Assert.True(result);
@@ -21,10 +21,10 @@ public class FileUitl_Test
 	public void IsBase64String_ShouldReturnFalseForInvalidBase64String()
 	{
 		// Arrange
-		var base64 = "Zm9vYmFy!";
+		const string base64 = "Zm9vYmFy!";
 
 		// Act
-		var result = FileUtil.IsBase64String(base64);
+		bool result = FileUtil.IsBase64String(base64);
 
 		// Assert
 		Assert.False(result);

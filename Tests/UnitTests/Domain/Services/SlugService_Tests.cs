@@ -14,7 +14,7 @@ public class SlugService_Tests
 	public void GenerateSlug_ReturnsExpectedSlug(string text, string expectedSlug)
 	{
 		// Act
-		var result = _slugService.GenerateSlug(text);
+		string result = _slugService.GenerateSlug(text);
 
 		// Assert
 		Assert.Equal(expectedSlug, result);
@@ -28,7 +28,7 @@ public class SlugService_Tests
 	public void GenerateSlug_WithId_ReturnsExpectedSlug(string text, string id, string expectedSlug)
 	{
 		// Act
-		var result = _slugService.GenerateSlug(text, id);
+		string result = _slugService.GenerateSlug(text, id);
 
 		// Assert
 		Assert.Equal(expectedSlug, result);
@@ -41,7 +41,7 @@ public class SlugService_Tests
 	public void GetIdFromSlug_ReturnsExpectedId(string text, string expectedId)
 	{
 		// Act
-		var result = _slugService.GetIdFromSlug(text);
+		string result = _slugService.GetIdFromSlug(text);
 
 		// Assert
 		Assert.Equal(expectedId, result);

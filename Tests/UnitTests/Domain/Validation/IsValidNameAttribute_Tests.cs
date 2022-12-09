@@ -20,9 +20,9 @@ public class IsValidNameAttribute_Tests
 	[InlineData("Å å Æ æ Ø ø")] // Danish/Norwegian
 	public void IsValid_ValidCharacters_ReturnsTrue(string testName)
 	{
-		var attribute = new IsValidNameAttribute();
+		IsValidNameAttribute attribute = new();
 
-		var result = attribute.IsValid(testName);
+		bool result = attribute.IsValid(testName);
 
 		Assert.True(result);
 	}
@@ -60,13 +60,13 @@ public class IsValidNameAttribute_Tests
 	public void IsValid_InvalidCharacters_ReturnsFalse(char c)
 	{
 		// Arrange
-		var attribute = new IsValidNameAttribute();
+		IsValidNameAttribute attribute = new();
 
 		// Act
-		var result1 = attribute.IsValid($"Example {c} Test");
-		var result2 = attribute.IsValid($"{c} Example Test");
-		var result3 = attribute.IsValid($"Example Test {c}");
-		var result4 = attribute.IsValid($"Exam{c}ple Test");
+		bool result1 = attribute.IsValid($"Example {c} Test");
+		bool result2 = attribute.IsValid($"{c} Example Test");
+		bool result3 = attribute.IsValid($"Example Test {c}");
+		bool result4 = attribute.IsValid($"Exam{c}ple Test");
 
 		// Assert
 		Assert.False(result1);

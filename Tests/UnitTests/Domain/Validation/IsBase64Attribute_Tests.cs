@@ -10,7 +10,7 @@ public class IsBase64Attribute_Tests
 	public void IsValid_ValidBase64_ReturnTrue(string email)
 	{
 		// Arrange
-		var attribute = new IsBase64Attribute();
+		IsBase64Attribute attribute = new();
 
 		// Act
 		bool result = attribute.IsValid(email);
@@ -27,7 +27,7 @@ public class IsBase64Attribute_Tests
 	public void IsValid_InvalidBase64_ReturnFalse(string email)
 	{
 		// Arrange
-		var attribute = new IsBase64Attribute();
+		IsBase64Attribute attribute = new();
 
 		// Act
 		bool result = attribute.IsValid(email);

@@ -31,7 +31,7 @@ public class IsEmailAttribute_Tests
 	public void IsValid_ValidEmails_ReturnTrue(string email)
 	{
 		// Arrange
-		var attribute = new IsEmailAttribute();
+		IsEmailAttribute attribute = new();
 
 		// Act
 		bool result = attribute.IsValid(email);
@@ -67,7 +67,7 @@ public class IsEmailAttribute_Tests
 	public void IsValid_InvalidEmails_ReturnFalse(string email)
 	{
 		// Arrange
-		var attribute = new IsEmailAttribute();
+		IsEmailAttribute attribute = new();
 
 		// Act
 		bool result = attribute.IsValid(email);

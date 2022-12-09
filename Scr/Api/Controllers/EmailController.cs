@@ -61,7 +61,7 @@ public class EmailController : Controller
 		}
 
 		// Get API key from header
-		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out var apiKey);
+		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out Microsoft.Extensions.Primitives.StringValues apiKey);
 
 		// Get template
 		var template = await _templateVersionTbl
@@ -87,6 +87,7 @@ public class EmailController : Controller
 				return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, does not match the provided API key");
 			}
 
+			#pragma warning disable IDE0046 // Convert to conditional expression
 			if (!await _templateTbl.Where(x => x.Id.Equals(result.Value.templateId) && x.ProjectId.Equals(result.Value.projectId)).AnyAsync())
 			{
 				return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, does not exist in the matched project");

@@ -47,7 +47,7 @@ public class EmailService : IEmailService
 		}
 		message.Subject = subject;
 
-		var bodyBuilder = new BodyBuilder
+		BodyBuilder bodyBuilder = new()
 		{
 			HtmlBody = htmlContent,
 			TextBody = plainTextContent
@@ -55,7 +55,7 @@ public class EmailService : IEmailService
 
 		if (attachments?.Any() ?? false)
 		{
-			foreach (var attachment in attachments)
+			foreach (EmailAttachmentTbl attachment in attachments)
 			{
 				bodyBuilder.Attachments.Add(attachment.FileName, Convert.FromBase64String(attachment.Content), ContentType.Parse(attachment.ContentType));
 			}
@@ -104,7 +104,7 @@ public class EmailService : IEmailService
 		{
 			Subject = _handleBarsService.Render(subjectTemplate, data),
 			HtmlContent = _handleBarsService.Render(htmlTemplate, data),
-			PlainTextContent = _handleBarsService.Render(plainTextTemplate, data),
+			PlainTextContent = _handleBarsService.Render(plainTextTemplate ?? string.Empty, data),
 		};
 	}
 }

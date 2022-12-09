@@ -143,8 +143,8 @@ public class TemplateModel : PageModel
 					testData.Data = "{}";
 				}
 
-				_handlebarsService.Render(UpdateTemplate.Html, testData.Data);
-				_handlebarsService.Render(UpdateTemplate.PlainText, testData.Data);
+				_handlebarsService.Render(UpdateTemplate.Html, testData.Data!);
+				_handlebarsService.Render(UpdateTemplate.PlainText, testData.Data!);
 			}
 			catch (Exception)
 			{
@@ -247,18 +247,22 @@ public class TemplateModel : PageModel
 				includeProperties: nameof(TemplateVersionTbl.TestData)))
 			.FirstOrDefault();
 
-		if (version is null)
+		if (version is null || version.Subject is null || version.Html is null)
+		{
+			return NotFound();
+		}
+
+		JsonNode? data = JsonNode.Parse(version.TestData.First()?.Data ?? string.Empty);
+		if(data is null)
 		{
 			return NotFound();
 		}
 
 		// Generate body
-
 		// TODO: Set test data to current view version
-
-		string subjectResult = _handlebarsService.Render(version.Subject, JsonNode.Parse(version.TestData.First()?.Data!));
-		string bodyResult = _handlebarsService.Render(version.Html, JsonNode.Parse(version.TestData.First().Data));
-		string plainTextResult = _handlebarsService.Render(version.PlainText, JsonNode.Parse(version.TestData.First().Data));
+		string subjectResult = _handlebarsService.Render(version.Subject, data);
+		string bodyResult = _handlebarsService.Render(version.Html, data);
+		string plainTextResult = _handlebarsService.Render(version.PlainText ?? string.Empty, data);
 
 		await _emailService.SendEmail(new List<MailboxAddress> { new MailboxAddress(TestSend.Name, TestSend.Email) }, null, null, subjectResult, bodyResult, plainTextResult);
 		return RedirectToPage("/project/template", new
@@ -274,7 +278,7 @@ public class TemplateModel : PageModel
 
 	public async Task<IActionResult> OnPostAddTestData()
 	{
-		var templateVersionId = _hashIdService.DecodeTemplateVersionId(AddTestData.HashedTemplateVersionId);
+		int? templateVersionId = _hashIdService.DecodeTemplateVersionId(AddTestData.HashedTemplateVersionId);
 
 		TemplateVersionTbl? templateVersion = (await _templateVersionTbl.Get(x => x.Id.Equals(templateVersionId))).FirstOrDefault();
 
@@ -306,7 +310,7 @@ public class TemplateModel : PageModel
 
 	public async Task<IActionResult> OnPostDeleteTestData()
 	{
-		var templateVersionId = _hashIdService.DecodeTemplateVersionId(DeleteTestData.HashedTemplateVersionId);
+		int? templateVersionId = _hashIdService.DecodeTemplateVersionId(DeleteTestData.HashedTemplateVersionId);
 
 		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
 			x => x.Id.Equals(DeleteTestData.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
@@ -335,7 +339,7 @@ public class TemplateModel : PageModel
 
 	public async Task<IActionResult> OnPostMarkAsDefault()
 	{
-		var templateVersionId = _hashIdService.DecodeTemplateVersionId(MarkAsDefault.HashedTemplateVersionId);
+		int? templateVersionId = _hashIdService.DecodeTemplateVersionId(MarkAsDefault.HashedTemplateVersionId);
 
 		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
 			x => x.Id.Equals(MarkAsDefault.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
@@ -372,7 +376,7 @@ public class TemplateModel : PageModel
 
 	public async Task<IActionResult> OnPostDuplicateTestData()
 	{
-		var templateVersionId = _hashIdService.DecodeTemplateVersionId(DuplicateTestData.HashedTemplateVersionId);
+		int? templateVersionId = _hashIdService.DecodeTemplateVersionId(DuplicateTestData.HashedTemplateVersionId);
 
 		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
 			x => x.Id.Equals(DuplicateTestData.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),
@@ -406,7 +410,7 @@ public class TemplateModel : PageModel
 
 	public async Task<IActionResult> OnPostUpdateTestDataName()
 	{
-		var templateVersionId = _hashIdService.DecodeTemplateVersionId(UpdateTestDataName.HashedTemplateVersionId);
+		int? templateVersionId = _hashIdService.DecodeTemplateVersionId(UpdateTestDataName.HashedTemplateVersionId);
 
 		TemplateTestDataTbl? testData = (await _templateTestDataTbl.Get(
 			x => x.Id.Equals(UpdateTestDataName.TestDataId) && x.TemplateVersionId.Equals(templateVersionId),

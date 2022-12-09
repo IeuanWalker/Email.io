@@ -81,7 +81,7 @@ public class SettingsModel : PageModel
 
 	public async Task<IActionResult> OnPostDeleteProject()
 	{
-		var project = await _projectTbl.GetByID(DeleteProjectId);
+		ProjectTbl? project = await _projectTbl.GetByID(DeleteProjectId);
 		if (project is null)
 		{
 			return NotFound();
@@ -148,7 +148,7 @@ public class SettingsModel : PageModel
 
 		int recordsFiltered = await sentEmailsQuery.CountAsync();
 
-		foreach (var order in dataTablesRequest.Order)
+		foreach (Order order in dataTablesRequest.Order)
 		{
 			sentEmailsQuery = sentEmailsQuery.OrderBy($"{dataTablesRequest.Columns[order.Column].Name} {order.Dir.ToLower()}");
 		}
@@ -184,40 +184,40 @@ public class DataTablesRequest
 {
 	public int Draw { get; set; }
 
-	public List<Column> Columns { get; set; }
+	public List<Column> Columns { get; set; } = default!;
 
-	public List<Order> Order { get; set; }
+	public List<Order> Order { get; set; } = default!;
 
 	public int Start { get; set; }
 
 	public int Length { get; set; }
 
-	public Search Search { get; set; }
+	public Search Search { get; set; } = default!;
 }
 
 public class Column
 {
-	public string Data { get; set; }
+	public string Data { get; set; } = default!;
 
-	public string Name { get; set; }
+	public string Name { get; set; } = default!;
 
 	public bool Searchable { get; set; }
 
 	public bool Orderable { get; set; }
 
-	public Search Search { get; set; }
+	public Search Search { get; set; } = default!;
 }
 
 public class Order
 {
 	public int Column { get; set; }
 
-	public string Dir { get; set; }
+	public string Dir { get; set; } = default!;
 }
 
 public class Search
 {
-	public string Value { get; set; }
+	public string Value { get; set; } = default!;
 
 	public bool IsRegex { get; set; }
 }

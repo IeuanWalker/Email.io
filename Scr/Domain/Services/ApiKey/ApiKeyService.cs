@@ -54,13 +54,13 @@ public class ApiKeyService : IApiKeyService
 
 	public async ValueTask<int?> GetProjectIdFromApiKey(string apiKey)
 	{
-		if (!_memoryCache.TryGetValue<Dictionary<string, int>>("Authentication_Project_ApiKeys", out var internalKeys))
+		if (!_memoryCache.TryGetValue<Dictionary<string, int>>("Authentication_Project_ApiKeys", out Dictionary<string, int>? internalKeys))
 		{
 			internalKeys = await _projectTbl.GetAllApiKeysAndProjectIds();
 
 			_memoryCache.Set("Authentication_Project_ApiKeys", internalKeys, DateTime.Now.AddHours(2));
 		}
 
-		return internalKeys is null || !internalKeys.TryGetValue(apiKey, out var projectId) ? null : projectId;
+		return internalKeys is null || !internalKeys.TryGetValue(apiKey, out int projectId) ? null : projectId;
 	}
 }

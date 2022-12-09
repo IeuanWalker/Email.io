@@ -13,10 +13,10 @@ public class IsFileNameAttribute_Test
 	public void IsValid_ValidName_ReturnsTrue(string fileName)
 	{
 		// Arrange
-		var attribute = new IsFileNameAttribute();
+		IsFileNameAttribute attribute = new();
 
 		// Act
-		var result = attribute.IsValid(fileName);
+		bool result = attribute.IsValid(fileName);
 
 		// Assert
 		Assert.True(result);
@@ -40,10 +40,10 @@ public class IsFileNameAttribute_Test
 	public void IsValid_InvalidName_ReturnsFalse(string fileName)
 	{
 		// Arrange
-		var attribute = new IsFileNameAttribute();
+		IsFileNameAttribute attribute = new();
 
 		// Act
-		var result = attribute.IsValid(fileName);
+		bool result = attribute.IsValid(fileName);
 
 		// Assert
 		Assert.False(result);

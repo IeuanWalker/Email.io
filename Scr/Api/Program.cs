@@ -3,7 +3,7 @@ using Api.Infrastructure;
 using Domain.Services.ApiKey;
 using Microsoft.OpenApi.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // App settings
@@ -59,7 +59,7 @@ builder.Services.AddAutoMapper(typeof(Program).GetTypeInfo().Assembly);
 // Hangfire
 HangfireConfiguration.ConfigureServices(builder.Services, builder.Configuration);
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
