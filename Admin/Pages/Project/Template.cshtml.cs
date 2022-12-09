@@ -1,9 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs.Specialized;
-using CoreHtmlToImage;
 using Database.Models;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
@@ -13,6 +9,7 @@ using Domain.Services.Email;
 using Domain.Services.Handlebars;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
+using Domain.Services.Thumbnail;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -31,6 +28,7 @@ public class TemplateModel : PageModel
 	readonly IHashIdService _hashIdService;
 	readonly ISlugService _slugService;
 	readonly IHandleBarsService _handlebarsService;
+	readonly IThumbnailService _thumbnailService;
 
 	public TemplateModel(
 		IProjectRepository projectTbl,
@@ -41,7 +39,8 @@ public class TemplateModel : PageModel
 		IEmailService emailService,
 		IHashIdService hashIdService,
 		ISlugService slugService,
-		IHandleBarsService handlebarsService)
+		IHandleBarsService handlebarsService,
+		IThumbnailService thumbnailService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
@@ -52,6 +51,7 @@ public class TemplateModel : PageModel
 		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
 		_slugService = slugService ?? throw new ArgumentNullException(nameof(slugService));
 		_handlebarsService = handlebarsService ?? throw new ArgumentNullException(nameof(handlebarsService));
+		_thumbnailService = thumbnailService ?? throw new ArgumentNullException(nameof(thumbnailService));
 	}
 
 	public TemplateVersionTbl? Version { get; set; }
@@ -187,8 +187,7 @@ public class TemplateModel : PageModel
 		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(UpdateTemplate.ProjectId), s => s
 			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
 
-		// TODO: Generate thumbnail
-		_jobClient.Enqueue(() => GenerateThumbnailAndPreview(version.Id));
+		_jobClient.Enqueue(() => _thumbnailService.GenerateThumbnail(version.Id));
 
 		return new JsonResult(new
 		{
@@ -268,53 +267,6 @@ public class TemplateModel : PageModel
 			templateId = TestSend.TemplateId,
 			versionId = TestSend.VersionId
 		});
-	}
-
-	public async Task GenerateThumbnailAndPreview(int versionId)
-	{
-		TemplateVersionTbl? version = (await _templateVersionTbl.Get(
-			x => x.Id.Equals(versionId),
-			null,
-			nameof(TemplateVersionTbl.Template)))
-			.FirstOrDefault();
-
-		if (version is null || version.Html is null)
-		{
-			return;
-		}
-
-		// Compile HTML and test data
-		string result = _handlebarsService.Render(version.Html, JsonNode.Parse(version.TestData.First(x => x.IsDefault).Data));
-
-		HtmlConverter converter = new();
-		byte[] preview = converter.FromHtmlString(result, format: ImageFormat.Png);
-		byte[] thumbnail = converter.FromHtmlString(result, 75, ImageFormat.Png, 50);
-
-		Uri previewUri = await SaveImage(version.Template.ProjectId, preview, $"Template-{version.TemplateId}-Version-{version.Id}-preview.png");
-		Uri thumbnailUri = await SaveImage(version.Template.ProjectId, thumbnail, $"Template-{version.TemplateId}-Version-{version.Id}-thumbnail.png");
-
-		await _templateVersionTbl.UpdateFromQuery(x => x.Id.Equals(versionId), s => s
-			.SetProperty(b => b.PreviewImage, _ => previewUri.ToString())
-			.SetProperty(b => b.ThumbnailImage, _ => thumbnailUri.ToString()));
-	}
-
-	public async Task<Uri> SaveImage(int projectId, byte[] file, string name)
-	{
-		BlobContainerClient blobContainerClient = new(
-			"UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite",
-			$"project-{projectId.ToString().ToLower()}");
-		await blobContainerClient.CreateIfNotExistsAsync();
-		await blobContainerClient.SetAccessPolicyAsync(PublicAccessType.Blob);
-		await blobContainerClient.DeleteBlobIfExistsAsync(name);
-
-		Stream stream = new MemoryStream(file);
-		await blobContainerClient.UploadBlobAsync(name, stream);
-
-		BlobBaseClient client = new("UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://azurite", $"project-{projectId.ToString().ToLower()}", name);
-
-		return client.Uri.AbsoluteUri.Contains("azurite") ?
-			new Uri(client.Uri.AbsoluteUri.Replace("azurite", "localhost")) :
-			client.Uri;
 	}
 
 	[BindProperty]
