@@ -12,7 +12,7 @@ public class RequestModelValidator : Validator<RequestModel>
 			.NotEmpty();
 
 		RuleFor(x => x.Language)
-			.NotEmpty();
+			.MaximumLength(5);
 
 		RuleFor(x => x.TemplateId)
 			.NotEmpty()

@@ -16,14 +16,14 @@ namespace Api.Endpoints.Email.Post;
 
 public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 {
-	public IProjectRepository ProjectTbl { get; set; }
-	public ITemplateRepository TemplateTbl { get; set; }
-	public ITemplateVersionRepository TemplateVersionTbl { get; set; }
-	public IEmailService EmailService { get; set; }
-	public IEmailRepository EmailTbl { get; set; }
-	public IBackgroundJobClient JobClient { get; set; }
-	public IHashIdService HashedService { get; set; }
-	public IMapper Mapper { get; set; }
+	public IProjectRepository ProjectTbl { get; set; } = null!;
+	public ITemplateRepository TemplateTbl { get; set; } = null!;
+	public ITemplateVersionRepository TemplateVersionTbl { get; set; } = null!;
+	public IEmailService EmailService { get; set; } = null!;
+	public IEmailRepository EmailTbl { get; set; } = null!;
+	public IBackgroundJobClient JobClient { get; set; } = null!;
+	public IHashIdService HashedService { get; set; } = null!;
+	public IMapper Mapper { get; set; } = null!;
 
 	public override void Configure()
 	{
