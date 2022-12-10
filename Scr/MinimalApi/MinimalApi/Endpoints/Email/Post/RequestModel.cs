@@ -34,6 +34,7 @@ public class RequestModel
 	//public int? SendAt { get; set; }
 	// TODO: Support categories for stats
 }
+
 public class EmailAddresses
 {
 	/// <summary>

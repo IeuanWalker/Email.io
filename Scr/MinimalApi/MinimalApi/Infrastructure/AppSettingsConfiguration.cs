@@ -1,5 +1,4 @@
 ﻿using Domain.Models;
-using Microsoft.Extensions.Configuration;
 
 namespace MinimalApi.Infrastructure;
 

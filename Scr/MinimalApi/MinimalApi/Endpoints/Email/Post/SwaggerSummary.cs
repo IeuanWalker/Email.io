@@ -1,6 +1,4 @@
-﻿using FastEndpoints;
-
-namespace MinimalApi.Endpoints.Email.Post;
+﻿namespace MinimalApi.Endpoints.Email.Post;
 
 public class SwaggerSummary : Summary<PostEmailEndpoint>
 {

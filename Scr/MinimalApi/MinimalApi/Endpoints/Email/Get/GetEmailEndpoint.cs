@@ -1,6 +1,4 @@
-﻿using FastEndpoints;
-
-namespace MinimalApi.Endpoints.Email.Get;
+﻿namespace MinimalApi.Endpoints.Email.Get;
 
 public class GetEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 {
@@ -9,7 +7,7 @@ public class GetEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		Get("email");
 		Version(1);
 	}
-	
+
 	public override async Task HandleAsync(RequestModel request, CancellationToken ct)
 	{
 		await SendAsync(new ResponseModel

@@ -51,12 +51,12 @@ public class ApiKeyService : IApiKeyService
 	//	// Return the first 36 characters of the API key
 	//	return apiKey.Substring(0, 36);
 	//}
-	
+
 	public async ValueTask<bool> DoesApiKeyExist(string apiKey)
 	{
-		if(_memoryCache.TryGetValue($"ApiKey-{apiKey}", out string _))
+		if (_memoryCache.TryGetValue($"ApiKey-{apiKey}", out string _))
 		{
-			return true;	
+			return true;
 		}
 
 		if (await _projectTbl.DoesApiKeyExist(apiKey))

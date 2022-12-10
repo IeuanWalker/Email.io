@@ -5,7 +5,6 @@ using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.Email;
 using Domain.Services.HashId;
-using FastEndpoints;
 using FluentValidation.Results;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
@@ -62,7 +61,7 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 			await SendErrorsAsync(cancellation: ct);
 			return;
 		}
-		
+
 		// Get API key from header
 		HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out StringValues apiKey);
 

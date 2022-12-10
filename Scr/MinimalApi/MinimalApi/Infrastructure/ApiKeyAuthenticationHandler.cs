@@ -35,13 +35,12 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
 			return AuthenticateResult.Fail("Invalid parameters");
 		}
 
-
-		if(!await _apiKeyService.DoesApiKeyExist(apiKey))
+		if (!await _apiKeyService.DoesApiKeyExist(apiKey))
 		{
 			Logger.LogWarning("An API request was received with an invalid API key {apiKey}", apiKey!);
 			return AuthenticateResult.Fail("Invalid api key");
 		}
-		
+
 		Logger.LogInformation("Api key authenticated");
 
 		Claim[] claims = new[] { new Claim(ClaimTypes.Name, string.Empty) };

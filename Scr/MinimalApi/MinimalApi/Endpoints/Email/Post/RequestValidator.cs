@@ -1,7 +1,4 @@
-﻿using FastEndpoints;
-using FluentValidation;
-
-namespace MinimalApi.Endpoints.Email.Post;
+﻿namespace MinimalApi.Endpoints.Email.Post;
 
 public class RequestModelValidator : Validator<RequestModel>
 {
@@ -23,6 +20,7 @@ public class RequestModelValidator : Validator<RequestModel>
 
 		RuleForEach(x => x.Attachments).SetValidator(new AttachementsValidator());
 	}
+
 	public class EmailAddressesValidator : Validator<EmailAddresses>
 	{
 		public EmailAddressesValidator()

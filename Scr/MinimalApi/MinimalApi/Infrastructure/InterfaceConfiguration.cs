@@ -3,7 +3,6 @@ using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateTestData;
 using Database.Repositories.TemplateVersion;
-using Domain.Models;
 using Domain.Services.ApiKey;
 using Domain.Services.BlobStorage;
 using Domain.Services.Email;

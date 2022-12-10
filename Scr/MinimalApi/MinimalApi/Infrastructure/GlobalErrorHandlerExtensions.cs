@@ -1,16 +1,10 @@
-﻿using Domain.Exceptions;
-using FastEndpoints;
-using Microsoft.AspNetCore.Builder;
+﻿using System.Net;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Net;
 
 namespace MinimalApi.Infrastructure;
 
 class ExceptionHandler { }
-
 
 /// <summary>
 /// extensions for global exception handling
@@ -33,7 +27,7 @@ public static class GlobalErrorHandlerExtensions
 			errApp.Run(async ctx =>
 			{
 				var exHandlerFeature = ctx.Features.Get<IExceptionHandlerFeature>();
-				if(exHandlerFeature is null)
+				if (exHandlerFeature is null)
 				{
 					return;
 				}

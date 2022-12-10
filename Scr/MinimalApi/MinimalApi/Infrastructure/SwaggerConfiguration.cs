@@ -1,5 +1,4 @@
-﻿using FastEndpoints;
-using FastEndpoints.Swagger;
+﻿using FastEndpoints.Swagger;
 using NSwag;
 
 namespace MinimalApi.Infrastructure;
@@ -19,7 +18,7 @@ static class SwaggerConfiguration
 				Type = OpenApiSecuritySchemeType.ApiKey
 			});
 		}, addJWTBearerAuth: false, tagIndex: 1, maxEndpointVersion: 1);
-		
+
 		return services;
 	}
 

@@ -1,7 +1,4 @@
-﻿using FastEndpoints;
-using FluentValidation;
-
-namespace MinimalApi.Endpoints.Email.Get;
+﻿namespace MinimalApi.Endpoints.Email.Get;
 
 public class RequestModelValidator : Validator<RequestModel>
 {
