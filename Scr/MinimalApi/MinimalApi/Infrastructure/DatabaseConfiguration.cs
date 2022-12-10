@@ -1,0 +1,27 @@
+﻿using Database.Context;
+using Microsoft.EntityFrameworkCore;
+using MinimalApi.Models.AppSettings;
+
+namespace MinimalApi.Infrastructure;
+
+static class DatabaseConfiguration
+{
+	/// <summary>
+	///     DbContext settings
+	/// </summary>
+	/// <param name="services"></param>
+	/// <param name="configuration"></param>
+	// TODO: Moved to shared project
+	public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+	{
+		IConfigurationSection databaseConnections = configuration.GetSection(nameof(DatabaseConnections));
+		string? connection = databaseConnections.GetValue<string>(nameof(DatabaseConnections.EmailDb));
+
+		if (connection is null)
+		{
+			throw new ArgumentNullException(nameof(configuration), "Missing database connection string");
+		}
+
+		services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly(nameof(Database))));
+	}
+}

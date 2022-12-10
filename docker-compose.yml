@@ -67,3 +67,21 @@ services:
         - MailHostUrl=smtp-server
         - MailPort=1025
         - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=EmailTestData;User ID =SA;Password=Pa55w0rd2019;TrustServerCertificate=true;
+ 
+
+  minimal-api:
+    container_name: minimal-api
+    depends_on:
+        - sql-server-db
+        - smtp-server
+        - azurite
+    build:
+      context: .
+      dockerfile: Scr/MinimalApi/MinimalApi/Dockerfile
+    ports:
+        - "8050:80"
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Developement
+        - MailHostUrl=smtp-server
+        - MailPort=1025
+        - DatabaseConnections__EmailDb=Server=sql-server-db,1433;Initial Catalog=EmailTestData;User ID =SA;Password=Pa55w0rd2019;TrustServerCertificate=true;

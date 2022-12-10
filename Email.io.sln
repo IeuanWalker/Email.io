@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "Scr\Database\Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Scr\Domain\Domain.csproj", "{E779ED5B-884B-45D0-B30C-8F53DC64ADF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApi", "Scr\MinimalApi\MinimalApi\MinimalApi.csproj", "{18EB7F10-32F6-40EE-8E3E-A793D7154761}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{E779ED5B-884B-45D0-B30C-8F53DC64ADF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E779ED5B-884B-45D0-B30C-8F53DC64ADF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E779ED5B-884B-45D0-B30C-8F53DC64ADF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18EB7F10-32F6-40EE-8E3E-A793D7154761}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18EB7F10-32F6-40EE-8E3E-A793D7154761}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18EB7F10-32F6-40EE-8E3E-A793D7154761}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18EB7F10-32F6-40EE-8E3E-A793D7154761}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,6 +71,7 @@ Global
 		{A3FE3A18-0B2B-4646-B7F6-42745BB40C3B} = {46B58EDE-3BFD-4C5B-A0A8-7F7F91FE9B6D}
 		{B71C012B-799D-4C81-AA7D-B36613B5E9E0} = {46B58EDE-3BFD-4C5B-A0A8-7F7F91FE9B6D}
 		{E779ED5B-884B-45D0-B30C-8F53DC64ADF6} = {46B58EDE-3BFD-4C5B-A0A8-7F7F91FE9B6D}
+		{18EB7F10-32F6-40EE-8E3E-A793D7154761} = {46B58EDE-3BFD-4C5B-A0A8-7F7F91FE9B6D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7D42FDA3-9E45-4872-A850-050934333E61}
