@@ -5,11 +5,12 @@ namespace Api.Infrastructure;
 
 static class SwaggerConfiguration
 {
-	public static IServiceCollection AddSwagger(this IServiceCollection services)
+	public static IServiceCollection AddSwagger(this IServiceCollection services, string enviroment)
 	{
 		services.AddSwaggerDoc(settings =>
 		{
-			settings.Title = "Email.io";
+			settings.Title = $"Email.io ({enviroment})";
+			settings.Description = "REST API endpoints for the Email.io system. For more information - https://github.com/IeuanWalker/Email.io";
 			settings.Version = "v1";
 			settings.AddAuth(ApiKeyAuthenticationOptions.DefaultScheme, new OpenApiSecurityScheme
 			{

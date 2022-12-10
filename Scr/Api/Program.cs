@@ -5,7 +5,7 @@ using Api.Infrastructure;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddFastEndpoints();
-builder.Services.AddSwagger();
+builder.Services.AddSwagger(builder.Environment.EnvironmentName);
 builder.Services.AddAppSettings(builder.Configuration);
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddHangfire(builder.Configuration);

@@ -20,8 +20,9 @@ public class SwaggerSummary : Summary<PostEmailEndpoint>
 			},
 			TemplateId = "YOUR TEMPLATE ID",
 		};
-		Response<ResponseModel>((int)HttpStatusCode.OK, "Email received", example: new() { 
-			Reference  = "abc123" 
+		Response<ResponseModel>((int)HttpStatusCode.OK, "Email received", example: new()
+		{
+			Reference = "abc123"
 		});
 		Response<ErrorResponse>((int)HttpStatusCode.BadRequest, "Failed validation", example: new()
 		{
