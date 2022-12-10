@@ -19,7 +19,7 @@ public sealed class IsBase64Attribute : ValidationAttribute
 			return new ValidationResult(contentRequiredErrorMessage);
 		}
 
-		#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable IDE0046 // Convert to conditional expression
 		if (FileUtil.IsBase64String(base64))
 		{
 			return ValidationResult.Success;

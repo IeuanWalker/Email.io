@@ -15,25 +15,24 @@ RUN apt install -y \
                 libxrender1 \
                 xfonts-75dpi \
                 xfonts-base
- 
 RUN dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb
-WORKDIR /api
+
+WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["Api/Api.csproj", "Api/"]
-COPY ["Domain/Domain.csproj", "Domain/"]
-RUN dotnet restore "Api/Api.csproj"
+COPY ["Scr/Api/Api.csproj", "Scr/Api/"]
+RUN dotnet restore "Scr/Api/Api.csproj"
 COPY . .
-WORKDIR "/src/Api"
-RUN dotnet build "Api.csproj" -c Release -o /api/build
+WORKDIR "/src/Scr/Api"
+RUN dotnet build "Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Api.csproj" -c Release -o /api/publish /p:UseAppHost=false
+RUN dotnet publish "Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
-WORKDIR /api
-COPY --from=publish /api/publish .
+WORKDIR /app
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Api.dll"]

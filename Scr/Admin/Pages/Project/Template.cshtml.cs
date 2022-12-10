@@ -253,7 +253,7 @@ public class TemplateModel : PageModel
 		}
 
 		JsonNode? data = JsonNode.Parse(version.TestData.First()?.Data ?? string.Empty);
-		if(data is null)
+		if (data is null)
 		{
 			return NotFound();
 		}

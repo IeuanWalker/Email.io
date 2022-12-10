@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using Domain.Services.ApiKey;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 
 namespace Api.Infrastructure;
 
@@ -20,24 +21,29 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
 
 	protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
 	{
-		if (!Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out Microsoft.Extensions.Primitives.StringValues apiKey) || apiKey.Count != 1)
+		if (!Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out StringValues apiKeys) || apiKeys.Count != 1)
 		{
 			Logger.LogWarning("An API request was received without the x-api-key header");
 			return AuthenticateResult.Fail("Invalid parameters");
 		}
 
-		int? projectId = await _apiKeyService.GetProjectIdFromApiKey(apiKey!);
+		string apiKey = apiKeys[0] ?? string.Empty;
 
-		if (projectId is null)
+		if (string.IsNullOrWhiteSpace(apiKey))
 		{
-			Logger.LogWarning("An API request was received with an invalid API key {apiKey}", apiKey!);
+			Logger.LogWarning("An API request was received with an invalid API key");
 			return AuthenticateResult.Fail("Invalid parameters");
 		}
 
-		Logger.BeginScope("{projectId}", projectId);
-		Logger.LogInformation("Client authenticated");
+		if (!await _apiKeyService.DoesApiKeyExist(apiKey))
+		{
+			Logger.LogWarning("An API request was received with an invalid API key {apiKey}", apiKey!);
+			return AuthenticateResult.Fail("Invalid api key");
+		}
 
-		Claim[] claims = new[] { new Claim(ClaimTypes.Name, (projectId?.ToString()) ?? string.Empty) };
+		Logger.LogInformation("Api key authenticated");
+
+		Claim[] claims = new[] { new Claim(ClaimTypes.Name, string.Empty) };
 		ClaimsIdentity identity = new(claims, ApiKeyAuthenticationOptions.DefaultScheme);
 		List<ClaimsIdentity> identities = new() { identity };
 		ClaimsPrincipal principal = new(identities);

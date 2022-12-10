@@ -7,5 +7,5 @@ public interface IApiKeyService
 {
 	Task<string> GenerateUniqueApiKey();
 
-	ValueTask<int?> GetProjectIdFromApiKey(string apiKey);
+	ValueTask<bool> DoesApiKeyExist(string apiKey);
 }

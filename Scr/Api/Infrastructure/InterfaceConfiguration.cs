@@ -19,7 +19,7 @@ static class InterfaceConfiguration
 	///     Interface mapping
 	/// </summary>
 	/// <param name="services"></param>
-	public static void ConfigureServices(IServiceCollection services)
+	public static IServiceCollection AddDependencies(this IServiceCollection services)
 	{
 		services.AddTransient<IProjectRepository, ProjectRepository>();
 		services.AddTransient<ITemplateRepository, TemplateRepository>();
@@ -33,5 +33,6 @@ static class InterfaceConfiguration
 		services.AddSingleton<IHandlebarsService, HandlebarsService>();
 		services.AddTransient<IThumbnailService, ThumbnailService>();
 		services.AddSingleton<IBlobStorageService, BlobStorageService>();
+		return services;
 	}
 }

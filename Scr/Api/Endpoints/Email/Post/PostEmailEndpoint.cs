@@ -1,23 +1,20 @@
 ﻿using Api.Infrastructure;
-using AutoMapper;
 using Database.Models;
 using Database.Repositories.Email;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
-using Domain.Models;
 using Domain.Services.Email;
 using Domain.Services.HashId;
+using FluentValidation.Results;
 using Hangfire;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
+using IMapper = AutoMapper.IMapper;
 
-namespace Api.Controllers;
+namespace Api.Endpoints.Email.Post;
 
-[ApiController]
-[Route("[controller]")]
-public class EmailController : Controller
+public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 {
 	readonly IProjectRepository _projectTbl;
 	readonly ITemplateRepository _templateTbl;
@@ -28,7 +25,7 @@ public class EmailController : Controller
 	readonly IHashIdService _hashedService;
 	readonly IMapper _mapper;
 
-	public EmailController(
+	public PostEmailEndpoint(
 		IProjectRepository projectTbl,
 		ITemplateRepository templateTbl,
 		ITemplateVersionRepository templateVersionTbl,
@@ -48,20 +45,25 @@ public class EmailController : Controller
 		_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 	}
 
-	// TODO: Handle no email addresses
-	[HttpPost]
-	[Authorize]
-	public async Task<IActionResult> SendEmail([FromBody] EmailModel request)
+	public override void Configure()
+	{
+		Post("email");
+		Version(1);
+	}
+
+	public override async Task HandleAsync(RequestModel request, CancellationToken ct)
 	{
 		// Get Ids from hash
 		(int projectId, int templateId)? result = _hashedService.DecodeProjectAndTemplateId(request.TemplateId);
 		if (result is null)
 		{
-			return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, is not valid");
+			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "TemplateId is not valid"));
+			await SendErrorsAsync(cancellation: ct);
+			return;
 		}
 
 		// Get API key from header
-		Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out Microsoft.Extensions.Primitives.StringValues apiKey);
+		HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out StringValues apiKey);
 
 		// Get template
 		var template = await _templateVersionTbl
@@ -76,34 +78,43 @@ public class EmailController : Controller
 				x.PlainText,
 				x.Subject,
 			})
-			.FirstOrDefaultAsync();
+			.FirstOrDefaultAsync(cancellationToken: ct);
 
 		// If template is null, find out why and return 400 Bad Request, with a message why
 		if (template is null)
 		{
 			// Validate ID's
-			if (!await _projectTbl.Where(x => x.Id.Equals(result.Value.projectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync())
+			if (!await _projectTbl.Where(x => x.Id.Equals(result.Value.projectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync(cancellationToken: ct))
 			{
-				return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, does not match the provided API key");
+				ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "TemplateId does not match the provided API key"));
+				await SendErrorsAsync(cancellation: ct);
+				return;
 			}
 
-			#pragma warning disable IDE0046 // Convert to conditional expression
-			if (!await _templateTbl.Where(x => x.Id.Equals(result.Value.templateId) && x.ProjectId.Equals(result.Value.projectId)).AnyAsync())
+			if (!await _templateTbl.Where(x => x.Id.Equals(result.Value.templateId) && x.ProjectId.Equals(result.Value.projectId)).AnyAsync(cancellationToken: ct))
 			{
-				return BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, does not exist in the matched project");
+				ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "TemplateId does not exist in the matched project"));
+				await SendErrorsAsync(cancellation: ct);
+				return;
 			}
 
-			return BadRequest($"No active template found for {nameof(request.TemplateId)}: {request.TemplateId}");
+			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "No active template found for the template"));
+			await SendErrorsAsync(cancellation: ct);
+			return;
 		}
 
 		// Validate template
 		if (string.IsNullOrEmpty(template.Html))
 		{
-			return BadRequest($"No html template found for {nameof(request.TemplateId)}: {request.TemplateId}");
+			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "No html template found for the template"));
+			await SendErrorsAsync(cancellation: ct);
+			return;
 		}
 		if (string.IsNullOrEmpty(template.Subject))
 		{
-			return BadRequest($"No subject template found for {nameof(request.TemplateId)}: {request.TemplateId}");
+			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "No subject template found for the template"));
+			await SendErrorsAsync(cancellation: ct);
+			return;
 		}
 
 		// Construct email
@@ -114,7 +125,9 @@ public class EmailController : Controller
 		}
 		catch (ArgumentException ex)
 		{
-			return BadRequest($"Error constructing email: {ex.Message}");
+			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), $"Error constructing email: {ex.Message}"));
+			await SendErrorsAsync(cancellation: ct);
+			return;
 		}
 
 		EmailTbl email = _mapper.Map<EmailTbl>(request);
@@ -136,6 +149,9 @@ public class EmailController : Controller
 			// ignore
 		}
 
-		return Ok(_hashedService.EncodeEmailId(email.Id));
+		await SendAsync(new ResponseModel
+		{
+			Reference = _hashedService.EncodeEmailId(email.Id)
+		}, cancellation: ct);
 	}
 }

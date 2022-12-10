@@ -40,7 +40,7 @@ static class DatabaseConfiguration
 		}
 		catch (Exception)
 		{
-			#pragma warning disable S112 // General exceptions should never be thrown
+#pragma warning disable S112 // General exceptions should never be thrown
 			throw new ApplicationException("Database migration need to be applied manually");
 		}
 	}
