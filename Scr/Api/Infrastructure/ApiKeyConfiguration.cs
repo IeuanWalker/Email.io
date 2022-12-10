@@ -10,7 +10,6 @@ static class ApiKeyConfiguration
 			.AddScoped<IApiKeyService, ApiKeyService>()
 			.AddScoped<ApiKeyAuthenticationHandler>();
 
-		services.AddAuthentication(ApiKeyAuthenticationOptions.DefaultScheme);
 		services.AddAuthentication(ApiKeyAuthenticationOptions.DefaultScheme)
 			.AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationOptions.DefaultScheme, null);
 

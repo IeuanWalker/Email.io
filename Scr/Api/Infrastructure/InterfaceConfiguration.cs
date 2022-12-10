@@ -15,17 +15,16 @@ namespace Api.Infrastructure;
 
 static class InterfaceConfiguration
 {
-	/// <summary>
-	///     Interface mapping
-	/// </summary>
-	/// <param name="services"></param>
 	public static IServiceCollection AddDependencies(this IServiceCollection services)
 	{
+		// Repositories
 		services.AddTransient<IProjectRepository, ProjectRepository>();
 		services.AddTransient<ITemplateRepository, TemplateRepository>();
 		services.AddTransient<ITemplateVersionRepository, TemplateVersionRepository>();
 		services.AddTransient<ITemplateTestDataRepository, TemplateTestDataRepository>();
 		services.AddTransient<IEmailRepository, EmailRepository>();
+
+		// Services
 		services.AddTransient<IEmailService, EmailService>();
 		services.AddTransient<IApiKeyService, ApiKeyService>();
 		services.AddSingleton<IHashIdService, HashIdService>();
@@ -33,6 +32,7 @@ static class InterfaceConfiguration
 		services.AddSingleton<IHandlebarsService, HandlebarsService>();
 		services.AddTransient<IThumbnailService, ThumbnailService>();
 		services.AddSingleton<IBlobStorageService, BlobStorageService>();
+
 		return services;
 	}
 }

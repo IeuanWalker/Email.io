@@ -19,7 +19,6 @@ static class HangfireConfiguration
 			throw new ArgumentNullException(nameof(configuration), "Missing database connection string");
 		}
 
-		// Add Hangfire services
 		services.AddHangfire(x =>
 		{
 			x.SetDataCompatibilityLevel(CompatibilityLevel.Version_170);

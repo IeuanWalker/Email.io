@@ -6,12 +6,6 @@ namespace Api.Infrastructure;
 
 static class DatabaseConfiguration
 {
-	/// <summary>
-	///     DbContext settings
-	/// </summary>
-	/// <param name="services"></param>
-	/// <param name="configuration"></param>
-	// TODO: Moved to shared project
 	public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
 	{
 		IConfigurationSection databaseConnections = configuration.GetSection(nameof(DatabaseConnections));
