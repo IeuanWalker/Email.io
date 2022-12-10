@@ -1,4 +1,4 @@
-﻿namespace MinimalApi.Endpoints.Email.Get;
+﻿namespace Api.Endpoints.Email.Get;
 
 public class GetEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 {

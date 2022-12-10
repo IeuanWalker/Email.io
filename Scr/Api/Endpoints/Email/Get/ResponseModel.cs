@@ -1,4 +1,4 @@
-﻿namespace MinimalApi.Endpoints.Email.Post;
+﻿namespace Api.Endpoints.Email.Get;
 
 public class ResponseModel
 {

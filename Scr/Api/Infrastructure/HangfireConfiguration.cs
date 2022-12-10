@@ -1,17 +1,15 @@
-﻿using Api.Models.AppSettings;
+﻿using Api.Infrastructure;
+using Api.Models.AppSettings;
 using Hangfire;
-using Hangfire.Annotations;
-using Hangfire.Dashboard;
 using Hangfire.Heartbeat;
 using Hangfire.RecurringJobAdmin;
 using Hangfire.SqlServer;
 
 namespace Api.Infrastructure;
 
-// TODO: Moved to shared project
 static class HangfireConfiguration
 {
-	public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+	public static IServiceCollection AddHangfire(this IServiceCollection services, IConfiguration configuration)
 	{
 		IConfigurationSection databaseConnections = configuration.GetSection(nameof(DatabaseConnections));
 		string? dbConnection = databaseConnections.GetValue<string>(nameof(DatabaseConnections.EmailDb));
@@ -42,22 +40,7 @@ static class HangfireConfiguration
 
 		// Add the processing server as IHostedService
 		services.AddHangfireServer();
-	}
 
-	public static void Configure(IApplicationBuilder app)
-	{
-		app.UseHangfireDashboard("/dev/Hangfire", new DashboardOptions()
-		{
-			Authorization = new[] { new NoAuthFilter() },
-			IgnoreAntiforgeryToken = true
-		});
-	}
-}
-
-public class NoAuthFilter : IDashboardAuthorizationFilter
-{
-	public bool Authorize([NotNull] DashboardContext context)
-	{
-		return true;
+		return services;
 	}
 }

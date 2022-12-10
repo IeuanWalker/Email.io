@@ -1,4 +1,5 @@
-﻿using Database.Models;
+﻿using Api.Infrastructure;
+using Database.Models;
 using Database.Repositories.Email;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
@@ -9,10 +10,9 @@ using FluentValidation.Results;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
-using MinimalApi.Infrastructure;
 using IMapper = AutoMapper.IMapper;
 
-namespace MinimalApi.Endpoints.Email.Post;
+namespace Api.Endpoints.Email.Post;
 
 public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 {

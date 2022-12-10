@@ -1,6 +1,6 @@
 ﻿using Domain.Services.ApiKey;
 
-namespace MinimalApi.Infrastructure;
+namespace Api.Infrastructure;
 
 static class ApiKeyConfiguration
 {
