@@ -6,7 +6,6 @@ using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.Email;
 using Domain.Services.HashId;
-using FluentValidation.Results;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
@@ -37,8 +36,7 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		(int projectId, int templateId)? result = HashedService.DecodeProjectAndTemplateId(request.TemplateId);
 		if (result is null)
 		{
-			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "TemplateId is not valid"));
-			await SendErrorsAsync(cancellation: ct);
+			ThrowError(x => x.TemplateId, "Invalid TemplateId");
 			return;
 		}
 
@@ -66,34 +64,29 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 			// Validate ID's
 			if (!await ProjectTbl.Where(x => x.Id.Equals(result.Value.projectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync(cancellationToken: ct))
 			{
-				ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "TemplateId does not match the provided API key"));
-				await SendErrorsAsync(cancellation: ct);
+				ThrowError(x => x.TemplateId, "TemplateId does not match the provided API key");
 				return;
 			}
 
 			if (!await TemplateTbl.Where(x => x.Id.Equals(result.Value.templateId) && x.ProjectId.Equals(result.Value.projectId)).AnyAsync(cancellationToken: ct))
 			{
-				ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "TemplateId does not exist in the matched project"));
-				await SendErrorsAsync(cancellation: ct);
+				ThrowError(x => x.TemplateId, "TemplateId does not exist in the matched project");
 				return;
 			}
 
-			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "No active template found for the template"));
-			await SendErrorsAsync(cancellation: ct);
+			ThrowError(x => x.TemplateId, "No active template found for the template");
 			return;
 		}
 
 		// Validate template
 		if (string.IsNullOrEmpty(template.Html))
 		{
-			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "No html template found for the template"));
-			await SendErrorsAsync(cancellation: ct);
+			ThrowError(x => x.TemplateId, "No html template found for the template");
 			return;
 		}
 		if (string.IsNullOrEmpty(template.Subject))
 		{
-			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "No subject template found for the template"));
-			await SendErrorsAsync(cancellation: ct);
+			ThrowError(x => x.TemplateId, "No subject template found for the template");
 			return;
 		}
 
@@ -105,8 +98,7 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		}
 		catch (ArgumentException ex)
 		{
-			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), $"Error constructing email: {ex.Message}"));
-			await SendErrorsAsync(cancellation: ct);
+			ThrowError(x => x.TemplateId, $"Error constructing email: {ex.Message}");
 			return;
 		}
 
