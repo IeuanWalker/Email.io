@@ -12,7 +12,7 @@ static class DatabaseConfiguration
 	/// <param name="services"></param>
 	/// <param name="configuration"></param>
 	// TODO: Moved to shared project
-	public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+	public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
 	{
 		IConfigurationSection databaseConnections = configuration.GetSection(nameof(DatabaseConnections));
 		string? connection = databaseConnections.GetValue<string>(nameof(DatabaseConnections.EmailDb));
@@ -23,5 +23,7 @@ static class DatabaseConfiguration
 		}
 
 		services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection, b => b.MigrationsAssembly(nameof(Database))));
+
+		return services;
 	}
 }

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 
-namespace Api.Infrastructure;
+namespace MinimalApi.Infrastructure;
 
 class ExceptionHandler { }
 
@@ -37,19 +37,23 @@ public static class GlobalErrorHandlerExtensions
 				{
 					return;
 				}
-				
+
+				var http = exHandlerFeature.Endpoint?.DisplayName?.Split(" => ")[0];
+				var type = exHandlerFeature.Error.GetType().Name;
+				var error = exHandlerFeature.Error.Message;
+
 				logger ??= ctx.Resolve<ILogger<ExceptionHandler>>();
-				logger.LogError(
-					"{@http}{@type}{@reason}{@exception}",
-					exHandlerFeature.Endpoint?.DisplayName?.Split(" => ")[0],
-					exHandlerFeature.Error.GetType().Name,
-					exHandlerFeature.Error.Message,
-					exHandlerFeature.Error);
+				logger.LogError("{@http}{@type}{@reason}{@exception}", http, type, error, exHandlerFeature.Error);
 
 				ctx.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 				string status = "Error";
 				string reason = "Unknown";
 				string note = "See application log for stack trace.";
+
+#if DEBUG
+				reason = error;
+				note = type;
+#endif
 
 				// Custom internal exception to throw specific status codes
 				if (exHandlerFeature.Error.GetType() == typeof(RequestHandleException))
