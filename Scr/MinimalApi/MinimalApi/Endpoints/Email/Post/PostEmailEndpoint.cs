@@ -8,7 +8,6 @@ using Domain.Services.HashId;
 using FastEndpoints;
 using FluentValidation.Results;
 using Hangfire;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using MinimalApi.Infrastructure;
@@ -16,9 +15,7 @@ using IMapper = AutoMapper.IMapper;
 
 namespace MinimalApi.Endpoints.Email.Post;
 
-[HttpPost("/api/email")]
-[Authorize]
-public class PostEmailEndpoint : Endpoint<RequestModel>
+public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 {
 	readonly IProjectRepository _projectTbl;
 	readonly ITemplateRepository _templateTbl;
@@ -48,7 +45,12 @@ public class PostEmailEndpoint : Endpoint<RequestModel>
 		_hashedService = hashedService ?? throw new ArgumentNullException(nameof(hashedService));
 		_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 	}
-	
+
+	public override void Configure()
+	{
+		Post("email");
+		Version(1);
+	}
 
 	public override async Task HandleAsync(RequestModel request, CancellationToken ct)
 	{
@@ -60,7 +62,7 @@ public class PostEmailEndpoint : Endpoint<RequestModel>
 			await SendErrorsAsync(cancellation: ct);
 			return;
 		}
-
+		
 		// Get API key from header
 		HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out StringValues apiKey);
 

@@ -1,6 +1,5 @@
-﻿using Database.Context;
+﻿using FastEndpoints;
 using FastEndpoints.Swagger;
-using Microsoft.EntityFrameworkCore;
 using NSwag;
 
 namespace MinimalApi.Infrastructure;
@@ -19,7 +18,7 @@ static class SwaggerConfiguration
 				Name = ApiKeyAuthenticationOptions.HeaderName,
 				Type = OpenApiSecuritySchemeType.ApiKey
 			});
-		}, tagIndex: 2);
+		}, addJWTBearerAuth: false, tagIndex: 1, maxEndpointVersion: 1);
 		
 		return services;
 	}

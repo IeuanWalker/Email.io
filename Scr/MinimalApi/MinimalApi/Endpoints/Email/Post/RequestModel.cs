@@ -1,9 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 using Domain.Validation;
-using FastEndpoints;
-using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 
 namespace MinimalApi.Endpoints.Email.Post;
 

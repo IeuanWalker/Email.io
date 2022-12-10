@@ -17,7 +17,13 @@ WebApplication app = builder.Build();
 app.UseGlobalExceptionHandler();
 app.UseHttpsRedirection();
 app.UseApiKeyAuthentication();
-app.UseFastEndpoints();
+app.UseFastEndpoints(c =>
+{
+	c.Endpoints.RoutePrefix = "api";
+	c.Versioning.Prefix = "v";
+	c.Versioning.DefaultVersion = 1;
+	c.Versioning.PrependToRoute = true;
+});
 app.UseSwagger();
 
 app.Run();
