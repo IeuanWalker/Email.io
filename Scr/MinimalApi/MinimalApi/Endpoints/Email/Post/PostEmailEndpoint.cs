@@ -5,45 +5,24 @@ using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.Email;
 using Domain.Services.HashId;
-using FluentValidation.Results;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
-using MinimalApi.Infrastructure;
 using IMapper = AutoMapper.IMapper;
+using MinimalApi.Infrastructure;
 
 namespace MinimalApi.Endpoints.Email.Post;
 
 public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 {
-	readonly IProjectRepository _projectTbl;
-	readonly ITemplateRepository _templateTbl;
-	readonly ITemplateVersionRepository _templateVersionTbl;
-	readonly IEmailService _emailService;
-	readonly IEmailRepository _emailTbl;
-	readonly IBackgroundJobClient _jobClient;
-	readonly IHashIdService _hashedService;
-	readonly IMapper _mapper;
-
-	public PostEmailEndpoint(
-		IProjectRepository projectTbl,
-		ITemplateRepository templateTbl,
-		ITemplateVersionRepository templateVersionTbl,
-		IEmailService emailService,
-		IEmailRepository emailTbl,
-		IBackgroundJobClient jobClient,
-		IHashIdService hashedService,
-		IMapper mapper)
-	{
-		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
-		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
-		_templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
-		_emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-		_emailTbl = emailTbl ?? throw new ArgumentNullException(nameof(emailTbl));
-		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
-		_hashedService = hashedService ?? throw new ArgumentNullException(nameof(hashedService));
-		_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-	}
+	public IProjectRepository ProjectTbl { get; set; } = null!;
+	public ITemplateRepository TemplateTbl { get; set; } = null!;
+	public ITemplateVersionRepository TemplateVersionTbl { get; set; } = null!;
+	public IEmailService EmailService { get; set; } = null!;
+	public IEmailRepository EmailTbl { get; set; } = null!;
+	public IBackgroundJobClient JobClient { get; set; } = null!;
+	public IHashIdService HashedService { get; set; } = null!;
+	public IMapper Mapper { get; set; } = null!;
 
 	public override void Configure()
 	{
@@ -54,11 +33,10 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 	public override async Task HandleAsync(RequestModel request, CancellationToken ct)
 	{
 		// Get Ids from hash
-		(int projectId, int templateId)? result = _hashedService.DecodeProjectAndTemplateId(request.TemplateId);
+		(int projectId, int templateId)? result = HashedService.DecodeProjectAndTemplateId(request.TemplateId);
 		if (result is null)
 		{
-			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "TemplateId is not valid"));
-			await SendErrorsAsync(cancellation: ct);
+			ThrowError(x => x.TemplateId, "Invalid TemplateId");
 			return;
 		}
 
@@ -66,7 +44,7 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out StringValues apiKey);
 
 		// Get template
-		var template = await _templateVersionTbl
+		var template = await TemplateVersionTbl
 			.Where(x =>
 				x.TemplateId.Equals(result.Value.templateId) &&
 				x.IsActive &&
@@ -84,36 +62,31 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		if (template is null)
 		{
 			// Validate ID's
-			if (!await _projectTbl.Where(x => x.Id.Equals(result.Value.projectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync(cancellationToken: ct))
+			if (!await ProjectTbl.Where(x => x.Id.Equals(result.Value.projectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync(cancellationToken: ct))
 			{
-				ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "TemplateId does not match the provided API key"));
-				await SendErrorsAsync(cancellation: ct);
+				ThrowError(x => x.TemplateId, "TemplateId does not match the provided API key");
 				return;
 			}
 
-			if (!await _templateTbl.Where(x => x.Id.Equals(result.Value.templateId) && x.ProjectId.Equals(result.Value.projectId)).AnyAsync(cancellationToken: ct))
+			if (!await TemplateTbl.Where(x => x.Id.Equals(result.Value.templateId) && x.ProjectId.Equals(result.Value.projectId)).AnyAsync(cancellationToken: ct))
 			{
-				ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "TemplateId does not exist in the matched project"));
-				await SendErrorsAsync(cancellation: ct);
+				ThrowError(x => x.TemplateId, "TemplateId does not exist in the matched project");
 				return;
 			}
 
-			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "No active template found for the template"));
-			await SendErrorsAsync(cancellation: ct);
+			ThrowError(x => x.TemplateId, "No active template found for the template");
 			return;
 		}
 
 		// Validate template
 		if (string.IsNullOrEmpty(template.Html))
 		{
-			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "No html template found for the template"));
-			await SendErrorsAsync(cancellation: ct);
+			ThrowError(x => x.TemplateId, "No html template found for the template");
 			return;
 		}
 		if (string.IsNullOrEmpty(template.Subject))
 		{
-			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), "No subject template found for the template"));
-			await SendErrorsAsync(cancellation: ct);
+			ThrowError(x => x.TemplateId, "No subject template found for the template");
 			return;
 		}
 
@@ -121,28 +94,27 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		ConstructedEmail constructedEmail = new();
 		try
 		{
-			constructedEmail = _emailService.ConstructEmail(request.Data, template.Subject, template.Html, template.PlainText);
+			constructedEmail = EmailService.ConstructEmail(request.Data, template.Subject, template.Html, template.PlainText);
 		}
 		catch (ArgumentException ex)
 		{
-			ValidationFailures.Add(new ValidationFailure(nameof(request.TemplateId), $"Error constructing email: {ex.Message}"));
-			await SendErrorsAsync(cancellation: ct);
+			ThrowError(x => x.TemplateId, $"Error constructing email: {ex.Message}");
 			return;
 		}
 
-		EmailTbl email = _mapper.Map<EmailTbl>(request);
+		EmailTbl email = Mapper.Map<EmailTbl>(request);
 		email.ProjectId = result.Value.projectId;
 		email.TemplateId = result.Value.templateId;
 		email.Subject = constructedEmail.Subject;
 		email.HtmlContent = constructedEmail.HtmlContent;
 		email.PlainTextContent = constructedEmail.PlainTextContent;
 
-		await _emailTbl.Add(email);
+		await EmailTbl.Add(email);
 
 		try
 		{
-			email.HangfireId = _jobClient.Enqueue<IEmailService>(x => x.SendEmail(email.Id));
-			_emailTbl.Update(email);
+			email.HangfireId = JobClient.Enqueue<IEmailService>(x => x.SendEmail(email.Id));
+			EmailTbl.Update(email);
 		}
 		catch (Exception)
 		{
@@ -151,7 +123,7 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 
 		await SendAsync(new ResponseModel
 		{
-			Reference = _hashedService.EncodeEmailId(email.Id)
+			Reference = HashedService.EncodeEmailId(email.Id)
 		}, cancellation: ct);
 	}
 }
