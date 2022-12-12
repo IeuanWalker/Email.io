@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace MinimalApi.Infrastructure;
+namespace FastendPointsApi.Infrastructure;
 
 static class AppSettingsConfiguration
 {

@@ -11,7 +11,7 @@ using Domain.Services.HashId;
 using Domain.Services.Slug;
 using Domain.Services.Thumbnail;
 
-namespace MinimalApi.Infrastructure;
+namespace FastendPointsApi.Infrastructure;
 
 static class InterfaceConfiguration
 {

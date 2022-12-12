@@ -1,7 +1,7 @@
 ﻿using FastEndpoints.Swagger;
 using NSwag;
 
-namespace MinimalApi.Infrastructure;
+namespace FastendPointsApi.Infrastructure;
 
 static class SwaggerConfiguration
 {

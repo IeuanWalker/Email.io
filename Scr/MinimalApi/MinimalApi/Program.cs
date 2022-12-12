@@ -1,7 +1,7 @@
 global using FastEndpoints;
 global using FluentValidation;
 using System.Reflection;
-using MinimalApi.Infrastructure;
+using FastendPointsApi.Infrastructure;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddFastEndpoints();

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
-namespace MinimalApi.Infrastructure;
+namespace FastendPointsApi.Infrastructure;
 
 /// <summary>
 /// https://www.camiloterevinto.com/post/simple-and-secure-api-keys-using-asp-net-core

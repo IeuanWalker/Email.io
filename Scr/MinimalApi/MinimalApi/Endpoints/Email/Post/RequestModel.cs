@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Nodes;
 using Domain.Validation;
 
-namespace MinimalApi.Endpoints.Email.Post;
+namespace FastendPointsApi.Endpoints.Email.Post;
 
 public class RequestModel
 {

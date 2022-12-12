@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "Scr\Database\Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Scr\Domain\Domain.csproj", "{E779ED5B-884B-45D0-B30C-8F53DC64ADF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApi", "Scr\MinimalApi\MinimalApi\MinimalApi.csproj", "{18EB7F10-32F6-40EE-8E3E-A793D7154761}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastendPointsApi", "Scr\MinimalApi\MinimalApi\FastendPointsApi.csproj", "{18EB7F10-32F6-40EE-8E3E-A793D7154761}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

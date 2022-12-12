@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Database.Models;
-using MinimalApi.Endpoints.Email.Post;
+using FastendPointsApi.Endpoints.Email.Post;
 
-namespace MinimalApi.Infrastructure.Maps;
+namespace FastendPointsApi.Infrastructure.Maps;
 
 public class EmailProfile : Profile
 {

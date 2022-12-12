@@ -9,9 +9,9 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using IMapper = AutoMapper.IMapper;
-using MinimalApi.Infrastructure;
+using FastendPointsApi.Infrastructure;
 
-namespace MinimalApi.Endpoints.Email.Post;
+namespace FastendPointsApi.Endpoints.Email.Post;
 
 public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 {

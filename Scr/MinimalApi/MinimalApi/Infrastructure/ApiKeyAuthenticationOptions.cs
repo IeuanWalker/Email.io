@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 
-namespace MinimalApi.Infrastructure;
+namespace FastendPointsApi.Infrastructure;
 
 public class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
 {

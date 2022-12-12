@@ -1,4 +1,4 @@
-﻿namespace MinimalApi.Endpoints.Email.Get;
+﻿namespace FastendPointsApi.Endpoints.Email.Get;
 
 public class SwaggerSummary : Summary<GetEmailEndpoint>
 {

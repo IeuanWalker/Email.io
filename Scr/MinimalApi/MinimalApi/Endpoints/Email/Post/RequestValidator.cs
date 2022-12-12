@@ -1,4 +1,4 @@
-﻿namespace MinimalApi.Endpoints.Email.Post;
+﻿namespace FastendPointsApi.Endpoints.Email.Post;
 
 public class RequestModelValidator : Validator<RequestModel>
 {

@@ -1,8 +1,8 @@
 ﻿using Database.Context;
+using FastendPointsApi.Models.AppSettings;
 using Microsoft.EntityFrameworkCore;
-using MinimalApi.Models.AppSettings;
 
-namespace MinimalApi.Infrastructure;
+namespace FastendPointsApi.Infrastructure;
 
 static class DatabaseConfiguration
 {

@@ -1,10 +1,11 @@
-﻿using Hangfire;
+﻿using FastendPointsApi.Infrastructure;
+using FastendPointsApi.Models.AppSettings;
+using Hangfire;
 using Hangfire.Heartbeat;
 using Hangfire.RecurringJobAdmin;
 using Hangfire.SqlServer;
-using MinimalApi.Models.AppSettings;
 
-namespace MinimalApi.Infrastructure;
+namespace FastendPointsApi.Infrastructure;
 
 static class HangfireConfiguration
 {

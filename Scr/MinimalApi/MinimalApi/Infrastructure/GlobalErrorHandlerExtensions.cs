@@ -2,7 +2,7 @@
 using Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace MinimalApi.Infrastructure;
+namespace FastendPointsApi.Infrastructure;
 
 class ExceptionHandler { }
 

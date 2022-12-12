@@ -1,4 +1,4 @@
-﻿namespace MinimalApi.Models.AppSettings;
+﻿namespace FastendPointsApi.Models.AppSettings;
 
 public class DatabaseConnections
 {

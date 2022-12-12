@@ -1,6 +1,6 @@
 ﻿using Domain.Services.ApiKey;
 
-namespace MinimalApi.Infrastructure;
+namespace FastendPointsApi.Infrastructure;
 
 static class ApiKeyConfiguration
 {
