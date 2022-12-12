@@ -43,7 +43,8 @@ app.MapPost("/api/email", [Authorize] async (IProjectRepository projectTbl,
 		IBackgroundJobClient jobClient,
 		IHashIdService hashedService,
 		IMapper mapper,
-		[FromBody]RequestModel request) =>
+		[FromBody]RequestModel request,
+		[FromHeader(Name = "x-api-key")]string apiKey) =>
 {
 	// Get Ids from hash
 	(int projectId, int templateId)? result = hashedService.DecodeProjectAndTemplateId(request.TemplateId);
@@ -51,10 +52,6 @@ app.MapPost("/api/email", [Authorize] async (IProjectRepository projectTbl,
 	{
 		return Results.BadRequest($"{nameof(request.TemplateId)}: {request.TemplateId}, is not valid");
 	}
-
-	// Get API key from header
-	//Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out StringValues apiKey);
-	string apiKey = "1234567890";
 
 	// Get template
 	var template = await templateVersionTbl
