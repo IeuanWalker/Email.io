@@ -9,6 +9,7 @@
       "serviceActions": {
         "admin": "StartDebugging",
         "api": "StartDebugging",
+        "fastendpoints-api": "StartDebugging",
         "minimal-api": "StartDebugging",
         "smtp-server": "StartWithoutDebugging",
         "sql-server-db": "StartWithoutDebugging"
