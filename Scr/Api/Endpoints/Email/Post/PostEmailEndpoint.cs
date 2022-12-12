@@ -81,8 +81,8 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		// If template is null, find out why and return 400 Bad Request, with a message why
 		if (template is null)
 		{
-			//! important - If an API gets reset, its possible for them to get passed the authentication code, as it uses a 2h cache 
-			if(!await _projectTbl.Where(x => x.ApiKey.Equals(apiKey)).AnyAsync(cancellationToken: ct))
+			//! important - If an API gets reset, its possible for them to get passed the authentication code, as it uses a 2h cache
+			if (!await _projectTbl.Where(x => x.ApiKey.Equals(apiKey)).AnyAsync(cancellationToken: ct))
 			{
 				await SendAsync(null!, (int)HttpStatusCode.Unauthorized, ct);
 				return;

@@ -1,6 +1,5 @@
 ﻿using FastEndpoints.Swagger;
 using NSwag;
-using NSwag.AspNetCore;
 
 namespace Api.Infrastructure;
 
@@ -25,7 +24,7 @@ static class SwaggerConfiguration
 	}
 
 	public static IApplicationBuilder UseSwagger(this IApplicationBuilder app)
-	{		
+	{
 		app.UseSwaggerGen(uiConfig: c => c.Path = string.Empty);
 
 		return app;
