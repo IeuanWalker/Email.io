@@ -1,13 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
-namespace Domain.Validation;
-
-/// <summary>
-/// Attempted RFC 5322 complient email validation
-/// </summary>
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-public partial class IsEmailAttribute : ValidationAttribute
+namespace Domain.Utilities;
+public static partial class EmailAddressUtil
 {
 	/// <summary>
 	/// A combination of 3 different regex to validate emails based on the RFC 5322 spec
@@ -24,39 +18,44 @@ public partial class IsEmailAttribute : ValidationAttribute
 	[GeneratedRegex(@"^\.|\.$|@.*@", RegexOptions.Compiled)]
 	private static partial Regex AdditionalValidationRegex();
 
-	const string emailFormatErrorMessage = "Email address is not in a valid format.";
-
-	public override bool IsValid(object? value)
+	/// <summary>
+	/// Attempted RFC 5322 complient email validation
+	/// </summary>
+	/// <param name="value">The email address to validate.</param>
+	/// <returns>True if the email address is valid, otherwise false.</returns>
+	public static bool IsValidEmailAddress(string value)
 	{
 		// Check if the value is null or empty
-		if (value is not string email || string.IsNullOrWhiteSpace(email))
+		if (string.IsNullOrWhiteSpace(value))
 		{
 			return false;
 		}
 
 		// Check general email regex
-		if (!EmailRegex().IsMatch(email))
+		if (!EmailRegex().IsMatch(value))
 		{
 			return false;
 		}
 
 		// Starts or ends in a fullstop
-		if (AdditionalValidationRegex().IsMatch(email))
+		if (AdditionalValidationRegex().IsMatch(value))
 		{
 			return false;
 		}
 
 		// TODO: Benchmark if this is faster than the regex
-		if (email.StartsWith('.') || email.EndsWith('.') || email.Split('@').Length > 2)
-		{
-			return false;
-		}
+		//if (value.StartsWith('.') || value.EndsWith('.') || value.Split('@').Length > 2)
+		//{
+		//	return false;
+		//}
 
 		return true;
 	}
 
-	public override string FormatErrorMessage(string name)
+	[GeneratedRegex("[±!@£$%^&*+§€#¢§¶•ªº«\\\\/<>?:;|=.]", RegexOptions.Compiled)]
+	private static partial Regex InvalidCharactersRegex();
+	public static bool IsValidName(string value)
 	{
-		return emailFormatErrorMessage;
+		return !InvalidCharactersRegex().Match(value).Success;
 	}
 }

@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
     <PackageReference Include="CoreHtmlToImage" Version="1.0.6" />
+    <PackageReference Include="FluentValidation" Version="11.4.0" />
     <PackageReference Include="Handlebars.Net" Version="2.1.2" />
     <PackageReference Include="Hashids.net" Version="1.6.1" />
     <PackageReference Include="MailKit" Version="3.4.3" />
@@ -19,6 +20,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Database\Database.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Validation\" />
   </ItemGroup>
 
 </Project>

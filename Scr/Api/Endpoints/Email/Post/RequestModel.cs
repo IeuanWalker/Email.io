@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Nodes;
-using Domain.Validation;
 
 namespace Api.Endpoints.Email.Post;
 
@@ -12,7 +11,7 @@ public class RequestModel
 	public IEnumerable<EmailAddresses>? BCCAddresses { get; set; }
 
 	/// <summary>
-	/// Data to be used when generating the email from the template
+	/// JSON data to be used when generating the email from the template
 	/// </summary>
 	public JsonNode Data { get; set; } = null!;
 
@@ -40,10 +39,7 @@ public class EmailAddresses
 	/// <summary>
 	/// Name of the recpient, optional
 	/// </summary>
-	[IsValidName]
 	public string? Name { get; set; }
-
-	[IsEmail]
 	public string Email { get; set; } = null!;
 }
 
@@ -52,18 +48,15 @@ public class AttachementsModels
 	/// <summary>
 	/// Name of the file + extension, i.e. "example.txt"
 	/// </summary>
-	[IsFileName]
 	public string FileName { get; set; } = string.Empty;
 
 	/// <summary>
 	/// Base64 string of the file
 	/// </summary>
-	[IsBase64]
 	public string Content { get; set; } = string.Empty;
 
 	/// <summary>
 	/// The ContentType/ mime type of the file
 	/// </summary>
-	[IsContentType]
 	public string ContentType { get; set; } = string.Empty;
 }
