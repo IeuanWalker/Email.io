@@ -8,7 +8,7 @@ public static partial class FileUtil
 	/// <summary>
 	/// Validates a Base64 string.
 	/// </summary>
-	/// <param name="base64"></param>
+	/// <param name="value"></param>
 	public static bool IsBase64String(string value)
 	{
 		if (value is not string base64 || string.IsNullOrWhiteSpace(base64))

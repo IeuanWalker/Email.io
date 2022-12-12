@@ -84,7 +84,7 @@ public class EmailAddressUtil_Test
 	[InlineData("á é è á ì ò ó ù Á É È À Ì Ò Ó Ù")] // Italian / italiano
 	[InlineData("Å å Ä ä Ö ö")] // Swedish/ finish
 	[InlineData("Å å Æ æ Ø ø")] // Danish/Norwegian
-	public void IsValid_ValidCharacters_ReturnsTrue(string name)
+	public void IsValidName_ValidCharacters_ReturnsTrue(string name)
 	{
 		bool result = EmailAddressUtil.IsValidName(name);
 
@@ -121,7 +121,7 @@ public class EmailAddressUtil_Test
 	[InlineData('|')]
 	[InlineData('=')]
 	[InlineData('.')]
-	public void IsValid_InvalidCharacters_ReturnsFalse(char c)
+	public void IsValidName_InvalidCharacters_ReturnsFalse(char c)
 	{
 		// Act
 		bool result1 = EmailAddressUtil.IsValidName(c.ToString());
