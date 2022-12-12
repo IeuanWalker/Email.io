@@ -5,5 +5,5 @@ namespace Database.Repositories.Project;
 
 public interface IProjectRepository : IGenericRepository<ProjectTbl>
 {
-	Task<bool> DoesApiKeyExist(string apiKey);
+	Task<List<string>> GetApiKeys();
 }

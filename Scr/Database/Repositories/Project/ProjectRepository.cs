@@ -12,9 +12,9 @@ public class ProjectRepository : GenericRepository<ProjectTbl>, IProjectReposito
 		base.context = context;
 		dbSet = context.Set<ProjectTbl>();
 	}
-
-	public async Task<bool> DoesApiKeyExist(string apiKey)
+	
+	public async Task<List<string>> GetApiKeys()
 	{
-		return await dbSet.AnyAsync(x => x.ApiKey.Equals(apiKey));
+		return await dbSet.Select(x => x.ApiKey).ToListAsync();
 	}
 }

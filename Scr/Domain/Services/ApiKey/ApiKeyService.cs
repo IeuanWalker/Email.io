@@ -54,19 +54,13 @@ public class ApiKeyService : IApiKeyService
 
 	public async ValueTask<bool> DoesApiKeyExist(string apiKey)
 	{
-		if (_memoryCache.TryGetValue($"ApiKey-{apiKey}", out string _))
+		if (!_memoryCache.TryGetValue("ApiKeys", out List<string>? apiKeys))
 		{
-			return true;
+			apiKeys = await _projectTbl.GetApiKeys();
+
+			_memoryCache.Set("ApiKeys", apiKeys, DateTime.Now.AddHours(2));
 		}
 
-		if (await _projectTbl.DoesApiKeyExist(apiKey))
-		{
-			_memoryCache.Set($"ApiKey-{apiKey}", apiKey, DateTime.Now.AddHours(2));
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return apiKeys?.Contains(apiKey) ?? false;
 	}
 }

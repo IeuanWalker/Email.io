@@ -1,4 +1,5 @@
-﻿using Api.Infrastructure;
+﻿using System.Net;
+using Api.Infrastructure;
 using Database.Models;
 using Database.Repositories.Email;
 using Database.Repositories.Project;
@@ -15,14 +16,34 @@ namespace Api.Endpoints.Email.Post;
 
 public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 {
-	public IProjectRepository ProjectTbl { get; set; } = null!;
-	public ITemplateRepository TemplateTbl { get; set; } = null!;
-	public ITemplateVersionRepository TemplateVersionTbl { get; set; } = null!;
-	public IEmailService EmailService { get; set; } = null!;
-	public IEmailRepository EmailTbl { get; set; } = null!;
-	public IBackgroundJobClient JobClient { get; set; } = null!;
-	public IHashIdService HashedService { get; set; } = null!;
-	public IMapper Mapper { get; set; } = null!;
+	readonly IProjectRepository _projectTbl;
+	readonly ITemplateRepository _templateTbl;
+	readonly ITemplateVersionRepository _templateVersionTbl;
+	readonly IEmailService _emailService;
+	readonly IEmailRepository _emailTbl;
+	readonly IBackgroundJobClient _jobClient;
+	readonly IHashIdService _hashedService;
+	readonly IMapper _mapper;
+
+	public PostEmailEndpoint(
+		IProjectRepository projectTbl,
+		ITemplateRepository templateTbl,
+		ITemplateVersionRepository templateVersionTbl,
+		IEmailService emailService,
+		IEmailRepository emailTbl,
+		IBackgroundJobClient jobClient,
+		IHashIdService hashedService,
+		IMapper mapper)
+	{
+		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
+		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
+		_templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
+		_emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+		_emailTbl = emailTbl ?? throw new ArgumentNullException(nameof(emailTbl));
+		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
+		_hashedService = hashedService ?? throw new ArgumentNullException(nameof(hashedService));
+		_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+	}
 
 	public override void Configure()
 	{
@@ -33,18 +54,17 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 	public override async Task HandleAsync(RequestModel request, CancellationToken ct)
 	{
 		// Get Ids from hash
-		(int projectId, int templateId)? result = HashedService.DecodeProjectAndTemplateId(request.TemplateId);
+		(int projectId, int templateId)? result = _hashedService.DecodeProjectAndTemplateId(request.TemplateId);
 		if (result is null)
 		{
 			ThrowError(x => x.TemplateId, "Invalid TemplateId");
-			return;
 		}
 
 		// Get API key from header
 		HttpContext.Request.Headers.TryGetValue(ApiKeyAuthenticationOptions.HeaderName, out StringValues apiKey);
 
 		// Get template
-		var template = await TemplateVersionTbl
+		var template = await _templateVersionTbl
 			.Where(x =>
 				x.TemplateId.Equals(result.Value.templateId) &&
 				x.IsActive &&
@@ -61,69 +81,71 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		// If template is null, find out why and return 400 Bad Request, with a message why
 		if (template is null)
 		{
-			// Validate ID's
-			if (!await ProjectTbl.Where(x => x.Id.Equals(result.Value.projectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync(cancellationToken: ct))
+			//! important - If an API gets reset, its possible for them to get passed the authentication code, as it uses a 2h cache 
+			if(!await _projectTbl.Where(x => x.ApiKey.Equals(apiKey)).AnyAsync(cancellationToken: ct))
 			{
-				ThrowError(x => x.TemplateId, "TemplateId does not match the provided API key");
+				await SendAsync(null!, (int)HttpStatusCode.Unauthorized, ct);
 				return;
 			}
 
-			if (!await TemplateTbl.Where(x => x.Id.Equals(result.Value.templateId) && x.ProjectId.Equals(result.Value.projectId)).AnyAsync(cancellationToken: ct))
+			// Validate ID's
+			if (!await _projectTbl.Where(x => x.Id.Equals(result.Value.projectId) && x.ApiKey.Equals(apiKey.ToString())).AnyAsync(cancellationToken: ct))
+			{
+				ThrowError(x => x.TemplateId, "TemplateId does not match the provided API key");
+			}
+
+			if (!await _templateTbl.Where(x => x.Id.Equals(result.Value.templateId) && x.ProjectId.Equals(result.Value.projectId)).AnyAsync(cancellationToken: ct))
 			{
 				ThrowError(x => x.TemplateId, "TemplateId does not exist in the matched project");
-				return;
 			}
 
 			ThrowError(x => x.TemplateId, "No active template found for the template");
-			return;
 		}
 
 		// Validate template
 		if (string.IsNullOrEmpty(template.Html))
 		{
-			ThrowError(x => x.TemplateId, "No html template found for the template");
-			return;
+			AddError(x => x.TemplateId, "No html template found for the template");
 		}
 		if (string.IsNullOrEmpty(template.Subject))
 		{
-			ThrowError(x => x.TemplateId, "No subject template found for the template");
-			return;
+			AddError(x => x.TemplateId, "No subject template found for the template");
 		}
+		ThrowIfAnyErrors();
 
 		// Construct email
 		ConstructedEmail constructedEmail = new();
 		try
 		{
-			constructedEmail = EmailService.ConstructEmail(request.Data, template.Subject, template.Html, template.PlainText);
+			constructedEmail = _emailService.ConstructEmail(request.Data, template.Subject, template.Html!, template.PlainText);
 		}
 		catch (ArgumentException ex)
 		{
 			ThrowError(x => x.TemplateId, $"Error constructing email: {ex.Message}");
-			return;
 		}
 
-		EmailTbl email = Mapper.Map<EmailTbl>(request);
+		EmailTbl email = _mapper.Map<EmailTbl>(request);
 		email.ProjectId = result.Value.projectId;
 		email.TemplateId = result.Value.templateId;
 		email.Subject = constructedEmail.Subject;
 		email.HtmlContent = constructedEmail.HtmlContent;
 		email.PlainTextContent = constructedEmail.PlainTextContent;
 
-		await EmailTbl.Add(email);
+		await _emailTbl.Add(email);
+
+		Response = new ResponseModel
+		{
+			Reference = _hashedService.EncodeEmailId(email.Id)
+		};
 
 		try
 		{
-			email.HangfireId = JobClient.Enqueue<IEmailService>(x => x.SendEmail(email.Id));
-			EmailTbl.Update(email);
+			email.HangfireId = _jobClient.Enqueue<IEmailService>(x => x.SendEmail(email.Id));
+			_emailTbl.Update(email);
 		}
 		catch (Exception)
 		{
 			// ignore
 		}
-
-		await SendAsync(new ResponseModel
-		{
-			Reference = HashedService.EncodeEmailId(email.Id)
-		}, cancellation: ct);
 	}
 }
