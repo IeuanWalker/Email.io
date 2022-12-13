@@ -1,6 +1,6 @@
 ﻿namespace Api.Endpoints.Email.Get;
 
-public class RequestModel
+public record RequestModel
 {
 	public string EmailReference { get; set; } = default!;
 	public string TemplateId { get; set; } = default!;
