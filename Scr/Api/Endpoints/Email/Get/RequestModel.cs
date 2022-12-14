@@ -2,6 +2,6 @@
 
 public record RequestModel
 {
-	public string EmailReference { get; set; } = default!;
-	public string TemplateId { get; set; } = default!;
+	public string EmailReference { get; init; } = default!;
+	public string TemplateId { get; init; } = default!;
 }
