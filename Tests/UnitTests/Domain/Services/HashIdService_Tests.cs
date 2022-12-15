@@ -73,11 +73,6 @@ public class HashIdService_Tests
 		// Assert
 		Assert.NotNull(decodedResult);
 
-		if (decodedResult is null)
-		{
-			return;
-		}
-
 		decodedResult.Value.projectId.Should().Be(expectedProjectId);
 		decodedResult.Value.templateId.Should().Be(expectedTemplateId);
 	}

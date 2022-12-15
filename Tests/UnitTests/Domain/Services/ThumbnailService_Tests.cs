@@ -65,7 +65,7 @@ public class ThumbnailService_Tests
 	}
 
 	[Fact]
-	public async Task GenerateThumbnail_ShouldReturnNull_WhenTestDataIsNotFound()
+	public async Task GenerateThumbnail_ShouldReturnNull_WhenTestDataIsABlankJson()
 	{
 		// Arrange
 		const int templateVersionId = 1;
@@ -75,7 +75,37 @@ public class ThumbnailService_Tests
 			.Get(Arg.Any<Expression<Func<TemplateVersionTbl, bool>>?>(), null, $"{nameof(TemplateVersionTbl.Template)},{nameof(TemplateVersionTbl.TestData)}")
 			.Returns(new[]
 			{
-				new TemplateVersionTbl()
+				new TemplateVersionTbl
+				{
+					Html = "Html",
+					TestData = new List<TemplateTestDataTbl>{ new() { IsDefault = true, Data = "{}" } }
+				}
+			});
+
+		// Act
+		await _sut.GenerateThumbnail(templateVersionId);
+
+		// Assert
+		// Verify that Update method of _templateVersionTbl was not called
+		_templateVersionTbl.DidNotReceive().Update(Arg.Any<TemplateVersionTbl>());
+	}
+
+	[Fact]
+	public async Task GenerateThumbnail_ShouldReturnNull_WhenTestDataIsInvalidAndThrowsException()
+	{
+		// Arrange
+		const int templateVersionId = 1;
+
+		// Set up mocked or stubbed dependencies to return result with no TestData value
+		_templateVersionTbl
+			.Get(Arg.Any<Expression<Func<TemplateVersionTbl, bool>>?>(), null, $"{nameof(TemplateVersionTbl.Template)},{nameof(TemplateVersionTbl.TestData)}")
+			.Returns(new[]
+			{
+				new TemplateVersionTbl
+				{
+					Html = "Html",
+					TestData = new List<TemplateTestDataTbl>{ new() { IsDefault = true, Data = " " } }
+				}
 			});
 
 		// Act

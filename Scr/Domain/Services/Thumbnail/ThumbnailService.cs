@@ -36,8 +36,18 @@ public class ThumbnailService : IThumbnailService
 			return;
 		}
 
-		JsonNode? data = JsonNode.Parse(version.TestData.First(x => x.IsDefault).Data);
-		if (data is null)
+		JsonNode? data;
+		try
+		{
+			data = JsonNode.Parse(version.TestData.First(x => x.IsDefault).Data);
+		}
+		catch (Exception)
+		{
+			// No test data or invalid JSON
+			return;
+		}
+
+		if (data is null || !data.AsObject().Any())
 		{
 			return;
 		}
