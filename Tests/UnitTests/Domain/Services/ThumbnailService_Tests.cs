@@ -5,20 +5,19 @@ using Database.Repositories.TemplateVersion;
 using Domain.Services.BlobStorage;
 using Domain.Services.Handlebars;
 using Domain.Services.Thumbnail;
-using NSubstitute;
 
 namespace UnitTests.Domain.Services;
 
 public class ThumbnailService_Tests
 {
-	readonly IThumbnailService _thumbnailService;
+	readonly IThumbnailService _sut;
 	readonly ITemplateVersionRepository _templateVersionTbl = Substitute.For<ITemplateVersionRepository>();
 	readonly IHandlebarsService _handlebarsService = Substitute.For<IHandlebarsService>();
 	readonly IBlobStorageService _blobStorageService = Substitute.For<IBlobStorageService>();
 
 	public ThumbnailService_Tests()
 	{
-		_thumbnailService = new ThumbnailService(_templateVersionTbl, _handlebarsService, _blobStorageService);
+		_sut = new ThumbnailService(_templateVersionTbl, _handlebarsService, _blobStorageService);
 	}
 
 	[Fact]
@@ -33,7 +32,7 @@ public class ThumbnailService_Tests
 			.Returns(new List<TemplateVersionTbl>());
 
 		// Act
-		await _thumbnailService.GenerateThumbnail(templateVersionId);
+		await _sut.GenerateThumbnail(templateVersionId);
 
 		// Assert
 		// Verify that Update method of _templateVersionTbl was not called
@@ -59,7 +58,7 @@ public class ThumbnailService_Tests
 			});
 
 		// Act
-		await _thumbnailService.GenerateThumbnail(templateVersionId);
+		await _sut.GenerateThumbnail(templateVersionId);
 
 		// Assert
 		// Verify that Update method of _templateVersionTbl was not called
@@ -81,7 +80,7 @@ public class ThumbnailService_Tests
 			});
 
 		// Act
-		await _thumbnailService.GenerateThumbnail(templateVersionId);
+		await _sut.GenerateThumbnail(templateVersionId);
 
 		// Assert
 		// Verify that Update method of _templateVersionTbl was not called
@@ -124,7 +123,7 @@ public class ThumbnailService_Tests
 		_blobStorageService.SaveImage(1, Arg.Any<byte[]>(), Arg.Any<string>()).Returns(new Uri(thumbnailImage));
 
 		// Act
-		await _thumbnailService.GenerateThumbnail(templateVersionId);
+		await _sut.GenerateThumbnail(templateVersionId);
 
 		// Assert
 		_templateVersionTbl.Received().Update(Arg.Is<TemplateVersionTbl>(t => t.ThumbnailImage == thumbnailImage));

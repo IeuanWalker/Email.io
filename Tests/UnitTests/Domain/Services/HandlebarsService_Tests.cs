@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Nodes;
 using Domain.Services.Handlebars;
 using HandlebarsDotNet;
+using NSubstitute.ExceptionExtensions;
 
 namespace UnitTests.Domain.Services;
 
@@ -9,11 +10,11 @@ namespace UnitTests.Domain.Services;
 /// </summary>
 public class HandlebarsService_Tests
 {
-	readonly IHandlebarsService _handlebarsService;
+	readonly IHandlebarsService _sut;
 
 	public HandlebarsService_Tests()
 	{
-		_handlebarsService = new HandlebarsService();
+		_sut = new HandlebarsService();
 	}
 
 	[Fact]
@@ -27,10 +28,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello Ieuan", result);
+		result.Should().Be("Hello Ieuan");
 	}
 
 	[Fact]
@@ -43,8 +44,11 @@ public class HandlebarsService_Tests
 			{ "name", "Ieuan" }
 		});
 
-		// Act / Assert
-		Assert.Throws<HandlebarsException>(() => _handlebarsService.Render(template, data));
+		// Act
+		Action act = () => _sut.Render(template, data);
+
+		// Assert
+		act.Should().Throw<HandlebarsException>();
 	}
 
 	//! Test for custom helpers
@@ -60,10 +64,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello Ieuan", result);
+		result.Should().Be("Hello Ieuan");
 	}
 
 	[Fact]
@@ -77,10 +81,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello other person", result);
+		result.Should().Be("Hello other person");
 	}
 
 	[Fact]
@@ -94,10 +98,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello Ieuan", result);
+		result.Should().Be("Hello Ieuan");
 	}
 
 	[Fact]
@@ -111,10 +115,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello Ieuan", result);
+		result.Should().Be("Hello Ieuan");
 	}
 
 	[Fact]
@@ -128,10 +132,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello teenager", result);
+		result.Should().Be("Hello teenager");
 	}
 
 	[Fact]
@@ -145,10 +149,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello adult", result);
+		result.Should().Be("Hello adult");
 	}
 
 	[Fact]
@@ -162,10 +166,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello teenager or adult", result);
+		result.Should().Be("Hello teenager or adult");
 	}
 
 	[Fact]
@@ -179,10 +183,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello adult", result);
+		result.Should().Be("Hello adult");
 	}
 
 	[Fact]
@@ -196,10 +200,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello adult", result);
+		result.Should().Be("Hello adult");
 	}
 
 	[Fact]
@@ -213,10 +217,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello teenager or adult", result);
+		result.Should().Be("Hello teenager or adult");
 	}
 
 	[Fact]
@@ -230,10 +234,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello adult", result);
+		result.Should().Be("Hello adult");
 	}
 
 	[Fact]
@@ -247,10 +251,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello teenager or adult", result);
+		result.Should().Be("Hello teenager or adult");
 	}
 
 	//! Test for standard handlebars helpers
@@ -266,10 +270,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello Ieuan", result);
+		result.Should().Be("Hello Ieuan");
 	}
 
 	[Fact]
@@ -283,10 +287,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello world", result);
+		result.Should().Be("Hello world");
 	}
 
 	[Fact]
@@ -300,10 +304,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello world", result);
+		result.Should().Be("Hello world");
 	}
 
 	[Fact]
@@ -317,10 +321,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello Ieuan", result);
+		result.Should().Be("Hello Ieuan");
 	}
 
 	[Fact]
@@ -334,10 +338,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello JohnJaneIeuan", result);
+		result.Should().Be("Hello JohnJaneIeuan");
 	}
 
 	[Fact]
@@ -351,10 +355,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello world", result);
+		result.Should().Be("Hello world");
 	}
 
 	[Fact]
@@ -373,10 +377,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello Ieuan", result);
+		result.Should().Be("Hello Ieuan");
 	}
 
 	[Fact]
@@ -390,10 +394,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Hello world", result);
+		result.Should().Be("Hello world");
 	}
 
 	[Fact]
@@ -412,10 +416,10 @@ public class HandlebarsService_Tests
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
-		Assert.Equal("Nils lives in DarmstadtYehuda lives in San Francisco", result);
+		result.Should().Be("Nils lives in DarmstadtYehuda lives in San Francisco");
 	}
 
 	//! Large complex test
@@ -465,7 +469,7 @@ This is a {{this}}.
 		});
 
 		// Act
-		string result = _handlebarsService.Render(template, data);
+		string result = _sut.Render(template, data);
 
 		// Assert
 		const string expectedResult =
@@ -479,6 +483,6 @@ An apple a day keeps the doctor away.
 This is a banana.
 This is a pear.
 ";
-		Assert.Equal(expectedResult, result);
+		result.Should().Be(expectedResult);
 	}
 }

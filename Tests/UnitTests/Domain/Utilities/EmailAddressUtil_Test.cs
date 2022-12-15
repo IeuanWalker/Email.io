@@ -34,7 +34,7 @@ public class EmailAddressUtil_Test
 		bool result = EmailAddressUtil.IsValidEmailAddress(email);
 
 		// Assert
-		Assert.True(result);
+		result.Should().BeTrue();
 	}
 
 	[Theory]
@@ -67,7 +67,7 @@ public class EmailAddressUtil_Test
 		bool result = EmailAddressUtil.IsValidEmailAddress(email);
 
 		// Assert
-		Assert.False(result);
+		result.Should().BeFalse();
 	}
 
 	[Theory]
@@ -86,9 +86,11 @@ public class EmailAddressUtil_Test
 	[InlineData("Å å Æ æ Ø ø")] // Danish/Norwegian
 	public void IsValidName_ValidCharacters_ReturnsTrue(string name)
 	{
+		// Act
 		bool result = EmailAddressUtil.IsValidName(name);
 
-		Assert.True(result);
+		// Assert
+		result.Should().BeTrue();
 	}
 
 	[Theory]
@@ -131,10 +133,10 @@ public class EmailAddressUtil_Test
 		bool result5 = EmailAddressUtil.IsValidName($"Exam{c}ple Test");
 
 		// Assert
-		Assert.False(result1);
-		Assert.False(result2);
-		Assert.False(result3);
-		Assert.False(result4);
-		Assert.False(result5);
+		result1.Should().BeFalse();
+		result2.Should().BeFalse();
+		result3.Should().BeFalse();
+		result4.Should().BeFalse();
+		result5.Should().BeFalse();
 	}
 }

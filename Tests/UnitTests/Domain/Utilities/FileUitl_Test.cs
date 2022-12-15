@@ -15,7 +15,7 @@ public class FileUitl_Test
 		bool result = FileUtil.IsBase64String(base64);
 
 		// Assert
-		Assert.True(result);
+		result.Should().BeTrue();
 	}
 
 	[Theory]
@@ -30,7 +30,7 @@ public class FileUitl_Test
 		bool result = FileUtil.IsBase64String(base64);
 
 		// Assert
-		Assert.False(result);
+		result.Should().BeFalse();
 	}
 
 	// Common mimme types - https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
@@ -117,7 +117,7 @@ public class FileUitl_Test
 		bool result = FileUtil.IsContentType(fileName);
 
 		// Assert
-		Assert.True(result);
+		result.Should().BeTrue();
 	}
 
 	[Theory]
@@ -141,7 +141,7 @@ public class FileUitl_Test
 		bool result = FileUtil.IsContentType(fileName);
 
 		// Assert
-		Assert.False(result);
+		result.Should().BeFalse();
 	}
 
 	[Theory]
@@ -180,6 +180,6 @@ public class FileUitl_Test
 		bool result = FileUtil.IsFileName(fileName);
 
 		// Assert
-		Assert.False(result);
+		result.Should().BeFalse();
 	}
 }

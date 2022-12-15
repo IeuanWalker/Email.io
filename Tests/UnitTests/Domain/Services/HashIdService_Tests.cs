@@ -6,7 +6,7 @@ namespace UnitTests.Domain.Services;
 
 public class HashIdService_Tests
 {
-	readonly HashIdService _hashIdService;
+	readonly HashIdService _sut;
 	readonly IOptions<HashSettings> _hashSettings;
 
 	public HashIdService_Tests()
@@ -35,7 +35,7 @@ public class HashIdService_Tests
 			}
 		});
 
-		_hashIdService = new(_hashSettings);
+		_sut = new(_hashSettings);
 	}
 
 	public static IEnumerable<object[]> ProjectIdTemplateIdHashes
@@ -56,11 +56,11 @@ public class HashIdService_Tests
 	public void EncodeProjectAndTemplateId_EncodesProvidedValues_ReturnCorrectHash(int projectId, int templateId, string expectedHash)
 	{
 		// Act
-		string hashedResult = _hashIdService.EncodeProjectAndTemplateId(projectId, templateId);
+		string hashedResult = _sut.EncodeProjectAndTemplateId(projectId, templateId);
 
 		// Assert
-		Assert.True(hashedResult.Length >= _hashSettings.Value.ProjectIdAndTemplateId.MinLength);
-		Assert.Equal(expectedHash, hashedResult);
+		hashedResult.Length.Should().BeGreaterThanOrEqualTo(_hashSettings.Value.ProjectIdAndTemplateId.MinLength);
+		hashedResult.Should().Be(expectedHash);
 	}
 
 	[Theory]
@@ -68,18 +68,18 @@ public class HashIdService_Tests
 	public void DecodeProjectAndTemplateId_DecodesProvidedHashes_ReturnCorrectProjectIdAndTemplateId(int expectedProjectId, int expectedTemplateId, string hash)
 	{
 		// Act
-		(int projectId, int templateId)? decordedResult = _hashIdService.DecodeProjectAndTemplateId(hash);
+		(int projectId, int templateId)? decodedResult = _sut.DecodeProjectAndTemplateId(hash);
 
 		// Assert
-		Assert.NotNull(decordedResult);
+		Assert.NotNull(decodedResult);
 
-		if (decordedResult is null)
+		if (decodedResult is null)
 		{
 			return;
 		}
 
-		Assert.Equal(expectedProjectId, decordedResult.Value.projectId);
-		Assert.Equal(expectedTemplateId, decordedResult.Value.templateId);
+		decodedResult.Value.projectId.Should().Be(expectedProjectId);
+		decodedResult.Value.templateId.Should().Be(expectedTemplateId);
 	}
 
 	[Theory]
@@ -95,10 +95,10 @@ public class HashIdService_Tests
 	public void DecodeProjectAndTemplateId_InvalidHashes_ReturnsNull(string hash)
 	{
 		// Act
-		(int projectId, int templateId)? decordedResult = _hashIdService.DecodeProjectAndTemplateId(hash);
+		(int projectId, int templateId)? decodedResult = _sut.DecodeProjectAndTemplateId(hash);
 
 		// Assert
-		Assert.Null(decordedResult);
+		decodedResult.Should().BeNull();
 	}
 
 	public static IEnumerable<object[]> ProjectIdHashes
@@ -119,11 +119,11 @@ public class HashIdService_Tests
 	public void EncodeProjectId_EncodesProjectId_ReturnCorrectHash(int projectId, string expectedHash)
 	{
 		// Act
-		string hashedResult = _hashIdService.EncodeProjectId(projectId);
+		string hashedResult = _sut.EncodeProjectId(projectId);
 
 		// Assert
-		Assert.True(hashedResult.Length >= _hashSettings.Value.ProjectId.MinLength);
-		Assert.Equal(expectedHash, hashedResult);
+		hashedResult.Length.Should().BeGreaterThanOrEqualTo(_hashSettings.Value.ProjectId.MinLength);
+		hashedResult.Should().Be(expectedHash);
 	}
 
 	[Theory]
@@ -131,10 +131,10 @@ public class HashIdService_Tests
 	public void DecodeProjectId_DecodesProvidedHashes_ReturnCorrectProjectId(int expectedProjectId, string hash)
 	{
 		// Act
-		int? projectId = _hashIdService.DecodeProjectId(hash);
+		int? projectId = _sut.DecodeProjectId(hash);
 
 		// Assert
-		Assert.Equal(expectedProjectId, projectId);
+		projectId.Should().Be(expectedProjectId);
 	}
 
 	[Theory]
@@ -151,10 +151,10 @@ public class HashIdService_Tests
 	public void DecodeProjectId_InvalidHashes_ReturnsNull(string hash)
 	{
 		// Act
-		int? projectId = _hashIdService.DecodeProjectId(hash);
+		int? projectId = _sut.DecodeProjectId(hash);
 
 		// Assert
-		Assert.Null(projectId);
+		projectId.Should().BeNull();
 	}
 
 	public static IEnumerable<object[]> TemplateIdHashes
@@ -175,11 +175,11 @@ public class HashIdService_Tests
 	public void EncodeTemplateVersionId_EncodesTemplateVersionId_ReturnCorrectHash(int templateVersionId, string expectedHash)
 	{
 		// Act
-		string hashedResult = _hashIdService.EncodeTemplateVersionId(templateVersionId);
+		string hashedResult = _sut.EncodeTemplateVersionId(templateVersionId);
 
 		// Assert
-		Assert.True(hashedResult.Length >= _hashSettings.Value.TemplateVersionId.MinLength);
-		Assert.Equal(expectedHash, hashedResult);
+		hashedResult.Length.Should().BeGreaterThanOrEqualTo(_hashSettings.Value.TemplateVersionId.MinLength);
+		hashedResult.Should().Be(expectedHash);
 	}
 
 	[Theory]
@@ -187,10 +187,10 @@ public class HashIdService_Tests
 	public void EncodeTemplateVersionId_DecodesProvidedHashes_ReturnCorrectTemplateVersionId(int templateVersionId, string hash)
 	{
 		// Act
-		int? projectId = _hashIdService.DecodeTemplateVersionId(hash);
+		int? projectId = _sut.DecodeTemplateVersionId(hash);
 
 		// Assert
-		Assert.Equal(templateVersionId, projectId);
+		projectId.Should().Be(templateVersionId);
 	}
 
 	[Theory]
@@ -207,10 +207,10 @@ public class HashIdService_Tests
 	public void DecodeTemplateVersionId_InvalidHashes_ReturnsNull(string hash)
 	{
 		// Act
-		int? projectId = _hashIdService.DecodeTemplateVersionId(hash);
+		int? projectId = _sut.DecodeTemplateVersionId(hash);
 
 		// Assert
-		Assert.Null(projectId);
+		projectId.Should().BeNull();
 	}
 
 	public static IEnumerable<object[]> EmailIdHashes
@@ -231,11 +231,11 @@ public class HashIdService_Tests
 	public void EncodeEmailId_EncodesTemplateVersionId_ReturnCorrectHash(int emailId, string expectedHash)
 	{
 		// Act
-		string hashedResult = _hashIdService.EncodeEmailId(emailId);
+		string hashedResult = _sut.EncodeEmailId(emailId);
 
 		// Assert
-		Assert.True(hashedResult.Length >= _hashSettings.Value.EmailId.MinLength);
-		Assert.Equal(expectedHash, hashedResult);
+		hashedResult.Length.Should().BeGreaterThanOrEqualTo(_hashSettings.Value.EmailId.MinLength);
+		hashedResult.Should().Be(expectedHash);
 	}
 
 	[Theory]
@@ -243,10 +243,10 @@ public class HashIdService_Tests
 	public void DecodeEmailId_DecodesProvidedHashes_ReturnCorrectEmailId(int expectedEmailId, string hash)
 	{
 		// Act
-		int? emailId = _hashIdService.DecodeEmailId(hash);
+		int? emailId = _sut.DecodeEmailId(hash);
 
 		// Assert
-		Assert.Equal(expectedEmailId, emailId);
+		emailId.Should().Be(expectedEmailId);
 	}
 
 	[Theory]
@@ -263,9 +263,9 @@ public class HashIdService_Tests
 	public void DecodeEmailId_InvalidHashes_ReturnsNull(string hash)
 	{
 		// Act
-		int? projectId = _hashIdService.DecodeEmailId(hash);
+		int? projectId = _sut.DecodeEmailId(hash);
 
 		// Assert
-		Assert.Null(projectId);
+		projectId.Should().BeNull();
 	}
 }

@@ -4,7 +4,7 @@ namespace UnitTests.Domain.Services;
 
 public class SlugService_Tests
 {
-	readonly ISlugService _slugService = new SlugService();
+	readonly ISlugService _sut = new SlugService();
 
 	[Theory]
 	[InlineData("This is a test input string", "this-is-a-test-input-string")]
@@ -14,10 +14,10 @@ public class SlugService_Tests
 	public void GenerateSlug_ReturnsExpectedSlug(string text, string expectedSlug)
 	{
 		// Act
-		string result = _slugService.GenerateSlug(text);
+		string result = _sut.GenerateSlug(text);
 
 		// Assert
-		Assert.Equal(expectedSlug, result);
+		result.Should().Be(expectedSlug);
 	}
 
 	[Theory]
@@ -28,10 +28,10 @@ public class SlugService_Tests
 	public void GenerateSlug_WithId_ReturnsExpectedSlug(string text, string id, string expectedSlug)
 	{
 		// Act
-		string result = _slugService.GenerateSlug(text, id);
+		string result = _sut.GenerateSlug(text, id);
 
 		// Assert
-		Assert.Equal(expectedSlug, result);
+		result.Should().Be(expectedSlug);
 	}
 
 	[Theory]
@@ -41,9 +41,9 @@ public class SlugService_Tests
 	public void GetIdFromSlug_ReturnsExpectedId(string text, string expectedId)
 	{
 		// Act
-		string result = _slugService.GetIdFromSlug(text);
+		string result = _sut.GetIdFromSlug(text);
 
 		// Assert
-		Assert.Equal(expectedId, result);
+		result.Should().Be(expectedId);
 	}
 }
