@@ -37,7 +37,6 @@ public class ThumbnailService_Tests
 		// Assert
 		// Verify that Update method of _templateVersionTbl was not called
 		_templateVersionTbl.DidNotReceive().Update(Arg.Any<TemplateVersionTbl>());
-	
 	}
 
 	[Fact]

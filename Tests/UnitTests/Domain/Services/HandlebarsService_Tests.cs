@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Nodes;
 using Domain.Services.Handlebars;
 using HandlebarsDotNet;
-using NSubstitute.ExceptionExtensions;
 
 namespace UnitTests.Domain.Services;
 
