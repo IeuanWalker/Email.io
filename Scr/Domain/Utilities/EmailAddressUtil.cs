@@ -15,7 +15,7 @@ public static partial class EmailAddressUtil
 	/// Matches if there are multiple @ symbols
 	/// </summary>
 	/// <returns></returns>
-	[GeneratedRegex(@"^\.|\.$|@.*@", RegexOptions.Compiled)]
+	[GeneratedRegex(@"^\.|\.$|@.*@|\.{2,}", RegexOptions.Compiled)]
 	private static partial Regex AdditionalValidationRegex();
 
 	/// <summary>
@@ -30,6 +30,24 @@ public static partial class EmailAddressUtil
 		{
 			return false;
 		}
+
+		var emailParts = value.Split('@');
+
+		if(emailParts.Length != 2)
+		{
+			return false;
+		}
+
+		if (emailParts[0].Length > 64)
+		{
+			return false;
+		}
+
+		if (emailParts[1].Length > 255)
+		{
+			return false;
+		}
+
 
 		// Check general email regex
 		if (!EmailRegex().IsMatch(value))
@@ -51,6 +69,16 @@ public static partial class EmailAddressUtil
 
 		return true;
 	}
+	static bool ValidateLocalPart(string localPart)
+	{
+		return true;
+	}
+
+	static bool ValidateDomain(string localPart)
+	{
+		return true;
+	}
+
 
 	[GeneratedRegex("[±!@£$%^&*+§€#¢§¶•ªº«\\\\/<>?:;|=.]", RegexOptions.Compiled)]
 	private static partial Regex InvalidCharactersRegex();
