@@ -1,5 +1,8 @@
 using System.Reflection;
 using Admin.Infrastructure;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Admin;
 
@@ -31,6 +34,21 @@ public class Startup
 
 		// Hangfire
 		HangfireConfiguration.ConfigureServices(services, Configuration);
+
+		// Authentication - https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/additional-claims?view=aspnetcore-3.1
+		services.AddAuthentication(options => {
+			options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+			options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+		})
+		.AddCookie()
+		.AddOpenIdConnect(o =>
+		{
+			o.ClientId = "";
+			o.ClientSecret = "";
+			o.Authority = "https://.onelogin.com/oidc";
+			o.ResponseType = "code";
+			o.GetClaimsFromUserInfoEndpoint = true;
+		});
 
 		services.AddRazorPages()
 			.AddRazorRuntimeCompilation();

@@ -3,10 +3,12 @@ using Database.Models;
 using Database.Repositories.Project;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Admin.Pages.Project;
 
+[Authorize]
 public class IndexModel : PageModel
 {
 	readonly IProjectRepository _projectTbl;
