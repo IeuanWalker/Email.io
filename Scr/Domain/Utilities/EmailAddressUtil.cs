@@ -39,7 +39,7 @@ public static partial class EmailAddressUtil
 	[GeneratedRegex(@"^[A-Za-z0-9!#$%&'*+\-/=?^_`{|}~.]+$", RegexOptions.Compiled)]
 	private static partial Regex LocalPartAllowedCharactersRegex();
 	[GeneratedRegex(@"\.{2,}", RegexOptions.Compiled)]
-	private static partial Regex LocalPartFullStopChecksRegex();
+	private static partial Regex LocalPartMultipleFullStopsRegex();
 	static bool ValidateLocalPart(string localPart)
 	{
 		if (localPart.Length > 64)
@@ -52,7 +52,7 @@ public static partial class EmailAddressUtil
 			return false;
 		}
 
-		if(localPart.StartsWith(".") || localPart.EndsWith(".") || LocalPartFullStopChecksRegex().Match(localPart).Success)
+		if(localPart.StartsWith(".") || localPart.EndsWith(".") || LocalPartMultipleFullStopsRegex().Match(localPart).Success)
 		{ 
 			return false;
 		}
@@ -70,6 +70,11 @@ public static partial class EmailAddressUtil
 	static bool ValidateDomain(string domainPart)
 	{
 		if (domainPart.Length > 255)
+		{
+			return false;
+		}
+
+		if (domainPart.StartsWith("-") || domainPart.EndsWith("-"))
 		{
 			return false;
 		}
