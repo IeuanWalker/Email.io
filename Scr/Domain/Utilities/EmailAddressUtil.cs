@@ -4,21 +4,6 @@ namespace Domain.Utilities;
 public static partial class EmailAddressUtil
 {
 	/// <summary>
-	/// A combination of 3 different regex to validate emails based on the RFC 5322 spec
-	/// </summary>
-	/// <returns></returns>
-	[GeneratedRegex(@"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])|(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))|(?("")("".+?""@)|(([0-9a-zA-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$", RegexOptions.Compiled)]
-	private static partial Regex EmailRegex();
-
-	/// <summary>
-	/// Matches if the start or end character is a full stop
-	/// Matches if there are multiple @ symbols
-	/// </summary>
-	/// <returns></returns>
-	[GeneratedRegex(@"^\.|\.$|@.*@|\.{2,}", RegexOptions.Compiled)]
-	private static partial Regex AdditionalValidationRegex();
-
-	/// <summary>
 	/// Attempted RFC 5322 complient email validation
 	/// </summary>
 	/// <param name="value">The email address to validate.</param>
@@ -38,45 +23,73 @@ public static partial class EmailAddressUtil
 			return false;
 		}
 
-		if (emailParts[0].Length > 64)
+		if (!ValidateLocalPart(emailParts[0]))
 		{
 			return false;
 		}
 
-		if (emailParts[1].Length > 255)
+		if (!ValidateDomain(emailParts[1]))
 		{
 			return false;
 		}
-
-
-		// Check general email regex
-		if (!EmailRegex().IsMatch(value))
-		{
-			return false;
-		}
-
-		// Starts or ends in a fullstop
-		if (AdditionalValidationRegex().IsMatch(value))
-		{
-			return false;
-		}
-
-		// TODO: Benchmark if this is faster than the regex
-		//if (value.StartsWith('.') || value.EndsWith('.') || value.Split('@').Length > 2)
-		//{
-		//	return false;
-		//}
 
 		return true;
 	}
+
+	[GeneratedRegex(@"^[A-Za-z0-9!#$%&'*+\-/=?^_`{|}~.]+$", RegexOptions.Compiled)]
+	private static partial Regex LocalPartAllowedCharactersRegex();
+	[GeneratedRegex(@"\.{2,}", RegexOptions.Compiled)]
+	private static partial Regex LocalPartFullStopChecksRegex();
 	static bool ValidateLocalPart(string localPart)
 	{
+		if (localPart.Length > 64)
+		{
+			return false;
+		}
+
+		if (!LocalPartAllowedCharactersRegex().Match(localPart).Success)
+		{
+			return false;
+		}
+
+		if(localPart.StartsWith(".") || localPart.EndsWith(".") || LocalPartFullStopChecksRegex().Match(localPart).Success)
+		{ 
+			return false;
+		}
+
 		return true;
 	}
 
-	static bool ValidateDomain(string localPart)
+
+	[GeneratedRegex(@"^(?!:\/\/)([a-zA-Z0-9][a-zA-Z0-9-]{0,62}\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,62}$", RegexOptions.Compiled)]
+	private static partial Regex DomainPartStandardDomainRegex();
+	[GeneratedRegex(@"^\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\]$", RegexOptions.Compiled)]
+	private static partial Regex DomainPartIPv4Regex();
+	[GeneratedRegex(@"(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))", RegexOptions.Compiled)]
+	private static partial Regex DomainPartIPv6Regex();
+	static bool ValidateDomain(string domainPart)
 	{
-		return true;
+		if (domainPart.Length > 255)
+		{
+			return false;
+		}
+
+		if (DomainPartStandardDomainRegex().Match(domainPart).Success)
+		{
+			return true;
+		}
+
+		if (DomainPartIPv4Regex().Match(domainPart).Success)
+		{
+			return true;
+		}
+
+		if (DomainPartIPv6Regex().Match(domainPart).Success)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 

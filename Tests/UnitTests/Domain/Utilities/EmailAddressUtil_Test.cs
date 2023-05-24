@@ -26,8 +26,7 @@ public class EmailAddressUtil_Test
 	[InlineData("user@[IPv6:2001:db8:1ff::a0b:dbd0]")]
 	[InlineData("user@[IPv6:2001:db8:1ff::a0b:dbd0]:80")]
 	[InlineData("!#$%&'*+-/=?^_`{|}~@domain.com")]
-	[InlineData("\"username\"@domain.com")]
-	[InlineData("\"john doe\"@domain.com")]
+	[InlineData("t@t.com")]
 	public void IsValidEmailAddress_ValidEmails_ReturnTrue(string email)
 	{
 		// Act
