@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims;
+@using Database.Models;
 @{
     @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
 }
@@ -37,16 +38,19 @@
                     <li class="menu-item">
                         <a href="#">Appearance</a>
                     </li>
-                    <li class="menu-item">
-                        <a href="#">Users access</a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="#">SMTP Senders</a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="/dev/hangfire">Hangfire</a>
-                    </li>
-                     @if (User.Identity?.IsAuthenticated ?? false)
+                    @if (User.IsInRole(UserRoles.Admin.ToString()))
+                    {
+                        <li class="menu-item">
+                            <a href="#">Users access</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#">SMTP Senders</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/dev/hangfire">Hangfire</a>
+                        </li>
+                    }
+                    @if (User.Identity?.IsAuthenticated ?? false)
                     {
 
                         <li class="menu-item">

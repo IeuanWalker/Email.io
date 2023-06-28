@@ -1,4 +1,5 @@
 ﻿using Admin.Models.AppSettings;
+using Database.Models;
 using Hangfire;
 using Hangfire.Annotations;
 using Hangfire.Dashboard;
@@ -56,8 +57,15 @@ static class HangfireConfiguration
 
 public class NoAuthFilter : IDashboardAuthorizationFilter
 {
-	public bool Authorize([NotNull] DashboardContext context)
+	public bool Authorize(DashboardContext context)
 	{
-		return true;
+		HttpContext httpContext = context.GetHttpContext();
+
+		if (!httpContext.User.Identity?.IsAuthenticated ?? true)
+		{
+			return false;
+		}
+
+		return httpContext.User.IsInRole(nameof(UserRoles.Admin));
 	}
 }

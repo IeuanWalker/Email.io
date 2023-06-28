@@ -1,22 +1,11 @@
-using System.Net.Http;
 using System.Reflection;
 using System.Security.Claims;
 using Admin.Infrastructure;
-using Database.Context;
 using Database.Models;
-using Database.Repositories.Project;
 using Database.Repositories.User;
-using HandlebarsDotNet;
-using Humanizer;
-using IdentityModel.Client;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web.UI;
-using static IdentityModel.OidcConstants;
 
 namespace Admin;
 
@@ -47,10 +36,6 @@ public class Startup
 		// AutoMapper
 		services.AddAutoMapper(typeof(Startup).GetTypeInfo().Assembly);
 
-		// Hangfire
-		HangfireConfiguration.ConfigureServices(services, Configuration);
-
-
 		services
 			.AddAuthentication(options =>
 			{
@@ -64,7 +49,7 @@ public class Startup
 				options.Authority = "https://login.microsoftonline.com/6d2b6129-6234-4f81-932c-25af126af273/";
 				options.ClientId = "39e54bdf-ef10-490e-92e3-aa8c3439a2b1";
 				options.ClientSecret = "4ts8Q~KPM~BXdKs7drrN6fnD3hIUA7YfzW4KbbY0";
-				options.ResponseType = ResponseTypes.Code;
+				options.ResponseType = IdentityModel.OidcConstants.ResponseTypes.Code;
 				options.UsePkce = true;
 				options.Scope.Clear();
 				options.Scope.Add("openid");
@@ -83,6 +68,9 @@ public class Startup
 		services.AddAuthorization();
 
 		services.AddControllersWithViews().AddMicrosoftIdentityUI();
+
+		// Hangfire
+		HangfireConfiguration.ConfigureServices(services, Configuration);
 
 		services.AddRazorPages()
 			.AddRazorRuntimeCompilation();
@@ -106,8 +94,7 @@ public class Startup
 
 		DatabaseConfiguration.Configure(app);
 
-		// Hangfire
-		HangfireConfiguration.Configure(app);
+
 
 		app.UseHttpsRedirection();
 		app.UseStaticFiles();
@@ -116,6 +103,9 @@ public class Startup
 
 		app.UseAuthentication();
 		app.UseAuthorization();
+
+		// Hangfire
+		HangfireConfiguration.Configure(app);
 
 		app.UseEndpoints(endpoints =>
 		{
@@ -192,19 +182,29 @@ public class AuthorizationCodeHandler
 		}
 		else
 		{
-			user = await _userTbl.Add(new UserTbl
+			user = new UserTbl
 			{
 				Sub = userId,
+				Role = UserRoles.Standard,
 				Email = email,
 				GivenName = givenName,
 				FamilyName = familyName,
 				DisplayName = displayName,
 				Initials = initials
-			});
+			};
+
+			// If no admin users exist, make this user an admin
+			if(!_userTbl.Where(x => x.Role.Equals(UserRoles.Admin)).Any())
+			{
+				user.Role = UserRoles.Admin;
+			}
+
+			user = await _userTbl.Add(user);
 		}
 
 		context.Principal.AddIdentity(new ClaimsIdentity(new Claim[]
 		{
+			new Claim(ClaimTypes.Role, user.Role.ToString()),
 			new Claim("DisplayName", user.DisplayName),
 			new Claim("Initials", user.Initials)
 		}));
