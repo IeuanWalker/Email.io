@@ -90,8 +90,6 @@ public class Startup
 
 		DatabaseConfiguration.Configure(app);
 
-
-
 		app.UseHttpsRedirection();
 		app.UseStaticFiles();
 
@@ -110,7 +108,6 @@ public class Startup
 		});
 	}
 }
-
 
 public class AuthorizationCodeHandler
 {

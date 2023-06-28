@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Database.Models;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
@@ -40,12 +38,6 @@ public class DetailsModel : PageModel
 
 	public async Task<IActionResult> OnGet(string slug)
 	{
-
-		string user = JsonSerializer.Serialize(this.HttpContext.User, new JsonSerializerOptions
-		{
-			ReferenceHandler = ReferenceHandler.Preserve
-		});
-
 		int? id = _hashIdService.DecodeProjectId(_slugService.GetIdFromSlug(slug));
 
 		if (id is null)

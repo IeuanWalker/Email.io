@@ -10,16 +10,12 @@ static class HangfireConfiguration
 	public static IServiceCollection AddHangfire(this IServiceCollection services, IConfiguration configuration)
 	{
 		IConfigurationSection databaseConnections = configuration.GetSection(nameof(DatabaseConnections));
-		string? dbConnection = databaseConnections.GetValue<string>(nameof(DatabaseConnections.EmailDb));
-
-		if (dbConnection is null)
-		{
-			throw new ArgumentNullException(nameof(configuration), "Missing database connection string");
-		}
+		string dbConnection = databaseConnections.GetValue<string>(nameof(DatabaseConnections.EmailDb))
+			?? throw new ArgumentNullException(nameof(configuration), "Missing database connection string");
 
 		services.AddHangfire(x =>
 		{
-			x.SetDataCompatibilityLevel(CompatibilityLevel.Version_170);
+			x.SetDataCompatibilityLevel(CompatibilityLevel.Version_180);
 			x.UseSimpleAssemblyNameTypeSerializer();
 			x.UseRecommendedSerializerSettings();
 			x.UseSqlServerStorage(dbConnection, new SqlServerStorageOptions
@@ -28,8 +24,8 @@ static class HangfireConfiguration
 				SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
 				QueuePollInterval = TimeSpan.Zero,
 				UseRecommendedIsolationLevel = true,
-				UsePageLocksOnDequeue = true,
-				DisableGlobalLocks = true
+				DisableGlobalLocks = true,
+				EnableHeavyMigrations = true
 			});
 		});
 

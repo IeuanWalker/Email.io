@@ -3,13 +3,13 @@ global using FluentValidation;
 using Api.Infrastructure;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Services.AddApiKeyAuthentication();
 builder.Services.AddFastEndpoints();
 builder.Services.AddSwagger(builder.Environment.EnvironmentName);
 builder.Services.AddAppSettings(builder.Configuration);
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddHangfire(builder.Configuration);
 builder.Services.AddDependencies();
-builder.Services.AddApiKeyAuthentication();
 builder.Services.AddMemoryCache();
 
 WebApplication app = builder.Build();

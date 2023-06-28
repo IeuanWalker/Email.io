@@ -15,12 +15,8 @@ static class DatabaseConfiguration
 	public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 	{
 		IConfigurationSection databaseConnections = configuration.GetSection(nameof(DatabaseConnections));
-		string? connection = databaseConnections.GetValue<string>(nameof(DatabaseConnections.EmailDb));
-
-		if (connection is null)
-		{
-			throw new ArgumentNullException(nameof(configuration), "Missing database connection string");
-		}
+		string connection = databaseConnections.GetValue<string>(nameof(DatabaseConnections.EmailDb))
+			?? throw new ArgumentNullException(nameof(configuration), "Missing database connection string");
 
 		services.AddDbContext<ApplicationDbContext>(options =>
 			options.UseSqlServer(connection, b => b.MigrationsAssembly(nameof(Database))));
@@ -40,7 +36,6 @@ static class DatabaseConfiguration
 		}
 		catch (Exception)
 		{
-#pragma warning disable S112 // General exceptions should never be thrown
 			throw new ApplicationException("Database migration need to be applied manually");
 		}
 	}

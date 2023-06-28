@@ -12,7 +12,7 @@ public class ProjectRepository : GenericRepository<ProjectTbl>, IProjectReposito
 		base.context = context;
 		dbSet = context.Set<ProjectTbl>();
 	}
-	
+
 	public async Task<List<string>> GetApiKeys()
 	{
 		return await dbSet.Select(x => x.ApiKey).ToListAsync();

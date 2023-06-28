@@ -53,13 +53,12 @@ public static partial class EmailAddressUtil
 		}
 
 		if(localPart.StartsWith(".") || localPart.EndsWith(".") || LocalPartMultipleFullStopsRegex().Match(localPart).Success)
-		{ 
+		{
 			return false;
 		}
 
 		return true;
 	}
-
 
 	[GeneratedRegex(@"^(?!:\/\/)([a-zA-Z0-9][a-zA-Z0-9-]{0,62}\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,62}$", RegexOptions.Compiled)]
 	private static partial Regex DomainPartStandardDomainRegex();
@@ -96,7 +95,6 @@ public static partial class EmailAddressUtil
 
 		return false;
 	}
-
 
 	[GeneratedRegex("[±!@£$%^&*+§€#¢§¶•ªº«\\\\/<>?:;|=.]", RegexOptions.Compiled)]
 	private static partial Regex InvalidCharactersRegex();

@@ -15,7 +15,7 @@ public static partial class FileUtil
 		{
 			return false;
 		}
-		
+
 		Span<byte> buffer = new(new byte[base64.Length]);
 		return Convert.TryFromBase64String(base64, buffer, out int _);
 	}

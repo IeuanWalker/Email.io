@@ -23,10 +23,7 @@ public partial class CreatedUserTbl : Migration
                 DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 Initials = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: false)
             },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_User", x => x.Id);
-            });
+            constraints: table => table.PrimaryKey("PK_User", x => x.Id));
     }
 
     /// <inheritdoc />
