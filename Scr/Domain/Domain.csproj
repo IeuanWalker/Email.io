@@ -7,15 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
     <PackageReference Include="CoreHtmlToImage" Version="1.0.6" />
-    <PackageReference Include="FluentValidation" Version="11.4.0" />
-    <PackageReference Include="Handlebars.Net" Version="2.1.2" />
-    <PackageReference Include="Hashids.net" Version="1.6.1" />
-    <PackageReference Include="MailKit" Version="3.4.3" />
+    <PackageReference Include="FluentValidation" Version="11.5.2" />
+    <PackageReference Include="Handlebars.Net" Version="2.1.4" />
+    <PackageReference Include="Hashids.net" Version="1.7.0" />
+    <PackageReference Include="MailKit" Version="4.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Stowage" Version="1.2.4" />
+    <PackageReference Include="Stowage" Version="1.2.6" />
   </ItemGroup>
 
   <ItemGroup>
