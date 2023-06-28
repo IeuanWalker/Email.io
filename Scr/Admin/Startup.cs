@@ -36,36 +36,36 @@ public class Startup
 		// Database
 		DatabaseConfiguration.ConfigureServices(services, Configuration);
 
-		services
-			.AddAuthentication(options =>
+services
+	.AddAuthentication(options =>
+	{
+		options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+		options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+	})
+	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+	.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+	{
+		options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+		options.Authority = "https://login.microsoftonline.com/6d2b6129-6234-4f81-932c-25af126af273/";
+		options.ClientId = "39e54bdf-ef10-490e-92e3-aa8c3439a2b1";
+		options.ClientSecret = "4ts8Q~KPM~BXdKs7drrN6fnD3hIUA7YfzW4KbbY0";
+		options.ResponseType = OpenIdConnectResponseType.Code;
+		options.UsePkce = true;
+		options.Scope.Clear();
+		options.Scope.Add("openid");
+		options.Scope.Add("profile");
+		options.SaveTokens = true;
+		options.GetClaimsFromUserInfoEndpoint = true;
+		options.Events = new OpenIdConnectEvents
+		{
+			OnTokenValidated = async context =>
 			{
-				options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-				options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-			})
-			.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-			.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-			{
-				options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-				options.Authority = "https://login.microsoftonline.com/6d2b6129-6234-4f81-932c-25af126af273/";
-				options.ClientId = "39e54bdf-ef10-490e-92e3-aa8c3439a2b1";
-				options.ClientSecret = "4ts8Q~KPM~BXdKs7drrN6fnD3hIUA7YfzW4KbbY0";
-				options.ResponseType = OpenIdConnectResponseType.Code;
-				options.UsePkce = true;
-				options.Scope.Clear();
-				options.Scope.Add("openid");
-				options.Scope.Add("profile");
-				options.SaveTokens = true;
-				options.GetClaimsFromUserInfoEndpoint = true;
-				options.Events = new OpenIdConnectEvents
-				{
-					OnTokenValidated = async context =>
-					{
-						AuthorizationCodeHandler codeHandler = context.HttpContext.RequestServices.GetRequiredService<AuthorizationCodeHandler>();
-						await codeHandler.HandleAuthorizationCodeAsync(context);
-					}
-				};
-			});
-		services.AddAuthorization();
+				AuthorizationCodeHandler codeHandler = context.HttpContext.RequestServices.GetRequiredService<AuthorizationCodeHandler>();
+				await codeHandler.HandleAuthorizationCodeAsync(context);
+			}
+		};
+	});
+services.AddAuthorization();
 
 		services.AddControllersWithViews().AddMicrosoftIdentityUI();
 
