@@ -45,7 +45,7 @@ public class Startup
 				options.Authority = "https://login.microsoftonline.com/6d2b6129-6234-4f81-932c-25af126af273/";
 				options.ClientId = "39e54bdf-ef10-490e-92e3-aa8c3439a2b1";
 				options.ClientSecret = "4ts8Q~KPM~BXdKs7drrN6fnD3hIUA7YfzW4KbbY0";
-				options.ResponseType = IdentityModel.OidcConstants.ResponseTypes.Code;
+				options.ResponseType = "Code";
 				options.UsePkce = true;
 				options.Scope.Clear();
 				options.Scope.Add("openid");
