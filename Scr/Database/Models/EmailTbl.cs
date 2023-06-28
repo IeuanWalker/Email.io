@@ -26,7 +26,7 @@ public class EmailTbl
 	public string PlainTextContent { get; set; } = string.Empty;
 
 	[MaxLength(5)]
-	public string Language { get; set; } = "en-GB";
+	public string? Language { get; set; }
 
 	[ForeignKey("AttachementsId")]
 	public ICollection<EmailAttachmentTbl>? Attachements { get; set; }

@@ -10,7 +10,6 @@ using Domain.Services.HashId;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
-using IMapper = AutoMapper.IMapper;
 
 namespace Api.Endpoints.Email.Post;
 
@@ -23,7 +22,6 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 	readonly IEmailRepository _emailTbl;
 	readonly IBackgroundJobClient _jobClient;
 	readonly IHashIdService _hashedService;
-	readonly IMapper _mapper;
 
 	public PostEmailEndpoint(
 		IProjectRepository projectTbl,
@@ -32,8 +30,7 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		IEmailService emailService,
 		IEmailRepository emailTbl,
 		IBackgroundJobClient jobClient,
-		IHashIdService hashedService,
-		IMapper mapper)
+		IHashIdService hashedService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
@@ -42,7 +39,6 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		_emailTbl = emailTbl ?? throw new ArgumentNullException(nameof(emailTbl));
 		_jobClient = jobClient ?? throw new ArgumentNullException(nameof(jobClient));
 		_hashedService = hashedService ?? throw new ArgumentNullException(nameof(hashedService));
-		_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 	}
 
 	public override void Configure()
@@ -124,13 +120,37 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 			ThrowError(x => x.TemplateId, $"Error constructing email: {ex.Message}");
 		}
 
-		EmailTbl email = _mapper.Map<EmailTbl>(request);
-		email.ProjectId = result.Value.projectId;
-		email.TemplateId = result.Value.templateId;
-		email.Subject = constructedEmail.Subject;
-		email.HtmlContent = constructedEmail.HtmlContent;
-		email.PlainTextContent = constructedEmail.PlainTextContent;
-
+		EmailTbl email = new()
+		{
+			ProjectId = result.Value.projectId,
+			TemplateId = result.Value.templateId,
+			Data = request.Data.ToString(),
+			ToAddresses = request.ToAddresses?.Select(x => new EmailAddressTbl
+			{
+				Name = x.Name,
+				Email = x.Email
+			}).ToList() ?? new List<EmailAddressTbl>(),
+			CCAddresses = request.CCAddresses?.Select(x => new EmailAddressTbl
+			{
+				Name = x.Name,
+				Email = x.Email
+			}).ToList(),
+			BCCAddresses = request.BCCAddresses?.Select(x => new EmailAddressTbl
+			{
+				Name = x.Name,
+				Email = x.Email
+			}).ToList(),
+			Subject = constructedEmail.Subject,
+			HtmlContent = constructedEmail.HtmlContent,
+			PlainTextContent = constructedEmail.PlainTextContent,
+			Language = request.Language,
+			Attachements = request.Attachments?.Select(x => new EmailAttachmentTbl
+			{
+				FileName = x.FileName,
+				Content = x.Content,
+				ContentType = x.ContentType
+			}).ToList(),
+		};
 		await _emailTbl.Add(email);
 
 		Response = new ResponseModel

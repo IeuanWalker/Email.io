@@ -1,6 +1,5 @@
 global using FastEndpoints;
 global using FluentValidation;
-using System.Reflection;
 using Api.Infrastructure;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -11,7 +10,6 @@ builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddHangfire(builder.Configuration);
 builder.Services.AddDependencies();
 builder.Services.AddApiKeyAuthentication();
-builder.Services.AddAutoMapper(typeof(Program).GetTypeInfo().Assembly);
 builder.Services.AddMemoryCache();
 
 WebApplication app = builder.Build();

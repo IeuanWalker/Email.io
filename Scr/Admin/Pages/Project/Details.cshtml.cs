@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AutoMapper;
 using Database.Models;
 using Database.Repositories.Project;
 using Database.Repositories.Template;
@@ -20,7 +19,6 @@ public class DetailsModel : PageModel
 	readonly IProjectRepository _projectTbl;
 	readonly ITemplateRepository _templateTbl;
 	readonly ITemplateVersionRepository _templateVersionTbl;
-	readonly IMapper _mapper;
 	readonly IHashIdService _hashIdService;
 	readonly ISlugService _slugService;
 
@@ -28,14 +26,12 @@ public class DetailsModel : PageModel
 		IProjectRepository projectTbl,
 		ITemplateRepository templateTbl,
 		ITemplateVersionRepository templateVersionTbl,
-		IMapper mapper,
 		IHashIdService hashIdService,
 		ISlugService slugService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_templateTbl = templateTbl ?? throw new ArgumentNullException(nameof(templateTbl));
 		_templateVersionTbl = templateVersionTbl ?? throw new ArgumentNullException(nameof(templateVersionTbl));
-		_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
 		_slugService = slugService ?? throw new ArgumentNullException(nameof(slugService));
 	}
@@ -63,20 +59,39 @@ public class DetailsModel : PageModel
 			return NotFound();
 		}
 
-		Project = _mapper.Map<ProjectResponseModel>(project);
-
-		Project.Slug = slug;
-		Project.Templates?.ForEach(x =>
+		Project = new ProjectResponseModel
 		{
-			x.HashedApiId = _hashIdService.EncodeProjectAndTemplateId(x.ProjectId, x.Id);
-			x.Versions?.ForEach(y =>
+			Id = project.Id,
+			Slug = slug,
+			Name = project.Name,
+			SubHeading = project.SubHeading,
+			Description = project.Description,
+			Tags = project.Tags,
+			ApiKey = project.ApiKey,
+			Templates = project.Templates?.Select(t => new TemplateResponseModel
 			{
-				y.HashedId = _hashIdService.EncodeTemplateVersionId(y.Id);
-				y.TemplateNameSlug = _slugService.GenerateSlug(x.Name);
-			});
-			x.Versions = x.Versions?.OrderByDescending(x => x.IsActive).ThenByDescending(x => x.DateModified).ToList();
-		});
-		Project.Templates = Project.Templates?.OrderBy(x => x.Name).ToList();
+				Id = t.Id,
+				DateModified = t.DateModified,
+				HashedApiId = _hashIdService.EncodeProjectAndTemplateId(project.Id, t.Id),
+				Name = t.Name,
+				ProjectId = t.ProjectId,
+				Versions = t.Versions?.Select(v => new TemplateVersionResponseModel
+				{
+					Id = v.Id,
+					HashedId = _hashIdService.EncodeTemplateVersionId(v.Id),
+					DateModified = v.DateModified,
+					Name = v.Name,
+					TemplateNameSlug = _slugService.GenerateSlug(v.Name),
+					IsActive = v.IsActive,
+					ThumbnailImage = v.ThumbnailImage
+				})
+				.OrderByDescending(x => x.IsActive)
+				.ThenByDescending(x => x.DateModified)
+				.ToList()
+			})
+			.OrderBy(x => x.Name)
+			.ToList()
+		};
 
 		CreateTemplate = new TemplateTbl
 		{

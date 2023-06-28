@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Security.Claims;
 using Admin.Infrastructure;
 using Database.Models;
@@ -32,9 +31,6 @@ public class Startup
 
 		// Database
 		DatabaseConfiguration.ConfigureServices(services, Configuration);
-
-		// AutoMapper
-		services.AddAutoMapper(typeof(Startup).GetTypeInfo().Assembly);
 
 		services
 			.AddAuthentication(options =>

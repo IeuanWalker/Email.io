@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Database.Models;
+﻿using Database.Models;
 using Database.Repositories.Project;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
@@ -12,18 +11,15 @@ public class IndexModel : PageModel
 	readonly IProjectRepository _projectTbl;
 	readonly IHashIdService _hashIdService;
 	readonly ISlugService _slugService;
-	readonly IMapper _mapper;
 
 	public IndexModel(
 		IProjectRepository projectTbl,
 		IHashIdService hashIdService,
-		ISlugService slugService,
-		IMapper mapper)
+		ISlugService slugService)
 	{
 		_projectTbl = projectTbl ?? throw new ArgumentNullException(nameof(projectTbl));
 		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
 		_slugService = slugService ?? throw new ArgumentNullException(nameof(slugService));
-		_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 	}
 
 	public List<ProjectResponseModel1> Projects { get; set; } = new List<ProjectResponseModel1>();
@@ -34,7 +30,16 @@ public class IndexModel : PageModel
 
 		if (result?.Any() ?? false)
 		{
-			Projects = _mapper.Map<List<ProjectResponseModel1>>(result);
+			Projects = result.Select(x => new ProjectResponseModel1
+			{
+				Id = x.Id,
+				DateModified = x.DateModified,
+				Name = x.Name,
+				SubHeading = x.SubHeading,
+				Description = x.Description,
+				Tags = x.Tags,
+				ApiKey = x.ApiKey
+			}).ToList();
 			Projects.ForEach(x => x.Slug = _slugService.GenerateSlug(x.Name, _hashIdService.EncodeProjectId(x.Id)));
 		}
 	}

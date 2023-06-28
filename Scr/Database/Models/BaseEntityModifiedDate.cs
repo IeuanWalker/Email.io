@@ -2,5 +2,5 @@
 
 public class BaseEntityModifiedDate
 {
-	public DateTime? DateModified { get; set; }
+	public DateTime DateModified { get; set; } = DateTime.UtcNow;
 }

@@ -14,8 +14,6 @@
   <ItemGroup>
     <PackageReference Include="FastEndpoints" Version="5.5.0" />
     <PackageReference Include="FastEndpoints.Swagger" Version="5.5.0" />
-    <PackageReference Include="AutoMapper" Version="12.0.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.32" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.7.32" />
     <PackageReference Include="MailKit" Version="3.4.3" />
