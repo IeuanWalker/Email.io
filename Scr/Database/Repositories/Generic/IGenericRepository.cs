@@ -64,7 +64,7 @@ public interface IGenericRepository<T> where T : class
 	/// Update object
 	/// </summary>
 	/// <param name="entityToUpdate"></param>
-	void Update(T entityToUpdate);
+	Task Update(T entityToUpdate);
 
 	/// <summary>
 	/// Update rows using query

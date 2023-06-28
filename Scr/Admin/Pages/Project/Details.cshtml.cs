@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using AutoMapper;
 using Database.Models;
 using Database.Repositories.Project;
@@ -6,12 +8,13 @@ using Database.Repositories.Template;
 using Database.Repositories.TemplateVersion;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Pages.Project;
-
+[Authorize]
 public class DetailsModel : PageModel
 {
 	readonly IProjectRepository _projectTbl;
@@ -41,6 +44,12 @@ public class DetailsModel : PageModel
 
 	public async Task<IActionResult> OnGet(string slug)
 	{
+
+		string user = JsonSerializer.Serialize(this.HttpContext.User, new JsonSerializerOptions
+		{
+			ReferenceHandler = ReferenceHandler.Preserve
+		});
+
 		int? id = _hashIdService.DecodeProjectId(_slugService.GetIdFromSlug(slug));
 
 		if (id is null)
@@ -132,7 +141,7 @@ public class DetailsModel : PageModel
 		}
 
 		result.Name = UpdateTemplateName.Name;
-		_templateTbl.Update(result);
+		await _templateTbl.Update(result);
 
 		await _projectTbl.UpdateFromQuery(x => x.Id.Equals(UpdateTemplateName.ProjectId), s => s
 			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
@@ -232,7 +241,7 @@ public class DetailsModel : PageModel
 
 		version.IsActive = true;
 
-		_templateVersionTbl.Update(version);
+		await _templateVersionTbl.Update(version);
 
 		await _templateVersionTbl.UpdateFromQuery(x =>
 			x.IsActive &&

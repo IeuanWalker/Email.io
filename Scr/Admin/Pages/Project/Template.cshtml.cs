@@ -179,7 +179,7 @@ public class TemplateModel : PageModel
 			version.TestData.Where(x => x.Id.Equals(testData.Id)).ToList().ForEach(x => x.Data = testData.Data);
 		}
 
-		_templateVersionTbl.Update(version);
+		await _templateVersionTbl.Update(version);
 
 		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(UpdateTemplate.TemplateId), s => s
 			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
@@ -215,7 +215,7 @@ public class TemplateModel : PageModel
 		version.Name = UpdateSettings.Name;
 		version.Subject = UpdateSettings.Subject;
 
-		_templateVersionTbl.Update(version);
+		await _templateVersionTbl.Update(version);
 
 		await _templateTbl.UpdateFromQuery(x => x.Id.Equals(UpdateSettings.TemplateId), s => s
 			.SetProperty(b => b.DateModified, _ => DateTime.UtcNow));
@@ -351,7 +351,7 @@ public class TemplateModel : PageModel
 		}
 
 		testData.IsDefault = true;
-		_templateTestDataTbl.Update(testData);
+		await _templateTestDataTbl.Update(testData);
 
 		await _templateTestDataTbl.UpdateFromQuery(x =>
 			x.IsDefault &&
@@ -422,7 +422,7 @@ public class TemplateModel : PageModel
 		}
 
 		testData.Name = UpdateTestDataName.Name;
-		_templateTestDataTbl.Update(testData);
+		await _templateTestDataTbl.Update(testData);
 
 		TempData["toastStatus"] = "success";
 		TempData["toastMessage"] = "Test data name updated";

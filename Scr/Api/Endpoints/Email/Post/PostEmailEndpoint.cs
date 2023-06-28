@@ -141,7 +141,7 @@ public class PostEmailEndpoint : Endpoint<RequestModel, ResponseModel>
 		try
 		{
 			email.HangfireId = _jobClient.Enqueue<IEmailService>(x => x.SendEmail(email.Id));
-			_emailTbl.Update(email);
+			await _emailTbl.Update(email);
 		}
 		catch (Exception)
 		{

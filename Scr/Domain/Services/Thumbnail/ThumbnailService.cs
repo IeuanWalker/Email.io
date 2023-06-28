@@ -61,6 +61,6 @@ public class ThumbnailService : IThumbnailService
 		Uri thumbnailUri = await _blobStorageService.SaveImage(version.Template.ProjectId, thumbnail, $"Template-{version.TemplateId}-Version-{version.Id}-thumbnail.png");
 
 		version.ThumbnailImage = thumbnailUri.ToString();
-		_templateVersionTbl.Update(version);
+		await _templateVersionTbl.Update(version);
 	}
 }

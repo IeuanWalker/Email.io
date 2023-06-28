@@ -51,9 +51,6 @@ public class ApplicationDbContext : DbContext
 				switch (entry.State)
 				{
 					case EntityState.Modified:
-						baseModifiedDateEntity.DateModified = now;
-						break;
-
 					case EntityState.Added:
 						baseModifiedDateEntity.DateModified = now;
 						break;
@@ -64,6 +61,7 @@ public class ApplicationDbContext : DbContext
 
 	#region DbSet's
 
+	public DbSet<UserTbl> UserTbl => Set<UserTbl>();
 	public DbSet<ProjectTbl> ProjectTbl => Set<ProjectTbl>();
 	public DbSet<EmailTbl> EmailTbl => Set<EmailTbl>();
 	public DbSet<EmailAddressTbl> EmailAddressTbl => Set<EmailAddressTbl>();

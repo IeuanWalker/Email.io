@@ -36,7 +36,7 @@ public class ThumbnailService_Tests
 
 		// Assert
 		// Verify that Update method of _templateVersionTbl was not called
-		_templateVersionTbl.DidNotReceive().Update(Arg.Any<TemplateVersionTbl>());
+		await _templateVersionTbl.DidNotReceive().Update(Arg.Any<TemplateVersionTbl>());
 	}
 
 	[Fact]
@@ -61,7 +61,7 @@ public class ThumbnailService_Tests
 
 		// Assert
 		// Verify that Update method of _templateVersionTbl was not called
-		_templateVersionTbl.DidNotReceive().Update(Arg.Any<TemplateVersionTbl>());
+		await _templateVersionTbl.DidNotReceive().Update(Arg.Any<TemplateVersionTbl>());
 	}
 
 	[Fact]
@@ -87,7 +87,7 @@ public class ThumbnailService_Tests
 
 		// Assert
 		// Verify that Update method of _templateVersionTbl was not called
-		_templateVersionTbl.DidNotReceive().Update(Arg.Any<TemplateVersionTbl>());
+		await _templateVersionTbl.DidNotReceive().Update(Arg.Any<TemplateVersionTbl>());
 	}
 
 	[Fact]
@@ -113,7 +113,7 @@ public class ThumbnailService_Tests
 
 		// Assert
 		// Verify that Update method of _templateVersionTbl was not called
-		_templateVersionTbl.DidNotReceive().Update(Arg.Any<TemplateVersionTbl>());
+		await _templateVersionTbl.DidNotReceive().Update(Arg.Any<TemplateVersionTbl>());
 	}
 
 	[Fact]
@@ -155,6 +155,6 @@ public class ThumbnailService_Tests
 		await _sut.GenerateThumbnail(templateVersionId);
 
 		// Assert
-		_templateVersionTbl.Received().Update(Arg.Is<TemplateVersionTbl>(t => t.ThumbnailImage == thumbnailImage));
+		await _templateVersionTbl.Received().Update(Arg.Is<TemplateVersionTbl>(t => t.ThumbnailImage == thumbnailImage));
 	}
 }

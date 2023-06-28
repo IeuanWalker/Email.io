@@ -95,7 +95,7 @@ public class EmailService : IEmailService
 
 		email.Sent = DateTime.Now;
 
-		_emailRepository.Update(email);
+		await _emailRepository.Update(email);
 	}
 
 	public ConstructedEmail ConstructEmail(JsonNode data, string subjectTemplate, string htmlTemplate, string? plainTextTemplate)

@@ -3,6 +3,7 @@ using Database.Repositories.Project;
 using Database.Repositories.Template;
 using Database.Repositories.TemplateTestData;
 using Database.Repositories.TemplateVersion;
+using Database.Repositories.User;
 using Domain.Services.ApiKey;
 using Domain.Services.BlobStorage;
 using Domain.Services.Email;
@@ -21,6 +22,7 @@ static class InterfaceConfiguration
 	/// <param name="services"></param>
 	public static void ConfigureServices(IServiceCollection services)
 	{
+		services.AddTransient<IUserRepository, UserRepository>();
 		services.AddTransient<IProjectRepository, ProjectRepository>();
 		services.AddTransient<ITemplateRepository, TemplateRepository>();
 		services.AddTransient<ITemplateVersionRepository, TemplateVersionRepository>();

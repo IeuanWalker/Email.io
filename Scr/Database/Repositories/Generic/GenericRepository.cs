@@ -102,7 +102,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		} while (rowsAffected >= batchSize);
 	}
 
-	public virtual void Update(T entityToUpdate)
+	public virtual async Task Update(T entityToUpdate)
 	{
 		// Make sure the object is being tracked by EF
 		dbSet.Attach(entityToUpdate);
@@ -111,7 +111,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		context.Entry(entityToUpdate).State = EntityState.Modified;
 
 		// Update changes to database
-		context.SaveChanges();
+		await context.SaveChangesAsync();
 	}
 
 	public virtual async Task UpdateFromQuery(Expression<Func<T, bool>> query, Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyCalls, int? batchSize = null)
