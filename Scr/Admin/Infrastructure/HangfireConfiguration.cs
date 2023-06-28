@@ -1,10 +1,7 @@
 ﻿using Admin.Models.AppSettings;
 using Database.Models;
 using Hangfire;
-using Hangfire.Annotations;
 using Hangfire.Dashboard;
-using Hangfire.Heartbeat;
-using Hangfire.RecurringJobAdmin;
 using Hangfire.SqlServer;
 
 namespace Admin.Infrastructure;
@@ -37,8 +34,6 @@ static class HangfireConfiguration
 				UsePageLocksOnDequeue = true,
 				DisableGlobalLocks = true
 			});
-			x.UseHeartbeatPage(TimeSpan.FromSeconds(1));
-			x.UseRecurringJobAdmin(typeof(Startup).Assembly);
 		});
 
 		// Add the processing server as IHostedService
