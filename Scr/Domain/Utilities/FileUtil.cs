@@ -48,6 +48,7 @@ public static partial class FileUtil
 
 	[GeneratedRegex(@"^[\w,\s-]+\.[\w]+$", RegexOptions.Compiled)]
 	private static partial Regex ValidFileNameRegex();
+
 	/// <summary>
 	/// Validates file name.
 	/// </summary>

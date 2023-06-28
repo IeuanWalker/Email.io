@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace Domain.Utilities;
+
 public static partial class EmailAddressUtil
 {
 	/// <summary>
@@ -18,7 +19,7 @@ public static partial class EmailAddressUtil
 
 		var emailParts = value.Split('@');
 
-		if(emailParts.Length != 2)
+		if (emailParts.Length != 2)
 		{
 			return false;
 		}
@@ -38,8 +39,10 @@ public static partial class EmailAddressUtil
 
 	[GeneratedRegex(@"^[A-Za-z0-9!#$%&'*+\-/=?^_`{|}~.]+$", RegexOptions.Compiled)]
 	private static partial Regex LocalPartAllowedCharactersRegex();
+
 	[GeneratedRegex(@"\.{2,}", RegexOptions.Compiled)]
 	private static partial Regex LocalPartMultipleFullStopsRegex();
+
 	static bool ValidateLocalPart(string localPart)
 	{
 		if (localPart.Length > 64)
@@ -52,7 +55,7 @@ public static partial class EmailAddressUtil
 			return false;
 		}
 
-		if(localPart.StartsWith(".") || localPart.EndsWith(".") || LocalPartMultipleFullStopsRegex().Match(localPart).Success)
+		if (localPart.StartsWith(".") || localPart.EndsWith(".") || LocalPartMultipleFullStopsRegex().Match(localPart).Success)
 		{
 			return false;
 		}
@@ -62,10 +65,13 @@ public static partial class EmailAddressUtil
 
 	[GeneratedRegex(@"^(?!:\/\/)([a-zA-Z0-9][a-zA-Z0-9-]{0,62}\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,62}$", RegexOptions.Compiled)]
 	private static partial Regex DomainPartStandardDomainRegex();
+
 	[GeneratedRegex(@"^\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\]$", RegexOptions.Compiled)]
 	private static partial Regex DomainPartIPv4Regex();
+
 	[GeneratedRegex(@"(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))", RegexOptions.Compiled)]
 	private static partial Regex DomainPartIPv6Regex();
+
 	static bool ValidateDomain(string domainPart)
 	{
 		if (domainPart.Length > 255)
@@ -98,6 +104,7 @@ public static partial class EmailAddressUtil
 
 	[GeneratedRegex("[±!@£$%^&*+§€#¢§¶•ªº«\\\\/<>?:;|=.]", RegexOptions.Compiled)]
 	private static partial Regex InvalidCharactersRegex();
+
 	public static bool IsValidName(string value)
 	{
 		return !InvalidCharactersRegex().Match(value).Success;

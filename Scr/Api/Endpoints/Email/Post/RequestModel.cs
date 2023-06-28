@@ -40,6 +40,7 @@ public class EmailAddresses
 	/// Name of the recpient, optional
 	/// </summary>
 	public string? Name { get; init; }
+
 	public string Email { get; init; } = null!;
 }
 

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Pages.Project;
+
 [Authorize]
 public class DetailsModel : PageModel
 {

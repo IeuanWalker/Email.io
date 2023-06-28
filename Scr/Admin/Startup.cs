@@ -120,7 +120,7 @@ public class AuthorizationCodeHandler
 
 	public async Task HandleAuthorizationCodeAsync(TokenValidatedContext context)
 	{
-		if(context.Principal is null)
+		if (context.Principal is null)
 		{
 			throw new NullReferenceException("Claim principal is null");
 		}
@@ -134,11 +134,11 @@ public class AuthorizationCodeHandler
 
 		UserTbl? user = _userTbl.Where(u => u.Sub == userId).FirstOrDefault();
 
-		if(user is not null)
+		if (user is not null)
 		{
 			bool needUpdating = false;
 
-			if(!user.Email.Equals(email))
+			if (!user.Email.Equals(email))
 			{
 				user.Email = email;
 				needUpdating = true;
@@ -162,13 +162,13 @@ public class AuthorizationCodeHandler
 				needUpdating = true;
 			}
 
-			if(!user.Initials.Equals(initials))
+			if (!user.Initials.Equals(initials))
 			{
 				user.Initials = initials;
 				needUpdating = true;
 			}
 
-			if(needUpdating)
+			if (needUpdating)
 			{
 				await _userTbl.Update(user);
 			}
@@ -187,7 +187,7 @@ public class AuthorizationCodeHandler
 			};
 
 			// If no admin users exist, make this user an admin
-			if(!_userTbl.Where(x => x.Role.Equals(UserRoles.Admin)).Any())
+			if (!_userTbl.Where(x => x.Role.Equals(UserRoles.Admin)).Any())
 			{
 				user.Role = UserRoles.Admin;
 			}
@@ -207,12 +207,12 @@ public class AuthorizationCodeHandler
 	{
 		string initials = string.Empty;
 
-		if(givenName is not null)
+		if (givenName is not null)
 		{
 			initials = givenName[0].ToString();
 		}
 
-		if(familyName is not null)
+		if (familyName is not null)
 		{
 			initials += familyName[0];
 		}
@@ -221,7 +221,7 @@ public class AuthorizationCodeHandler
 		{
 			return email[0].ToString();
 		}
-		
+
 		return initials;
 	}
 }
