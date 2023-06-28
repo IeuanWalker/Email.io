@@ -3,6 +3,18 @@
 public interface IHashIdService
 {
 	/// <summary>
+	/// Encodes the given project ID into a hash.
+	/// </summary>
+	/// <param name="userId"></param>
+	string EncodeUserId(int userId);
+
+	/// <summary>
+	/// Decodes hash into project Id
+	/// </summary>
+	/// <param name="hash"></param>
+	int? DecodeUserId(string hash);
+
+	/// <summary>
 	/// Encodes the given project and template IDs into a hash.
 	/// </summary>
 	/// <param name="projectId"></param>

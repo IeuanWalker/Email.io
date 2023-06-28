@@ -2,6 +2,7 @@
 
 public class HashSettings
 {
+	public HashSetting UserId { get; set; } = default!;
 	public HashSetting ProjectIdAndTemplateId { get; set; } = default!;
 	public HashSetting ProjectId { get; set; } = default!;
 	public HashSetting TemplateVersionId { get; set; } = default!;

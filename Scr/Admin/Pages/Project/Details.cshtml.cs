@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Admin.Pages.Project;
 
-[Authorize]
 public class DetailsModel : PageModel
 {
 	readonly IProjectRepository _projectTbl;

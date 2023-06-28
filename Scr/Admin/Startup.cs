@@ -2,9 +2,13 @@ using System.Security.Claims;
 using Admin.Infrastructure;
 using Database.Models;
 using Database.Repositories.User;
+using Domain.Services.HashId;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web.UI;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Admin;
 
@@ -45,7 +49,7 @@ public class Startup
 				options.Authority = "https://login.microsoftonline.com/6d2b6129-6234-4f81-932c-25af126af273/";
 				options.ClientId = "39e54bdf-ef10-490e-92e3-aa8c3439a2b1";
 				options.ClientSecret = "4ts8Q~KPM~BXdKs7drrN6fnD3hIUA7YfzW4KbbY0";
-				options.ResponseType = "Code";
+				options.ResponseType = OpenIdConnectResponseType.Code;
 				options.UsePkce = true;
 				options.Scope.Clear();
 				options.Scope.Add("openid");
@@ -69,6 +73,13 @@ public class Startup
 		HangfireConfiguration.ConfigureServices(services, Configuration);
 
 		services.AddRazorPages()
+			.AddMvcOptions(options =>
+			{
+				AuthorizationPolicy policy = new AuthorizationPolicyBuilder()
+					  .RequireAuthenticatedUser()
+					  .Build();
+				options.Filters.Add(new AuthorizeFilter(policy));
+			})
 			.AddRazorRuntimeCompilation();
 	}
 
@@ -112,10 +123,12 @@ public class Startup
 public class AuthorizationCodeHandler
 {
 	readonly IUserRepository _userTbl;
+	readonly IHashIdService _hashIdService;
 
-	public AuthorizationCodeHandler(IUserRepository userTbl)
+	public AuthorizationCodeHandler(IUserRepository userTbl, IHashIdService hashIdService)
 	{
 		_userTbl = userTbl ?? throw new ArgumentNullException(nameof(userTbl));
+		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
 	}
 
 	public async Task HandleAuthorizationCodeAsync(TokenValidatedContext context)
@@ -198,6 +211,7 @@ public class AuthorizationCodeHandler
 		context.Principal.AddIdentity(new ClaimsIdentity(new Claim[]
 		{
 			new Claim(ClaimTypes.Role, user.Role.ToString()),
+			new Claim("UserId", _hashIdService.EncodeUserId(user.Id)),
 			new Claim("DisplayName", user.DisplayName),
 			new Claim("Initials", user.Initials)
 		}));

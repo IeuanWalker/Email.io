@@ -6,6 +6,7 @@ namespace Domain.Services.HashId;
 
 public class HashIdService : IHashIdService
 {
+	readonly Hashids _hashidsUserId;
 	readonly Hashids _hashidsProjectIdAndTemplateId;
 	readonly Hashids _hashidsProjectId;
 	readonly Hashids _hashidsTemplateVersionId;
@@ -13,6 +14,7 @@ public class HashIdService : IHashIdService
 
 	public HashIdService(IOptions<HashSettings> hashSettings)
 	{
+		_hashidsUserId = new(hashSettings.Value.UserId.Salt, hashSettings.Value.UserId.MinLength);
 		_hashidsProjectIdAndTemplateId = new(hashSettings.Value.ProjectIdAndTemplateId.Salt, hashSettings.Value.ProjectIdAndTemplateId.MinLength);
 		_hashidsProjectId = new(hashSettings.Value.ProjectId.Salt, hashSettings.Value.ProjectId.MinLength);
 		_hashidsTemplateVersionId = new(hashSettings.Value.TemplateVersionId.Salt, hashSettings.Value.TemplateVersionId.MinLength);
@@ -42,6 +44,17 @@ public class HashIdService : IHashIdService
 			return null;
 		}
 	}
+
+	public string EncodeUserId(int userId)
+	{
+		return _hashidsUserId.Encode(userId);
+	}
+
+	public int? DecodeUserId(string hash)
+	{
+		return Decode(_hashidsUserId, hash);
+	}
+
 
 	public string EncodeProjectId(int projectId)
 	{

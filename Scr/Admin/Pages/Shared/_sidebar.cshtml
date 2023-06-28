@@ -12,7 +12,6 @@
             <h2>Email.io</h2><small class="label label-secondary text-bold">@hostingEnv.EnvironmentName</small>
         </a>
     </div>
-    <span class="navbar-text text-dark">Hello @User.FindFirstValue("DisplayName")</span>
 
     <div class="nav">
         <a class="nav-item" asp-area="" asp-page="/project/index">Projects</a>
@@ -52,6 +51,9 @@
                     }
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
+                        <li class="menu-item">
+                            <a asp-area="" asp-page="/account/index" asp-route-slug="@User.FindFirstValue("DisplayName")-@User.FindFirstValue("UserId")">Account</a>
+                        </li>
 
                         <li class="menu-item">
                             <a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">

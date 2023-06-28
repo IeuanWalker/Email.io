@@ -1,0 +1,21 @@
+﻿@page "/account/{slug}"
+@model Admin.Pages.Account.IndexModel
+@{
+    ViewData["Title"] = @Model.CurrentUser.DisplayName;
+}
+
+<div class="columns">
+    <div class="column col-auto">
+        <figure class="avatar avatar-xl" data-initial="@Model.CurrentUser.Initials" style="background-color: #5755d9;"></figure>
+    </div>
+    <div class="column mt-2">
+        <div class="text-large">@Model.CurrentUser.DisplayName (@Model.CurrentUser.Email)</div>
+        <div class="text-muted text-small">Role: @Model.CurrentUser.Role</div>
+    </div>
+</div>
+<a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut" class="btn mt-2">Logout</a>
+
+
+
+    
+@*TODO: List projects user is a member of, order by owned then last modified*@

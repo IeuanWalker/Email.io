@@ -25,10 +25,6 @@ public partial class SlugService : ISlugService
 	public string GetIdFromSlug(string slug)
 	{
 		return slug.Split('-')[^1];
-
-		// TODO: Benchmark
-		//int lastHyphenIndex = slug.LastIndexOf('-');
-		//return slug.Substring(lastHyphenIndex + 1);
 	}
 
 	[GeneratedRegex(@"[^a-z0-9\s-]", RegexOptions.Compiled)]
