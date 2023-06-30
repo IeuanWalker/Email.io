@@ -14,6 +14,7 @@ services:
         MSSQL_PID: Express
     ports:
         - "1433:1433"
+
   smtp-server:
     container_name: smtp-server
     image: mailhog/mailhog:latest

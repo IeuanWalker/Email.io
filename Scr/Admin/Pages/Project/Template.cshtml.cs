@@ -54,7 +54,7 @@ public class TemplateModel : PageModel
 		_thumbnailService = thumbnailService ?? throw new ArgumentNullException(nameof(thumbnailService));
 	}
 
-	public TemplateVersionTbl? Version { get; set; }
+	public TemplateVersionTbl Version { get; set; } = null!;
 	public string ProjectSlug { get; set; } = default!;
 
 	public async Task<IActionResult> OnGet(string slug, string hashedVersionId)
@@ -70,16 +70,18 @@ public class TemplateModel : PageModel
 		}
 
 		// TODO: Pull minimal data
-		Version = (await _templateVersionTbl.Get(x =>
+		TemplateVersionTbl? version = (await _templateVersionTbl.Get(x =>
 				x.Id.Equals(versionId) &&
 				x.Template!.ProjectId.Equals(projectId),
 				includeProperties: nameof(TemplateVersionTbl.TestData)))
-			.FirstOrDefault();
+			.SingleOrDefault();
 
-		if (Version is null)
+		if (version is null)
 		{
 			return NotFound();
 		}
+
+		Version = version;
 
 		Version.TestData = Version.TestData.OrderByDescending(x => x.IsDefault).ToList();
 

@@ -1,15 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Database.Models;
 
 [Table("User")]
+[Index(nameof(Sub), nameof(Iss), IsUnique = true)]
 public class UserTbl
 {
 	[Key]
 	public int Id { get; set; }
-
+	/// <summary>
+	/// User's unique identifier from OCID provider
+	/// </summary>
 	public string Sub { get; set; } = null!;
+	/// <summary>
+	/// Issuer of the user's unique identifier
+	/// </summary>
+	public string Iss { get; set; } = null!;
 
 	[Column(TypeName = "nvarchar(8)")]
 	public UserRoles Role { get; set; } = UserRoles.Standard;

@@ -13,7 +13,7 @@ public class IndexModel : PageModel
 	readonly IHashIdService _hashIdService;
 	readonly IUserRepository _userTbl;
 	public IndexModel(
-		ISlugService slugService, 
+		ISlugService slugService,
 		IHashIdService hashIdService,
 		IUserRepository userTbl)
 	{

@@ -55,7 +55,6 @@ public class HashIdService : IHashIdService
 		return Decode(_hashidsUserId, hash);
 	}
 
-
 	public string EncodeProjectId(int projectId)
 	{
 		return _hashidsProjectId.Encode(projectId);

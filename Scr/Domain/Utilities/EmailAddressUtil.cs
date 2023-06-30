@@ -11,13 +11,12 @@ public static partial class EmailAddressUtil
 	/// <returns>True if the email address is valid, otherwise false.</returns>
 	public static bool IsValidEmailAddress(string value)
 	{
-		// Check if the value is null or empty
 		if (string.IsNullOrWhiteSpace(value))
 		{
 			return false;
 		}
 
-		var emailParts = value.Split('@');
+		string[] emailParts = value.Split('@');
 
 		if (emailParts.Length != 2)
 		{

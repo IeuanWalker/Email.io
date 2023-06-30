@@ -138,14 +138,15 @@ public class AuthorizationCodeHandler
 			throw new NullReferenceException("Claim principal is null");
 		}
 
-		string userId = context.Principal.FindFirstValue(ClaimTypes.NameIdentifier) ?? context.Principal.FindFirstValue("sub") ?? throw new NullReferenceException("User ID claim not found");
+		string sub = context.Principal.FindFirstValue(ClaimTypes.NameIdentifier) ?? context.Principal.FindFirstValue("sub") ?? throw new NullReferenceException("User ID claim not found");
+		string iss = context.Principal.FindFirstValue("iss") ?? throw new NullReferenceException("User ID claim not found");
 		string email = context.Principal.FindFirstValue(ClaimTypes.Email) ?? throw new NullReferenceException("User email claim not found");
 		string? givenName = context.Principal.FindFirstValue(ClaimTypes.GivenName);
 		string? familyName = context.Principal.FindFirstValue(ClaimTypes.Surname);
 		string displayName = givenName ?? email;
 		string initials = GetInstials(givenName, familyName, email).ToUpper();
 
-		UserTbl? user = _userTbl.Where(u => u.Sub == userId).FirstOrDefault();
+		UserTbl? user = _userTbl.Where(u => u.Sub.Equals(sub) && u.Iss.Equals(iss)).SingleOrDefault();
 
 		if (user is not null)
 		{
@@ -190,7 +191,8 @@ public class AuthorizationCodeHandler
 		{
 			user = new UserTbl
 			{
-				Sub = userId,
+				Sub = sub,
+				Iss = iss,
 				Role = UserRoles.Standard,
 				Email = email,
 				GivenName = givenName,
