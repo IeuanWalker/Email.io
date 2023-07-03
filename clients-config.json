@@ -1,0 +1,13 @@
+[
+  {
+    "ClientId": "implicit-mock-client",
+    "ClientSecrets": [ "client-credentials-mock-client-secret" ],
+    "Description": "Client for implicit flow",
+    "AllowedGrantTypes": [ "implicit" ],
+    "AllowAccessTokensViaBrowser": true,
+    "RedirectUris": [ "http://localhost:3000/auth/oidc", "http://localhost:4004/auth/oidc" ],
+    "AllowedScopes": [ "openid", "profile", "email" ],
+    "IdentityTokenLifetime": 3600,
+    "AccessTokenLifetime": 3600
+  }
+]

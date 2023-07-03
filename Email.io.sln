@@ -11,6 +11,9 @@ EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{59347A2B-06D8-4CC7-B6C1-1D9635ECE8DD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scr", "Scr", "{46B58EDE-3BFD-4C5B-A0A8-7F7F91FE9B6D}"
+	ProjectSection(SolutionItems) = preProject
+		clients-config.json = clients-config.json
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{44FF4FDA-4991-47FE-8823-BA2C1A12369A}"
 EndProject
