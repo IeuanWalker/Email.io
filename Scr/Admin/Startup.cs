@@ -210,13 +210,20 @@ public class AuthorizationCodeHandler
 			user = await _userTbl.Add(user);
 		}
 
-		context.Principal.AddIdentity(new ClaimsIdentity(new Claim[]
+		ClaimsIdentity claimsIdentity = new(new[]
 		{
 			new Claim(ClaimTypes.Role, user.Role.ToString()),
 			new Claim("UserId", _hashIdService.EncodeUserId(user.Id)),
-			new Claim("DisplayName", user.DisplayName),
-			new Claim("Initials", user.Initials)
-		}));
+			new Claim(nameof(user.DisplayName), user.DisplayName),
+			new Claim(nameof(user.Initials), user.Initials)
+		});
+
+		if(user.CanCreateProject is not null)
+		{
+			claimsIdentity.AddClaim(new Claim(nameof(user.CanCreateProject), ((bool)user.CanCreateProject).ToString()));
+		}
+
+		context.Principal.AddIdentity(claimsIdentity);
 	}
 
 	static string GetInstials(string? givenName, string? familyName, string email)

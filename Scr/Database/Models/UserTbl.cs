@@ -33,6 +33,8 @@ public class UserTbl
 	public string Initials { get; set; } = null!;
 
 	// TODO: Last active
+
+	public bool? CanCreateProject { get; set; }
 }
 
 public enum UserRoles

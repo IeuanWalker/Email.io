@@ -3,6 +3,7 @@
 @using Humanizer;
 @using Microsoft.AspNetCore.Html;
 @using Admin.Pages.Project;
+@using System.Security.Claims;
 @model Admin.Pages.Project.IndexModel
 @{
     ViewData["Title"] = "Projects";
@@ -20,7 +21,14 @@
 @if (Model.Projects.Any())
 {
     <div class="clearfix">
-        <a asp-page="/project/create" type="button" class="btn float-right mt-2">Create project</a>
+        @if (User.FindFirstValue(nameof(UserTbl.CanCreateProject)) is null)
+        {
+            <a asp-page="/project/create" type="button" class="btn float-right mt-2">Request permission to create a project</a>
+        }
+        else if (bool.Parse(User.FindFirstValue(nameof(UserTbl.CanCreateProject))!))
+        {
+            <a asp-page="/project/create" type="button" class="btn float-right mt-2">Create project</a>
+        }
     </div>
     <div class="columns">
 
@@ -47,7 +55,14 @@ else
         <p class="empty-title h5">Create your first project</p>
         <p class="empty-subtitle">Project allow you to group 1 or more email templates together</p>
         <div class="empty-action">
-            <a asp-page="/project/create" class="btn" type="button">Create project</a>
+            @if (User.FindFirstValue(nameof(UserTbl.CanCreateProject)) is null)
+            {
+                <a asp-page="/project/create" class="btn" type="button">Request permission to create a project</a>
+            }
+            else if (bool.Parse(User.FindFirstValue(nameof(UserTbl.CanCreateProject))!))
+            {
+                <a asp-page="/project/create" class="btn" type="button">Create project</a>
+            }
         </div>
     </div>
 }

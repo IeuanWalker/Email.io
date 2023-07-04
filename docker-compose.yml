@@ -26,7 +26,7 @@ services:
       - "8025:8025" # Web UI
 
   azurite:
-    container_name: azurite
+    container_name: blob-storage
     image: mcr.microsoft.com/azure-storage/azurite
     hostname: azurite
     command: "azurite-blob --loose --blobHost 0.0.0.0"

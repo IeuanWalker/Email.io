@@ -1,5 +1,6 @@
 ﻿using Database.Models;
 using Database.Repositories.Project;
+using Database.Repositories.User;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -21,7 +22,6 @@ public class IndexModel : PageModel
 		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
 		_slugService = slugService ?? throw new ArgumentNullException(nameof(slugService));
 	}
-
 	public List<ProjectResponseModel1> Projects { get; set; } = new List<ProjectResponseModel1>();
 
 	public async Task OnGet()
