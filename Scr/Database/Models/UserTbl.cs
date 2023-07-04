@@ -35,6 +35,8 @@ public class UserTbl
 	// TODO: Last active
 
 	public bool? CanCreateProject { get; set; }
+
+	public ICollection<ProjectUserTbl>? Projects { get; set; }
 }
 
 public enum UserRoles

@@ -45,6 +45,8 @@ public class IndexModel : PageModel
 	}
 }
 
+// TODO: Add ability to request permission to create a project
+
 public class ProjectResponseModel1 : ProjectTbl
 {
 	public string Slug { get; set; } = default!;

@@ -17,8 +17,9 @@ public class UsersModel : PageModel
 	}
 
 	public void OnGet()
-    {
-    }
+	{
+		// Method intentionally left empty.
+	}
 
 	public async Task<JsonResult> OnPostUsers(DataTablesRequest dataTablesRequest)
 	{

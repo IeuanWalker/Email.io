@@ -24,4 +24,5 @@ public class ProjectTbl : BaseEntityModifiedDate
 	public string? Tags { get; set; }
 	public string ApiKey { get; set; } = default!;
 	public ICollection<TemplateTbl>? Templates { get; set; }
+	public ICollection<ProjectUserTbl>? Users { get; set; }
 }

@@ -4,6 +4,7 @@ using Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230704161058_CreatedProjectUsersTbl")]
+    partial class CreatedProjectUsersTbl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -180,45 +183,6 @@ namespace Database.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("CanCreateApiKey")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanCreateTemplate")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanCreateTemplateVersion")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanDeleteApiKey")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanDeleteTemplate")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanDeleteTemplateVersion")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanEditProject")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanEditTemplate")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanEditTemplateVersion")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanResetApiKey")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanViewActivityLog")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanViewApiKeys")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CanViewSentEmails")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Role")
                         .IsRequired()

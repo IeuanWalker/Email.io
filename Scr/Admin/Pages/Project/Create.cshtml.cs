@@ -1,13 +1,16 @@
-﻿using Database.Models;
+﻿using System.Security.Claims;
+using Database.Models;
 using Database.Repositories.Project;
 using Domain.Services.ApiKey;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Admin.Pages.Project;
 
+[Authorize(Policy = nameof(UserTbl.CanCreateProject))]
 public class CreateModel : PageModel
 {
 	readonly IProjectRepository _projectTbl;
