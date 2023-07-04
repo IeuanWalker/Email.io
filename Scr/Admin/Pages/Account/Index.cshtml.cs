@@ -1,5 +1,5 @@
+using Database.Context;
 using Database.Models;
-using Database.Repositories.User;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +11,15 @@ public class IndexModel : PageModel
 {
 	readonly ISlugService _slugService;
 	readonly IHashIdService _hashIdService;
-	readonly IUserRepository _userTbl;
+	readonly ApplicationDbContext _context;
 	public IndexModel(
 		ISlugService slugService,
 		IHashIdService hashIdService,
-		IUserRepository userTbl)
+		ApplicationDbContext context)
 	{
 		_slugService = slugService ?? throw new ArgumentNullException(nameof(slugService));
 		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
-		_userTbl = userTbl ?? throw new ArgumentNullException(nameof(userTbl));
+		_context = context ?? throw new ArgumentNullException(nameof(context));
 	}
 
 	public UserTbl CurrentUser { get; set; } = new UserTbl();
@@ -31,7 +31,8 @@ public class IndexModel : PageModel
 			return NotFound();
 		}
 
-		UserTbl? user = await _userTbl.GetByID(id.Value);
+		UserTbl? user = await _context.UserTbl.FindAsync(id.Value);
+
 		if (user is null)
 		{
 			return NotFound();

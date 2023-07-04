@@ -1,7 +1,7 @@
 using System.Linq.Dynamic.Core;
 using Admin.Pages.Project;
+using Database.Context;
 using Database.Models;
-using Database.Repositories.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +10,10 @@ namespace Admin.Pages;
 
 public class UsersModel : PageModel
 {
-	readonly IUserRepository _userTbl;
-	public UsersModel(IUserRepository userTbl)
+	readonly ApplicationDbContext _context;
+	public UsersModel(ApplicationDbContext context)
 	{
-		_userTbl = userTbl ?? throw new ArgumentNullException(nameof(userTbl));
+		_context = context ?? throw new ArgumentNullException(nameof(context));
 	}
 
 	public void OnGet()
@@ -23,9 +23,9 @@ public class UsersModel : PageModel
 
 	public async Task<JsonResult> OnPostUsers(DataTablesRequest dataTablesRequest)
 	{
-		int recordsTotal = await _userTbl.Where().CountAsync();
+		int recordsTotal = await _context.UserTbl.CountAsync();
 
-		IQueryable<UserTbl> sentEmailsQuery = _userTbl.Where();
+		IQueryable<UserTbl> sentEmailsQuery = _context.UserTbl.AsQueryable();
 
 		if (!string.IsNullOrWhiteSpace(dataTablesRequest.Search.Value))
 		{

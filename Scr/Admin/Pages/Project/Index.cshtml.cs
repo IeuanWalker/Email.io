@@ -1,6 +1,5 @@
 ﻿using Database.Models;
 using Database.Repositories.Project;
-using Database.Repositories.User;
 using Domain.Services.HashId;
 using Domain.Services.Slug;
 using Microsoft.AspNetCore.Mvc.RazorPages;

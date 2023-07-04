@@ -1,12 +1,13 @@
 using System.Security.Claims;
 using Admin.Infrastructure;
+using Database.Context;
 using Database.Models;
-using Database.Repositories.User;
 using Domain.Services.HashId;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web.UI;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
@@ -125,12 +126,12 @@ public class Startup
 
 public class AuthorizationCodeHandler
 {
-	readonly IUserRepository _userTbl;
+	readonly ApplicationDbContext _context;
 	readonly IHashIdService _hashIdService;
 
-	public AuthorizationCodeHandler(IUserRepository userTbl, IHashIdService hashIdService)
+	public AuthorizationCodeHandler(ApplicationDbContext context, IHashIdService hashIdService)
 	{
-		_userTbl = userTbl ?? throw new ArgumentNullException(nameof(userTbl));
+		_context = context ?? throw new ArgumentNullException(nameof(context));
 		_hashIdService = hashIdService ?? throw new ArgumentNullException(nameof(hashIdService));
 	}
 
@@ -149,7 +150,7 @@ public class AuthorizationCodeHandler
 		string displayName = givenName ?? email;
 		string initials = GetInstials(givenName, familyName, email).ToUpper();
 
-		UserTbl? user = _userTbl.Where(u => u.Sub.Equals(sub) && u.Iss.Equals(iss)).SingleOrDefault();
+		UserTbl? user = await _context.UserTbl.SingleOrDefaultAsync(x => x.Sub.Equals(sub) && x.Iss.Equals(iss));
 
 		if (user is not null)
 		{
@@ -187,7 +188,8 @@ public class AuthorizationCodeHandler
 
 			if (needUpdating)
 			{
-				await _userTbl.Update(user);
+				_context.UserTbl.Update(user);
+				await _context.SaveChangesAsync();
 			}
 		}
 		else
@@ -205,12 +207,13 @@ public class AuthorizationCodeHandler
 			};
 
 			// If no admin users exist, make this user an admin
-			if (!_userTbl.Where(x => x.Role.Equals(UserRoles.Admin)).Any())
+			if (!await _context.UserTbl.AnyAsync(x => x.Role.Equals(UserRoles.Admin)))
 			{
 				user.Role = UserRoles.Admin;
 			}
 
-			user = await _userTbl.Add(user);
+			_context.UserTbl.Add(user);
+			await _context.SaveChangesAsync();
 		}
 
 		ClaimsIdentity claimsIdentity = new(new[]

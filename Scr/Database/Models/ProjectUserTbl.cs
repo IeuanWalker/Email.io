@@ -29,7 +29,6 @@ public class ProjectUserTbl
 	public bool CanEditProject { get; set; }
 }
 
-
 public enum ProjectUserRoles
 {
 	Standard,
